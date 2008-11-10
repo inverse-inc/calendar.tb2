@@ -1,0 +1,87 @@
+--- ../lightning-osx/chrome/content/calendar/calendar-item-editing.js	2008-11-07 11:38:26.000000000 -0500
++++ src/calendar/base/content/calendar-item-editing.js	2008-11-10 11:43:03.000000000 -0500
+@@ -482,7 +482,6 @@
+         return;
+     }
+     transport = transport.QueryInterface(Components.interfaces.calIItipTransport);
+-
+     var invitedAttendee = ((calInstanceOf(aItem.calendar, Components.interfaces.calISchedulingSupport) &&
+                             aItem.calendar.isInvitation(aItem))
+                            ? aItem.calendar.getInvitedAttendee(aItem) : null);
+@@ -490,20 +489,46 @@
+         if (aItem.calendar.canNotify("REPLY", aItem)) {
+             return; // provider does that
+         }
+-
+         var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));
+-
+-        if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
++	
++	origInvitedAttendee = invitedAttendee;
++	invitedAttendee = invitedAttendee.clone();
++        
++	if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
+             // in case the attendee has just deleted the item, we want to send out a DECLINED REPLY:
+-            origInvitedAttendee = invitedAttendee;
+-            invitedAttendee = invitedAttendee.clone();
+             invitedAttendee.participationStatus = "DECLINED";
+         }
++	
++	// Much like in sun-calendar-event-dialog-attendees.xml (onInitialize)
++	// we have to check if the attendee is equal to the calendar-user-address-set.
++	// If they aren't equal, it means that someone is accepting invitations
++	// on behalf of an other user.
++	if (aItem.calendar.type == "caldav") {
++	  var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
++	    .getService(Components.interfaces.nsISupports)
++	    .wrappedJSObject;
++	  
++	  var entry = aclMgr.calendarEntry(aItem.calendar.uri);		
++	  var found = false;
++	  var identity;
++	  
++	  for (var i = 0; i < entry.userAddresses.length; i++) {
++	    identity = entry.userAddresses[i].toLowerCase();
++	    if (invitedAttendee.id.toLowerCase() == identity) {
++	      found = true;
++	    }
++	  }
++	  
++	  if (!found && entry.userAddresses.length > 0) {
++	    invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
++	  }
++	}
++	  //invitedAttendee.setProperty("SENT-BY", "mailto:lmarcotte@inverse.ca");
+ 
+         // has this been a PARTSTAT change?
+-        if (aItem.organizer &&
+-            (!origInvitedAttendee ||
+-             (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
++        if (aItem.organizer) { // &&
++	  //(!origInvitedAttendee ||
++	  // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
+ 
+             aItem = aItem.clone();
+             aItem.removeAllAttendees();
+@@ -551,13 +576,11 @@
+             canceledAttendees.push(cancAtt);
+         }
+     }
+-
+     var autoResponse = false; // confirm to send email
+ 
+     // Check to see if some part of the item was updated, if so, re-send invites
+     if (!aOriginalItem || aItem.generation != aOriginalItem.generation) { // REQUEST
+         var requestItem = aItem.clone();
+-
+         if (!requestItem.organizer) {
+             var organizer = Components.classes["@mozilla.org/calendar/attendee;1"]
+                                       .createInstance(Components.interfaces.calIAttendee);
+@@ -587,7 +610,6 @@
+             autoResponse = true; // don't ask again
+         }
+     }
+-
+     // Cancel the event for all canceled attendees
+     if (canceledAttendees.length > 0) {
+         var cancelItem = aOriginalItem.clone();

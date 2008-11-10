@@ -1,0 +1,18 @@
+--- ../mozilla/calendar/base/content/calendar-view-core.xml	2008-08-28 10:13:54.000000000 -0400
++++ src/calendar/base/content/calendar-view-core.xml	2008-11-01 10:47:44.000000000 -0400
+@@ -243,12 +243,12 @@
+           this.setAttribute("calendar", item.calendar.name.toLowerCase());
+ 
+           // Invitation
+-          if (item.calendar instanceof Components.interfaces.calISchedulingSupport &&
++          if (!isCalendarWritable(item.calendar)) {
++              this.setAttribute("readonly", "true");
++          } else if (item.calendar instanceof Components.interfaces.calISchedulingSupport &&
+               item.calendar.isInvitation(item)) {
+               this.setAttribute("invitation-status", item.calendar.getInvitedAttendee(item).participationStatus);
+               this.setAttribute("readonly", "true");
+-          } else if (!isCalendarWritable(item.calendar)) {
+-              this.setAttribute("readonly", "true");
+           }
+         ]]></body>
+       </method>

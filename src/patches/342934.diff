@@ -1,0 +1,84 @@
+diff --git a/calendar/base/themes/pinstripe/calendar-task-tree.css b/calendar/base/themes/pinstripe/calendar-task-tree.css
+--- a/calendar/base/themes/pinstripe/calendar-task-tree.css
++++ b/calendar/base/themes/pinstripe/calendar-task-tree.css
+@@ -55,34 +55,34 @@
+     color: red;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(overdue, selected, focus) {
+     background-color: red;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(duetoday) {
+-    color: blue;
++    color: ActiveCaption;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(duetoday, selected, focus) {
+-    background-color: blue;
++    background-color: Background;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(future) {
+-    color: gray;
++    color: InfoText;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(future, selected, focus) {
+     background-color: Highlight;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(completed) {
+     text-decoration: line-through;
+-    color: black;
++    color: GrayText;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-image(calendar-task-tree-col-completed, completed),
+ .calendar-task-tree-col-completed {
+     list-style-image: url(chrome://calendar/skin/unifinder-images.png);
+     -moz-image-region: rect(0 26px 13px 13px);
+ }
+ 
+diff --git a/calendar/base/themes/winstripe/calendar-task-tree.css b/calendar/base/themes/winstripe/calendar-task-tree.css
+--- a/calendar/base/themes/winstripe/calendar-task-tree.css
++++ b/calendar/base/themes/winstripe/calendar-task-tree.css
+@@ -55,34 +55,34 @@
+     color: red;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(overdue, selected, focus) {
+     background-color: red;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(duetoday) {
+-    color: blue;
++    color: ActiveCaption;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(duetoday, selected, focus) {
+-    background-color: blue;
++    background-color: Background;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(future) {
+-    color: gray;
++    color: InfoText;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-row(future, selected, focus) {
+     background-color: Highlight;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-cell-text(completed) {
+     text-decoration: line-through;
+-    color: black;
++    color: GrayText;
+ }
+ 
+ .calendar-task-tree > treechildren::-moz-tree-image(calendar-task-tree-col-completed, completed),
+ .calendar-task-tree-col-completed {
+     list-style-image: url(chrome://calendar/skin/unifinder-images.png);
+     -moz-image-region: rect(0 26px 13px 13px);
+ }
+ 

@@ -1,0 +1,4 @@
+How to generate a patch :
+
+1- place yourself at the top-level of the Lightning (Inverse Edition) source code
+2- diff -u ../lightning-osx/chrome/content/calendar/calendar-month-view.xml ./src/calendar/base/content/calendar-month-view.xml

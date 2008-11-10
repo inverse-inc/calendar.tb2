@@ -1,0 +1,14 @@
+--- ../mozilla/calendar/base/content/calendar-multiday-view.xml	2008-09-16 08:48:04.000000000 -0400
++++ src/calendar/base/content/calendar-multiday-view.xml	2008-11-01 12:42:31.000000000 -0400
+@@ -1575,6 +1575,11 @@
+               return;
+           }
+ 
++	  if (aOccurrence.calendar instanceof Components.interfaces.calISchedulingSupport &&
++	      aOccurrence.calendar.isInvitation(aOccurrence)) {
++	      return;
++	  }
++
+           //dump ("startSweepingToModify\n");
+           this.mDragState = {
+               origColumn: this,

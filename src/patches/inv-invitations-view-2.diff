@@ -1,0 +1,14 @@
+--- ../lightning-osx/chrome/content/calendar/calendar-month-view.xml	2008-11-07 11:38:26.000000000 -0500
++++ ./src/calendar/base/content/calendar-month-view.xml	2008-11-01 12:54:12.000000000 -0400
+@@ -169,6 +169,11 @@
+             return;
+         }
+ 
++	if (item.calendar instanceof Components.interfaces.calISchedulingSupport &&
++	    item.calendar.isInvitation(item)) {
++	    return;
++	}
++
+         var flavourProvider = {
+             QueryInterface: function(aIID) {
+                 return doQueryInterface(this, null, aIID, [Components.interfaces.nsIFlavorDataProvider]);
