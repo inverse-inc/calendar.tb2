@@ -1,0 +1,7 @@
+2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Initial import of Mozilla Calendar source and binaries.
+	The import is based on the last stable release for
+	Thunderbird 2 - which is 0.9.
+	* Generation of the initial set of patches in
+	  src/patches
