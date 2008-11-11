@@ -95,7 +95,11 @@ function build_win32 {
     sed s/0.9/0.9.1/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    
+   
+    # We copy the missing XPT file
+    cd $BASE
+    cp ./binaries/lightning/saxparser.xpt ./tmp/components
+
     # We regenerate the xpi
     cd $BASE/tmp
     zip -r ../output/lightning-0.9-inverse.win32.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite

@@ -275,7 +275,6 @@ calDavCalendar.prototype = {
             var itemData = cacheValues[count];
             if (itemId == "ctag") {
                 this.mCtag = itemData;
-		dump("INITIAL CTAG: " + this.mCtag + "\n");
             } else {
                 var itemDataArray = itemData.split("\u001A");
                 var etag = itemDataArray[0];
@@ -285,10 +284,11 @@ calDavCalendar.prototype = {
                     this.mHrefIndex[resourcePath] = itemId;
                     var locationPath = decodeURIComponent(resourcePath)
                         .substr(this.mLocationPath.length);
+		    // See https://bugzilla.mozilla.org/show_bug.cgi?id=464344
                     var item = { etag: etag,
                                  isNew: false,
                                  locationPath: locationPath,
-                                 isInboxItem: (isInboxItem == "true")};
+                                 isInBoxItem: (isInboxItem == "true")};
                     this.mItemInfoCache[itemId] = item;
                 }
             }
@@ -1376,12 +1376,12 @@ calDavCalendar.prototype = {
                     var isReply = (method == "REPLY");
                     var item = items[0];
                     if (!item) {
-                        thisCalendar.notifyOperationComplete(aListener,
-                                                             Components.results.NS_ERROR_FAILURE,
-                                                             Components.interfaces.calIOperationListener.GET,
-                                                             null,
-                                                             "failed to retrieve item");
-                        return;
+		        thisCalendar.notifyOperationComplete(aListener,
+			  				     Components.results.NS_ERROR_FAILURE,
+		                                             Components.interfaces.calIOperationListener.GET,
+		                                             null,
+							     "failed to retrieve item");
+		        return;
                     }
 
                     item.calendar = thisCalendar.superCalendar;
@@ -2264,7 +2264,6 @@ calDavCalendar.prototype = {
         refreshEvent.itemsReported = [];
         refreshEvent.uri = this.mInBoxUrl;
 
-	dump("GET UPDATED ITEMS 2\n");
         this.getUpdatedItems(refreshEvent);
     },
 

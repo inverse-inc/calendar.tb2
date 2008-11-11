@@ -1,3 +1,10 @@
+2008-11-11  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * Fixed bug #464344
+	* Added binaries/lightning/saxparser.xpt to the
+	  Lightning/win32 build in order to get a working
+	  SAX parser on this platform
+
 2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Modified calDavCalendar.js
