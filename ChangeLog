@@ -4,6 +4,7 @@
 	* Added binaries/lightning/saxparser.xpt to the
 	  Lightning/win32 build in order to get a working
 	  SAX parser on this platform
+	* Changed the version number to 0.9.1pre1
 
 2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
