@@ -49,6 +49,91 @@
 
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
+//
+// Fast etag handling.
+//
+function cdHandler() {
+}
+
+cdHandler.prototype = {
+ aRefreshEvent: null,
+ calendar: null,
+ count: 0,
+ 
+ characters: function characters(value) {
+    if (this.inGetEtag) {
+      this.etag += value;
+    } else if (this.inHref) {
+      this.href += value;
+    } else if (this.inStatus) {
+      this.status += value;
+    }
+  },
+ startDocument: function startDocument() {
+    this.inResponse = false;
+    this.inHref = false;
+    this.inGetEtag = false;
+    this.inStatus = false;
+    this.count = 0;
+  },
+ endDocument: function endDocument() {
+  },
+ startElement: function startElement(uri, localName, qName, attributes) {
+    if (localName == "response") {
+      this.inResponse = true;
+      this.href = "";
+      this.etag = "";
+      this.status = "";
+    } else if (localName == "href") {
+      this.inHref = true;
+    } else if (localName == "getetag") {
+      this.inGetEtag = true;
+    } else if (localName == "status") {
+      this.inStatus = true;
+    }
+  },
+ 
+ endElement: function endElement(uri, localName, qName) {
+    if (localName == "response") {
+      var status = parseInt(this.status.split(" ")[1]);
+      if (status == 200
+	  && this.etag.length
+	  && this.href.length) {
+	var href = this.calendar.ensurePath(this.href).toString();
+	this.aRefreshEvent.itemsReported.push(href);
+	var itemuid = this.calendar.mHrefIndex[href];
+	if (!itemuid
+	    || (this.etag
+		!= this.calendar.mItemInfoCache[itemuid].etag)) {
+	  this.aRefreshEvent.itemsNeedFetching.push(href);
+	}
+      }
+      this.count++;
+      this.inResponse = false;
+    } else if (localName == "href") {
+      this.inHref = false;
+    } else if (localName == "getetag") {
+      this.inGetEtag = false;
+    } else if (localName == "status") {
+      this.inStatus = false;
+    }
+  },
+ startPrefixMapping: function startPrefixMapping(prefix, uri) {
+  },
+ endPrefixMapping: function endPrefixMapping(prefix) {
+  },
+ ignorableWhitespace: function ignorableWhitespace(whitespace) {
+  },
+ processingInstruction: function processingInstruction(target, data) {
+  },
+ 
+ QueryInterface: function QueryInterface(aIID) {
+    return doQueryInterface(this, cdHandler.prototype, aIID,
+			    [Components.interfaces.nsISAXContentHandler]);
+  }
+};
+
+
 function calDavCalendar() {
     this.initProviderBase();
     this.unmappedProperties = [];
@@ -698,7 +783,7 @@ calDavCalendar.prototype = {
 
             // 204 = HTTP "No content"
             //
-            if (status == 204 || status == 200) {
+            if (status == 204 || status == 200 || status == 404) {
                 if (!aFromInBox) {
                     if (thisCalendar.isCached) {
                         // the item is deleted in the storage calendar from calCachedCalendar
@@ -1043,7 +1128,8 @@ calDavCalendar.prototype = {
             }
 
             if (responseStatus == 207) {
-	      dump("PARSING - BEGIN (" + thisCalendar.name + ")\n");
+	      var parsingT = (new Date()).getTime();
+	      dump("PARSING - BEGIN (" + thisCalendar.name + "): " + ((new Date()).getTime() - parsingT) +"\n");
                 // We only need to parse 207's, anything else is probably a
                 // server error (i.e 50x).
                 var str = convertByteArray(aResult, aResultLength);
@@ -1056,24 +1142,32 @@ calDavCalendar.prototype = {
                 if (str.substr(0,6) == "<?xml ") {
                     str = str.substring(str.indexOf('<', 2));
                 }
-                var multistatus = new XML(str);
-                for (var i = 0; i < multistatus.*.length(); i++) {
-                    var response = new XML(multistatus.*[i]);
-                    var etag = response..D::["getetag"];
-                    if (etag.length() == 0) {
-                        continue;
-                    }
-                    var href = response..D::["href"];
-                    var resourcePath = thisCalendar.ensurePath(href);
-                    aRefreshEvent.itemsReported.push(resourcePath.toString());
-
-                    var itemuid = thisCalendar.mHrefIndex[resourcePath];
-                    if (!itemuid || etag != thisCalendar.mItemInfoCache[itemuid].etag) {
-                        aRefreshEvent.itemsNeedFetching.push(resourcePath);
-                    }
-                }
-	      dump("PARSING - DONE\n");
-	      
+	      //var multistatus = new XML(str);
+	      var parser =
+	      Components.classes["@mozilla.org/saxparser/xmlreader;1"]
+	      .createInstance(Components.interfaces.nsISAXXMLReader);
+	      var handler = new cdHandler();
+	      parser.contentHandler = handler;
+	      handler.aRefreshEvent = aRefreshEvent;
+	      handler.calendar = thisCalendar;
+	      parser.parseFromString(str, "application/xml");
+              //  for (var i = 0; i < multistatus.*.length(); i++) {
+	      //    var response = new XML(multistatus.*[i]);
+	      //    var etag = response..D::["getetag"];
+	      //    if (etag.length() == 0) {
+	      //        continue;
+	      //    }
+	      //    var href = response..D::["href"];
+	      //    var resourcePath = thisCalendar.ensurePath(href);
+	      //    aRefreshEvent.itemsReported.push(resourcePath.toString());
+	      //
+	      ///    var itemuid = thisCalendar.mHrefIndex[resourcePath];
+	      //   if (!itemuid || etag != thisCalendar.mItemInfoCache[itemuid].etag) {
+	      //        aRefreshEvent.itemsNeedFetching.push(resourcePath);
+	      //    }
+	      //}
+	      //dump("PARSING - DONE: " + ((new Date()).getTime() - parsingT) + " count: " + multistatus.*.length() + "\n");
+	      dump("PARSING - DONE: " + ((new Date()).getTime() - parsingT) + "\n");
             } else if (Math.floor(responseStatus / 100) == 4) {
                 // A 4xx error probably means the server doesn't support this
                 // type of query. Disable it for this session. This doesn't
@@ -2446,6 +2540,30 @@ calDavCalendar.prototype = {
       }
 
       return false;
+    },
+
+    getInvitedAttendee: function caldav_getInvitedAttendee(aItem) {
+      var id = this.getProperty("organizerId");
+      var attendee = (id ? aItem.getAttendeeById(id) : null);
+
+      if (!attendee) {
+	var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	  .getService(Components.interfaces.nsISupports)
+	  .wrappedJSObject;
+	
+	var entry = aclMgr.calendarEntry(this.uri);
+
+	if (entry.isCalendarReady()) {
+	  var identity;
+	  for (var i = 0; i < entry.ownerIdentities.length; i++) {
+	    identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
+	    attendee = aItem.getAttendeeById(identity);
+	    if (attendee) return attendee;
+	  }
+	}
+      }
+
+      return attendee;
     }
 };
 

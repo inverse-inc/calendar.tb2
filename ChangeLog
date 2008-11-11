@@ -1,5 +1,14 @@
 2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
+        * Modified calDavCalendar.js
+	- added a fast etag parser
+	- re-implemented getInvitedAttendee so it takes
+	  into account all identities
+	- modified the delete method to proceed with the
+	  delete even with 404 error codes from the server
+
+2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
 	* Initial import of Mozilla Calendar source and binaries.
 	The import is based on the last stable release for
 	Thunderbird 2 - which is 0.9.
