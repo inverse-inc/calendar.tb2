@@ -6,7 +6,8 @@
 	  into account all identities
 	- modified the delete method to proceed with the
 	  delete even with 404 error codes from the server
-
+	- added patch from bug #342934
+	
 2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Initial import of Mozilla Calendar source and binaries.
