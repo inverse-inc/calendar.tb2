@@ -1,3 +1,9 @@
+2008-11-12  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Added src/patches/454543.diff for bug #454543
+	  Included the fix in the source code and
+	  slightly modified it (replaced let = with var=)
+
 2008-11-11  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Fixed bug #464344
