@@ -230,9 +230,10 @@ calCachedCalendar.prototype = {
     mPendingSync: null,
     mSyncQueue: null,
     synchronize: function cCC_synchronize(respFunc) {
+
         this.mSyncQueue.push(respFunc);
         if (this.mSyncQueue.length > 1) { // don't use mPendingSync here
-            LOG("[calCachedCalendar] sync in action/pending.");
+	    LOG("[calCachedCalendar] sync in action/pending.");
             return this.mPendingSync;
         }
 

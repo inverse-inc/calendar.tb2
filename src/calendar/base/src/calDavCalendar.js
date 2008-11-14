@@ -330,14 +330,7 @@ calDavCalendar.prototype = {
 
     get canRefresh caldav_get_canRefresh() {
       // A cached calendar doesn't need to be refreshed.
-      dump("CAN REFRESH 1 " + this.isCached + " class: " + this.className +"\n");
-      dump("CAN REFRESH 2 " + this.mCheckedServerInfo +"\n")
-      // See https://bugzilla.mozilla.org/show_bug.cgi?id=463960
-      if (this.isCached && this.mCheckedServerInfo)
-	return true;
-
       return !this.isCached;
-      //return true;
     },
 
     // mUriParams stores trailing ?parameters from the
@@ -1004,6 +997,13 @@ calDavCalendar.prototype = {
                     dump("CalDAV: ctag matches, no need to fetch data for calendar "
                         + thisCalendar.name);
                 }
+		
+		// See https://bugzilla.mozilla.org/show_bug.cgi?id=463960
+		if (thisCalendar.isCached && aChangeLogListener) {
+		  aChangeLogListener.onResult({ status: Components.results.NS_OK },
+					      Components.results.NS_OK);
+		}
+		
                 // we may still need to poll the inbox
                 if (thisCalendar.firstInRealm()) {
                     thisCalendar.pollInBox();
