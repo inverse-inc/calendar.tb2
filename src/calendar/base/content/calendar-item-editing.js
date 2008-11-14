@@ -523,7 +523,6 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	    invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
 	  }
 	}
-	  //invitedAttendee.setProperty("SENT-BY", "mailto:lmarcotte@inverse.ca");
 
         // has this been a PARTSTAT change?
         if (aItem.organizer) { // &&
