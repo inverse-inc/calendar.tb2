@@ -1,3 +1,8 @@
+2008-11-16  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * Improved the speed of the SAX handler in
+	calDavCalendar.js b avoiding calls to ensurePath()
+
 2008-11-14  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Added a Linux/64-bit Lightning build

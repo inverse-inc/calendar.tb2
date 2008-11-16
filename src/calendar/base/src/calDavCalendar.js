@@ -59,6 +59,7 @@ cdHandler.prototype = {
  aRefreshEvent: null,
  calendar: null,
  count: 0,
+ index: 0,
  
  characters: function characters(value) {
     if (this.inGetEtag) {
@@ -75,6 +76,7 @@ cdHandler.prototype = {
     this.inGetEtag = false;
     this.inStatus = false;
     this.count = 0;
+    this.index = 0;
   },
  endDocument: function endDocument() {
   },
@@ -95,11 +97,24 @@ cdHandler.prototype = {
  
  endElement: function endElement(uri, localName, qName) {
     if (localName == "response") {
-      var status = parseInt(this.status.split(" ")[1]);
-      if (status == 200
+      //var status = parseInt(this.status.split(" ")[1]);
+      //if (status == 200
+      if (this.status.indexOf(" 200") > 0
 	  && this.etag.length
 	  && this.href.length) {
-	var href = this.calendar.ensurePath(this.href).toString();
+	
+	var href = this.href;
+	
+	if (this.count == 0) {
+	  href = this.calendar.ensurePath(this.href).toString();
+	  if (href != this.href) {
+	    this.index = this.href.indexOf(href);
+	  }
+	}
+	else if (this.index > 0) {
+	  href = href.substr(this.index);
+	}
+	  	  
 	this.aRefreshEvent.itemsReported.push(href);
 	var itemuid = this.calendar.mHrefIndex[href];
 	if (!itemuid
@@ -1136,7 +1151,7 @@ calDavCalendar.prototype = {
                 if (!str) {
                     dump("CAlDAV: Failed to parse getetag REPORT");
                 } else if (thisCalendar.verboseLogging()) {
-                    dump("CalDAV: recv: " + str);
+		    //dump("CalDAV: recv: " + str);
                 }
 
                 if (str.substr(0,6) == "<?xml ") {
@@ -1323,7 +1338,7 @@ calDavCalendar.prototype = {
                 }
                 return;
             } else if (thisCalendar.verboseLogging()) {
-                dump("CalDAV: recv: " + str);
+	        //dump("CalDAV: recv: " + str);
             }
             if (str.substr(0,6) == "<?xml ") {
                 str = str.substring(str.indexOf('<', 2));
