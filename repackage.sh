@@ -44,7 +44,7 @@ function build_osx {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
@@ -92,7 +92,7 @@ function build_win32 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
    
@@ -144,7 +144,7 @@ function build_linux {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
@@ -192,7 +192,7 @@ function build_linux_x64 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     

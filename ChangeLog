@@ -1,3 +1,12 @@
+2008-11-18  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * src/calendar/base/content/sun-calendar-event-dialog.js
+	 src/patches/464444.diff
+	 new files in order to fix the issue (bug #464444) where
+	 the last attendee wouldn't be notified when he was
+	 removed from the list of invited attendees
+	* Bumped the version number to 0.9.0pre3
+
 2008-11-16  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Improved the speed of the SAX handler in
