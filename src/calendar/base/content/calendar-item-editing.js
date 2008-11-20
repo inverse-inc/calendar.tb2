@@ -635,9 +635,6 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
     // We have to modify our item a little, so we clone it.
     var item = aItem.clone();
 
-    // We fake Sequence ID support.
-    item.setProperty("SEQUENCE", item.generation);
-
     // Initialize and set our properties on the item
     itipItem.init(calGetSerializedItem(item));
     itipItem.responseMethod = aMethod;

@@ -1,3 +1,9 @@
+2008-11-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/src/calTransactionManager.js
+	We correctly handle the SEQUENCE increase upon
+	event modification
+
 2008-11-18  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * src/calendar/base/content/sun-calendar-event-dialog.js

@@ -187,6 +187,74 @@ calTransaction.prototype = {
         }
     },
 
+    // Stolen from bug #457203 -  iTIP overhaul
+    prepareSequence: function cal_itip_prepareSequence(newItem, oldItem) {
+      //if (oldItem.calendar.isInvitation(newItem)) {
+      //      return newItem; // invitation copies don't bump the SEQUENCE
+      //  }
+
+        if (newItem.recurrenceId && !oldItem.recurrenceId && oldItem.recurrenceInfo) {
+            // XXX todo: there's still the bug that modifyItem is called with mixed occurrence/parent,
+            //           find original occurrence
+            oldItem = oldItem.recurrenceInfo.getOccurrenceFor(newItem.recurrenceId);
+            NS_ASSERT(oldItem, "unexpected!");
+            if (!oldItem) {
+                return newItem;
+            }
+        }
+        function hashMajorProps(aItem) {
+            var propStrings = [];
+            function addProps(item) {
+                if (item) {
+                    const majorProps = {
+                        DTSTART: true,
+                        DTEND: true,
+                        DURATION: true,
+                        DUE: true,
+                        RDATE: true,
+                        RRULE: true,
+                        EXDATE: true,
+                        STATUS: true,
+                        LOCATION: true
+                    };
+                    calIterateIcalComponent(
+                        item.icalComponent,
+                        function(subComp) {
+                            for (var prop = subComp.getFirstProperty("ANY");
+                                 prop;
+                                 prop = subComp.getNextProperty("ANY")) {
+                                if (majorProps[prop.propertyName]) {
+                                    propStrings.push(item.recurrenceId + "#" + prop.icalString);
+                                }
+                            }
+                        });
+                }
+            }
+            addProps(aItem);
+            var rec = (aItem && aItem.recurrenceInfo);
+            if (rec) {
+                rec.getExceptionIds({}).forEach(
+                    function(rid) {
+                        addProps(rec.getExceptionFor(rid, false));
+                    });
+            }
+            propStrings.sort();
+            return propStrings.join("");
+        }
+
+        var h1 = hashMajorProps(newItem);
+        var h2 = hashMajorProps(oldItem);
+        if (h1 != h2) {
+            newItem = newItem.clone();
+            // bump SEQUENCE, it never decreases (mind undo scenario here)
+            newItem.setProperty("SEQUENCE",
+                                String(Math.max(oldItem.getProperty("SEQUENCE"),
+                                                newItem.getProperty("SEQUENCE")) + 1));
+        }
+
+        return newItem;
+    },
+
     doTransaction: function cT_doTransaction() {
         this.mIsDoTransaction = true;
         switch (this.mAction) {
@@ -199,8 +267,8 @@ calTransaction.prototype = {
                     this.mOldCalendar.deleteItem(this.mOldItem, this);
                     this.mCalendar.addItem(this.mItem, this);
                 } else {
-                    this.mCalendar.modifyItem(this.mItem,
-                                              this.mOldItem,
+		     this.mCalendar.modifyItem(this.prepareSequence(this.mItem, this.mOldItem),
+					      this.mOldItem,
                                               this);
                 }
                 break;
