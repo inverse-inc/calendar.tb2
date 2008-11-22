@@ -40,6 +40,11 @@ function build_osx {
     # We update the JavaScript core files
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
+
+    # We update the french locale
+    cd $BASE/src/calendar
+    jar -cvf calendar-fr.jar locale
+    mv -f calendar-fr.jar ../../tmp/chrome/
     
     # We update the RDF file
     cd $BASE/tmp
@@ -89,6 +94,11 @@ function build_win32 {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
     
+    # We update the french locale
+    cd $BASE/src/calendar
+    jar -cvf calendar-fr.jar locale
+    mv -f calendar-fr.jar ../../tmp/chrome/
+
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
@@ -140,7 +150,12 @@ function build_linux {
     # We update the JavaScript core files
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
-    
+
+    # We update the french locale
+    cd $BASE/src/calendar
+    jar -cvf calendar-fr.jar locale
+    mv -f calendar-fr.jar ../../tmp/chrome/    
+
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
@@ -188,6 +203,11 @@ function build_linux_x64 {
     # We update the JavaScript core files
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
+
+    # We update the french locale
+    cd $BASE/src/calendar
+    jar -cvf calendar-fr.jar locale
+    mv -f calendar-fr.jar ../../tmp/chrome/
     
     # We update the RDF file
     cd $BASE/tmp

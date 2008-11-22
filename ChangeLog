@@ -1,3 +1,10 @@
+2008-11-22  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Added file src/patches/457854.diff
+	to backport this particular bugfix
+	* Added the calendar-fr.jar source files
+	in order to fix typos in the French translation
+
 2008-11-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/src/calTransactionManager.js
