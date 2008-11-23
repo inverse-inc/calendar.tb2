@@ -29,6 +29,7 @@ function build_osx {
     cd $BASE/tmp/chrome/
     cp -fr ../../src/calendar/base/themes/pinstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin
@@ -82,6 +83,7 @@ function build_win32 {
     cd $BASE/tmp/chrome/
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/    
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin
@@ -139,6 +141,7 @@ function build_linux {
     cd $BASE/tmp/chrome/
     cp -fr ../../src/calendar/base/themes/pinstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin
@@ -192,6 +195,7 @@ function build_linux_x64 {
     cd $BASE/tmp/chrome/
     cp -fr ../../src/calendar/base/themes/pinstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin

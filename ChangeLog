@@ -4,6 +4,8 @@
 	to backport this particular bugfix
 	* Added the calendar-fr.jar source files
 	in order to fix typos in the French translation
+	* Added src/calendar/base/content/widgets/minimonth.xml
+	so that we update the view wrt the selected day
 
 2008-11-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
