@@ -934,21 +934,12 @@ calDavCalendar.prototype = {
             headchannel.open();
         }
 
-	//if (!this.mFirstRefreshDone) {
-	//  dump("GET UPDATED ITEMS 4 -initial loading not done, returning\n");
-	//  return;
-	//	}
-	dump("mCtag: " + this.mCtag + "for calendar: " + this.name + "\n");
-	if (!this.mCtag || (!this.isCached && !this.mFirstRefreshDone)) {
-        //if (!this.mCtag || !this.mFirstRefreshDone) {
+	if (!this.mCtag || !this.mFirstRefreshDone) {
             var refreshEvent = this.prepRefresh();
-	    dump("GET UPDATED ITEMS 3 " + this.mCtag + " " + this.mFirstRefreshDone + "\n");
-            this.getUpdatedItems(refreshEvent, aChangeLogListener);
+	    this.getUpdatedItems(refreshEvent, aChangeLogListener);
             return;
         }
         var thisCalendar = this;
-
-	dump("SAFE REFRESH 2 - we at least get the ctag for: " + typeof(thisCalendar) +"\n");
 
         var D = new Namespace("D", "DAV:");
         var CS = new Namespace("CS", "http://calendarserver.org/ns/");
@@ -1409,7 +1400,7 @@ calDavCalendar.prototype = {
 
                     var pathLength = decodeURIComponent(aUri.path).length;
                     var locationPath = decodeURIComponent(resourcePath).substr(pathLength);
-                    var isInboxItem = thisCalendar.isInBox(aUri.spec);
+		    var isInboxItem = thisCalendar.isInBox(aUri.spec);
                     if (thisCalendar.mItemInfoCache[item.id]) {
                         thisCalendar.mItemInfoCache[item.id].isNew = false;
                     } else {
@@ -1446,7 +1437,7 @@ calDavCalendar.prototype = {
             } else {
                 thisCalendar.mObservers.notify("onLoad", [thisCalendar]);
             }
-	    dump("FIRST REFRESH DONE 1\n");
+
             thisCalendar.mFirstRefreshDone = true;
             while (thisCalendar.mQueuedQueries.length) {
                 var query = thisCalendar.mQueuedQueries.pop();
@@ -1576,16 +1567,13 @@ calDavCalendar.prototype = {
 
             // check for server-side ctag support
             var ctag = multistatus..CS::["getctag"].toString();
-	    dump("READ CTAG: " + ctag + " FOR CALENDAR: " + thisCalendar.name + " typoeof:" + typeof(thisCalendar) + "\n");
             if (ctag.length) {
 	      // We compare the stored ctag with the one we just got, if
-	      // they don't match, we update the items.
+	      // they don't match, we update the items in safeRefresh.
 	      // See:  https://bugzilla.mozilla.org/show_bug.cgi?id=463961
-	      if (ctag != thisCalendar.mCtag) {
-		dump("CALENDAR HAS CHANGED SINCE LAST START\n");
-		var refreshEvent = thisCalendar.prepRefresh();
-		thisCalendar.getUpdatedItems(refreshEvent, aChangeLogListener);
-	        }
+	      if (ctag == thisCalendar.mCtag) {
+		thisCalendar.mFirstRefreshDone = true;
+	      }
 	      thisCalendar.mCtag = ctag;
 	      thisCalendar.mTargetCalendar.setMetaData("ctag", ctag);
 	      if (thisCalendar.verboseLogging()) {

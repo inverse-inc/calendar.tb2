@@ -1,3 +1,8 @@
+2008-11-24  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * Updated the code with regard to bug #463961
+	* Bumped version number to 0.9.1pre5
+	
 2008-11-22  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added file src/patches/457854.diff
