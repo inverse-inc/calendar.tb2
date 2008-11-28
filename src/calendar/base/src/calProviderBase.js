@@ -66,7 +66,7 @@ function calGetEmailIdentityOfCalendar(aCalendar, outAccount) {
         if (!identity) {
             // dangling identity:
             WARN("Calendar " + (aCalendar.uri ? aCalendar.uri.spec : aCalendar.id) +
-                 " has a dangling E-Mail identity configured.");
+                 " has a dangling E-Mail identity configured. key was: " + key);
         }
         return identity;
     } else { // take default account/identity:

@@ -233,6 +233,6 @@ function build_linux_x64 {
 # Which target do we build ? 
 #
 build_osx
-build_win32
-build_linux
-build_linux_x64
+#build_win32
+#build_linux
+#build_linux_x64

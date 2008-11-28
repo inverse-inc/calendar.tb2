@@ -1,3 +1,11 @@
+2008-11-28  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* We now allow the creation of cached
+	calendar immediately. See:
+	See https://bugzilla.mozilla.org/show_bug.cgi?id=466686
+	for details
+        * Bumped version number to 0.9.1pre6
+
 2008-11-24  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Updated the code with regard to bug #463961
@@ -11,6 +19,7 @@
 	in order to fix typos in the French translation
 	* Added src/calendar/base/content/widgets/minimonth.xml
 	so that we update the view wrt the selected day
+	See https://bugzilla.mozilla.org/show_bug.cgi?id=466979
 
 2008-11-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
 

@@ -529,11 +529,16 @@ calCalendarManager.prototype = {
     /**
      * calICalendarManager interface
      */
-    createCalendar: function cmgr_createCalendar(type, uri) {
+    createCalendar: function cmgr_createCalendar(type, uri, cached) {
         try {
             var calendar = Components.classes["@mozilla.org/calendar/calendar;1?type=" + type]
                                      .createInstance(Components.interfaces.calICalendar);
             calendar.uri = uri;
+	    
+	    // See https://bugzilla.mozilla.org/show_bug.cgi?id=466686
+	    if (cached == true)
+	      calendar = new calCachedCalendar(calendar);
+
             return calendar;
         } catch (ex) {
             // XXX todo: bug 439620
