@@ -171,6 +171,10 @@ function calDavCalendar() {
     this.mCtag = null;
     // By default, support both events and todos.
     this.supportedItemTypes = ["VEVENT", "VTODO"];
+
+    var observerService = Components.classes["@mozilla.org/observer-service;1"]
+      .getService(Components.interfaces.nsIObserverService);
+    observerService.addObserver(this, "caldav-acl-loaded", false);
 }
 
 // some shorthand
@@ -455,7 +459,7 @@ calDavCalendar.prototype = {
 	    .wrappedJSObject;
 	    var entry = aclMgr.calendarEntry(this.uri);
 	    
-	    if (entry.isCalendarReady() && entry.supportsACL) {
+	    if (entry.isCalendarReady() && entry.hasAccessControl) {
 	      return "mailto:" + entry.ownerIdentities[0].email;
 	    }
 	    return this.calendarUserAddress;
@@ -484,7 +488,7 @@ calDavCalendar.prototype = {
             case "capabilities.tasks.supported":
                 return (this.supportedItemTypes.indexOf("VTODO") > -1);
             case "capabilities.events.supported":
-                return (this.supportedItemTypes.indexOf("VEVENT") > -1);
+                return (this.supportedItemTypes.indexOf("VEVENT") > -1);	    
         }
         return this.__proto__.__proto__.getProperty.apply(this, arguments);
     },
@@ -1071,8 +1075,18 @@ calDavCalendar.prototype = {
 
     getUpdatedItems: function caldav_getUpdatedItems(aRefreshEvent, aChangeLogListener) {
         if (this.mDisabled) {
+	    // we reset our calendar status
+	    this.setProperty("currentStatus", Components.results.NS_OK);
+
             // check if maybe our calendar has become available
             this.checkDavResourceType(aChangeLogListener);
+
+	    // try to reread the ACLs
+	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	    .getService(Components.interfaces.nsISupports)
+	    .wrappedJSObject;
+	    
+	    aclMgr.refresh(this.uri);
             return;
         }
 	dump("In getUpdatedItems - step 1\n");
@@ -1545,7 +1559,8 @@ calDavCalendar.prototype = {
             }
 
             var str = convertByteArray(aResult, aResultLength);
-            if (!str) {
+	    // See https://bugzilla.mozilla.org/show_bug.cgi?id=429126
+            if (!str || aContext.responseStatus == 404) {
                 dump("CalDAV: Failed to determine resource type");
                 thisCalendar.completeCheckServerInfo(aChangeLogListener, 
                                                      Components.interfaces.calIErrors.DAV_NOT_DAV);
@@ -1618,7 +1633,7 @@ calDavCalendar.prototype = {
             if ((resourceType == kDavResourceTypeCalendar) &&
                 thisCalendar.mDisabled) {
                 thisCalendar.mDisabled = false;
-                thisCalendar.mReadOnly = false;
+                thisCalendar.readOnly = false;
             }
 
             thisCalendar.setCalHomeSet();
@@ -2037,7 +2052,7 @@ calDavCalendar.prototype = {
             return;
         }
 
-        this.mReadOnly = true;
+        this.readOnly = true;
         this.mDisabled = true;
         this.notifyError(aErrNo,
                          calGetString("calendar", message , [this.mUri.spec]));
@@ -2513,7 +2528,7 @@ calDavCalendar.prototype = {
       
       // If our server does not support ACLs, we rollback to the previous method
       // of checking if it's an invitation (code from calProviderBase.js)
-      if (!entry.supportsACL)
+      if (!entry.hasAccessControl)
 	{
 	  var id = this.getProperty("organizerId");
 	  if (id) {
@@ -2566,6 +2581,11 @@ calDavCalendar.prototype = {
       }
 
       return attendee;
+    },
+
+    observe: function(aSubject, aTopic, aData) {     
+      if (this.uri.spec == aData)
+	this.mObservers.notify("onLoad", [this]);
     }
 };
 

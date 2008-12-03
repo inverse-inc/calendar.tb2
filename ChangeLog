@@ -1,3 +1,13 @@
+2008-12-03  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* We now correctly refresh ACLs when going online
+	and we refresh the view once they are loaded
+	* Fixed bug https://bugzilla.mozilla.org/show_bug.cgi?id=429126
+	* Replaced mReadOnly with readOnly in calDavCalendar.js
+	so we correctly mark the calendar as a read-only one
+	when there's a network error.
+	* Bumped version number to 0.9.1pre7
+
 2008-11-28  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* We now allow the creation of cached
