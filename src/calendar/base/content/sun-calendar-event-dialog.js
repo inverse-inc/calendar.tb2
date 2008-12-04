@@ -1543,6 +1543,12 @@ function updateCalendar() {
         disableElement("send-invitations-checkbox");
     }
 
+    // We might have to change the organizer, let's see
+    if (window.organizer) {
+      window.organizer.id = calendar.getProperty("organizerId");
+      window.organizer.commonName = calendar.getProperty("organizerCN");
+    }
+
     // update the accept button
     updateAccept();
 
@@ -1894,6 +1900,31 @@ function saveItem() {
         } else {
             item.setProperty("X-MOZ-SEND-INVITATIONS", sendInvitesCheckbox.checked ? "TRUE" : "FALSE");
         }
+    }
+
+    // For CalDAV calendars, we check if the organizerID is different from our
+    // calendar-user-address-set. The organzerID is the owner of the calendar.
+    // If it's different, that is because someone is acting on behalf of
+    // the organizer.
+    if (item.calendar.type == "caldav" && item.organizer) {
+      var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	.getService(Components.interfaces.nsISupports)
+	.wrappedJSObject;
+      
+      var entry = aclMgr.calendarEntry(item.calendar.uri);		
+      var found = false;
+      var identity;
+      
+      for (var i = 0; i < entry.userAddresses.length; i++) {
+	identity = entry.userAddresses[i].toLowerCase();
+	if (item.organizer.id.toLowerCase() == identity) {
+	  found = true;
+	}
+      }
+      
+      if (!found && entry.userAddresses.length > 0) {
+	item.organizer.setProperty("SENT-BY", entry.userAddresses[0]);
+      }
     }
 
     return item;
