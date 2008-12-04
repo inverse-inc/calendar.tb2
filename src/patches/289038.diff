@@ -1,0 +1,51 @@
+Index: calendar/lightning/content/imip-bar.js
+===================================================================
+RCS file: /cvsroot/mozilla/calendar/lightning/content/imip-bar.js,v
+retrieving revision 1.1.2.8
+diff -u -8 -p -r1.1.2.8 imip-bar.js
+--- calendar/lightning/content/imip-bar.js	28 Sep 2007 08:32:24 -0000	1.1.2.8
++++ calendar/lightning/content/imip-bar.js	16 Nov 2007 20:35:30 -0000
+@@ -96,18 +96,18 @@ function checkForItipItem(subject)
+     gItipItem = itipItem;
+ 
+     // XXX Bug 351742: no S/MIME or spoofing protection yet
+     // handleImipSecurity(imipMethod);
+ 
+     setupBar(imipMethod);
+ }
+ 
+-addEventListener("messagepane-loaded", imipOnLoad, true);
+-addEventListener("messagepane-unloaded", imipOnUnload, true);
++window.addEventListener("load", imipOnLoad, true);
++window.addEventListener("unload", imipOnUnload, true);
+ 
+ /**
+  * Add self to gMessageListeners defined in msgHdrViewOverlay.js
+  */
+ function imipOnLoad()
+ {
+     var listener = {};
+     listener.onStartHeaders = onImipStartHeaders;
+@@ -117,18 +117,20 @@ function imipOnLoad()
+     // Set up our observers
+     var observerSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                 .getService(Components.interfaces.nsIObserverService);
+     observerSvc.addObserver(onItipItem, "onItipItemCreation", false);
+ }
+ 
+ function imipOnUnload()
+ {
+-    removeEventListener("messagepane-loaded", imipOnLoad, true);
+-    removeEventListener("messagepane-unloaded", imipOnUnload, true);
++    var imipBar = document.getElementById("imip-bar");
++    imipBar.setAttribute("collapsed", "true");
++    document.getElementById("imip-button1").setAttribute("hidden", "true");
++    document.getElementById("imip-button2").setAttribute("hidden", "true");
+ 
+     var observerSvc = Components.classes["@mozilla.org/observer-service;1"]
+                                 .getService(Components.interfaces.nsIObserverService);
+     observerSvc.removeObserver(onItipItem, "onItipItemCreation");
+ 
+     gItipItem = null;
+ }
+ 

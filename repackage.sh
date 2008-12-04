@@ -33,6 +33,10 @@ function build_osx {
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin
+    jar -xvf lightning.jar
+    cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
+    jar -cvf lightning.jar content skin
+    rm -rf content skin
     
     # We update the preference file
     cd $BASE
@@ -86,6 +90,10 @@ function build_win32 {
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/    
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
+    rm -rf content skin
+    jar -xvf lightning.jar
+    cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
+    jar -cvf lightning.jar content skin
     rm -rf content skin
     
     # We update the preference file
@@ -145,6 +153,10 @@ function build_linux {
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
     rm -rf content skin
+    jar -xvf lightning.jar
+    cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
+    jar -cvf lightning.jar content skin
+    rm -rf content skin
     
     # We update the preference file
     cd $BASE
@@ -198,6 +210,10 @@ function build_linux_x64 {
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     rm -f calendar.jar
     jar -cvf calendar.jar content skin
+    rm -rf content skin
+    jar -xvf lightning.jar
+    cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
+    jar -cvf lightning.jar content skin
     rm -rf content skin
     
     # We update the preference file

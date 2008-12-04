@@ -1,3 +1,11 @@
+2008-12-04  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Added the following files
+	src/calendar/lightning/content/imip-bar.js
+	src/patches/289038.diff
+	We now correctly handle if we are the owner
+	on the calendar in imip-bar.js
+
 2008-12-03  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* We now correctly refresh ACLs when going online
