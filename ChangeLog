@@ -5,6 +5,9 @@
 	src/patches/289038.diff
 	We now correctly handle if we are the owner
 	on the calendar in imip-bar.js
+	* Added a hack around bug
+	https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	in calendar-item-editing.js
 
 2008-12-03  Ludovic Marcotte  <lmarcotte@inverse.ca>
 

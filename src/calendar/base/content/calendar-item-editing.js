@@ -52,7 +52,7 @@ opCompleteListener.prototype = {
             // calProviderBase.notifyOperationComplete (with adding an oldItem parameter).
             // I am not yet sure what to do for mixed mode invitations, e.g.
             // some users on the attendee list are caldav users and get REQUESTs into their inbox,
-            // other get emailed... For now let's do both.
+            // other get emailed... For now let's do both.	  
             checkAndSendItipMessage(aItem, aOpType, this.mOriginalItem);
         }
         if (this.mOuterListener) {
@@ -481,6 +481,13 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     if (!transport) { // Only send if there's a transport for the calendar
         return;
     }
+ 
+    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+    if (aOriginalItem.recurrenceId) {
+      aItem = aItem.clone();
+      aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
+    }
+
     transport = transport.QueryInterface(Components.interfaces.calIItipTransport);
     var invitedAttendee = ((calInstanceOf(aItem.calendar, Components.interfaces.calISchedulingSupport) &&
                             aItem.calendar.isInvitation(aItem))
@@ -526,16 +533,28 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
         // has this been a PARTSTAT change?
         if (aItem.organizer) { // &&
-	  //(!origInvitedAttendee ||
-	  // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
+	    //(!origInvitedAttendee ||
+	    // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
+	    var rID = null;
 
-            aItem = aItem.clone();
+	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	    if (aOriginalItem.recurrenceId) {
+	      rID = aItem.getProperty("RECURRENCE-ID");
+	      aItem.recurrenceId = null;
+	    } else {
+	      aItem = aItem.clone();
+	    } 
+	  
             aItem.removeAllAttendees();
             aItem.addAttendee(invitedAttendee);
 
             var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
                                      .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
+
+	    if (rID)
+	      itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+
             itipItem.targetCalendar = aItem.calendar;
             itipItem.autoResponse = Components.interfaces.calIItipItem.USER;
             itipItem.responseMethod = "REPLY";

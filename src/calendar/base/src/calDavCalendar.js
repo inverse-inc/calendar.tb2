@@ -338,7 +338,6 @@ calDavCalendar.prototype = {
 
     mCalendarUserAddress: null,
     get calendarUserAddress caldav_get_calendarUserAddress() {
-      dump("this.mCalendarUserAddress: " + this.mCalendarUserAddress + "\n");
       return this.mCalendarUserAddress;
     },
 
@@ -2373,7 +2372,6 @@ calDavCalendar.prototype = {
     },
 
     sendItems: function caldav_sendItems(aCount, aRecipients, aItipItem) {
-        dump("sendItems 1\n");
         if (aItipItem.responseMethod == "REPLY") {
             // Get my participation status
             var attendee = aItipItem.getItemList({})[0].getAttendeeById(this.calendarUserAddress);
@@ -2400,7 +2398,6 @@ calDavCalendar.prototype = {
                                                  this);
 
             httpchannel.requestMethod = "POST";
-	    dump("SETTING ORIGINATOR TO: " + this.getProperty("organizerId") + "\n");
             httpchannel.setRequestHeader("Originator", this.getProperty("organizerId"), false);
             for each (var recipient in aRecipients) {
                 httpchannel.setRequestHeader("Recipient", recipient.id, true);
