@@ -483,7 +483,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     }
  
     // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-    if (aOriginalItem.recurrenceId) {
+    if (aOriginalItem && aOriginalItem.recurrenceId) {
       aItem = aItem.clone();
       aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
     }
@@ -538,7 +538,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	    var rID = null;
 
 	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	    if (aOriginalItem.recurrenceId) {
+	    if (aOriginalItem && aOriginalItem.recurrenceId) {
 	      rID = aItem.getProperty("RECURRENCE-ID");
 	      aItem.recurrenceId = null;
 	    } else {
