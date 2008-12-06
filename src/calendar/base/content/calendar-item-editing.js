@@ -481,7 +481,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     if (!transport) { // Only send if there's a transport for the calendar
         return;
     }
- 
+
     // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
     if (aOriginalItem && aOriginalItem.recurrenceId) {
       aItem = aItem.clone();
@@ -531,6 +531,11 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	  }
 	}
 
+	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	if (aOriginalItem && aOriginalItem.recurrenceId) {
+	  aItem.organizer = aItem.parentItem.organizer;
+	}
+	
         // has this been a PARTSTAT change?
         if (aItem.organizer) { // &&
 	    //(!origInvitedAttendee ||
@@ -552,6 +557,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                                      .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
 
+	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
 	    if (rID)
 	      itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
 
