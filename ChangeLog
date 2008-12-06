@@ -1,3 +1,10 @@
+2008-12-06  Ludovic Marcotte  <lmarcotte@inverse.ca>	
+
+	* Modified src/calendar/base/src/calDavCalendar.js
+	so implement a faster way of comparing items in order
+	to detect if some were deleted from the server. We
+	now use a hash table instead of an array.
+
 2008-12-04  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added the following files

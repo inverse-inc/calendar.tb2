@@ -115,7 +115,7 @@ cdHandler.prototype = {
 	  href = href.substr(this.index);
 	}
 	  	  
-	this.aRefreshEvent.itemsReported.push(href);
+	this.aRefreshEvent.itemsReported[href] = true;
 	var itemuid = this.calendar.mHrefIndex[href];
 	if (!itemuid
 	    || (this.etag
@@ -1066,7 +1066,7 @@ calDavCalendar.prototype = {
         refreshEvent.typesCount = typesCount;
         refreshEvent.queryStatuses = [];
         refreshEvent.itemsNeedFetching = [];
-        refreshEvent.itemsReported = [];
+        refreshEvent.itemsReported = {};
         refreshEvent.uri = this.calendarUri;
 
         return refreshEvent;
@@ -1219,9 +1219,8 @@ calDavCalendar.prototype = {
                 try { 
                     // if an item has been deleted from the server, delete it here too
                     for (var path in thisCalendar.mHrefIndex) {
-                        if (aRefreshEvent.itemsReported.indexOf(path) < 0 &&
-                            path.indexOf(aRefreshEvent.uri.path) == 0) {
-
+		         if (aRefreshEvent.itemsReported[path] != true && 
+			     path.indexOf(aRefreshEvent.uri.path) == 0) {
                             var getItemListener = {};
                             getItemListener.onGetResult = function caldav_gUIs_oGR(aCalendar,
                                 aStatus, aItemType, aDetail, aCount, aItems) {
@@ -2278,7 +2277,7 @@ calDavCalendar.prototype = {
         refreshEvent.typesCount = typesCount;
         refreshEvent.queryStatuses = [];
         refreshEvent.itemsNeedFetching = [];
-        refreshEvent.itemsReported = [];
+        refreshEvent.itemsReported = {};
         refreshEvent.uri = this.mInBoxUrl;
 
         this.getUpdatedItems(refreshEvent);
