@@ -1024,7 +1024,7 @@ calDavCalendar.prototype = {
     },
 
     refresh: function caldav_refresh() {
-        dump("caldav_refresh: " + this.mCheckedServerInfo + "\n");
+        dump("caldav_refresh: " + this.mCheckedServerInfo + "\n"); 
         if (!this.mCheckedServerInfo) {
             // If we haven't refreshed yet, then we should check the resource
             // type first. This will call refresh() again afterwards.
@@ -2579,9 +2579,24 @@ calDavCalendar.prototype = {
       return attendee;
     },
 
-    observe: function(aSubject, aTopic, aData) {     
-      if (this.uri.spec == aData)
-	this.mObservers.notify("onLoad", [this]);
+    observe: function(aSubject, aTopic, aData) {
+      if (aTopic == "caldav-acl-loaded" &&
+	  this.uri.spec == aData) {
+	
+	// We always mark our calendar as writable. The ACL code will handle correctly
+	// all the cases where one can delete components but not modify them and more.
+	this.readOnly = false;
+	
+	// We refresh our view after the ACL reload. We do NOT call onLoad since
+	// it'll trigger a safeRefresh call and thus, reload the ctag for no
+	// good reason.
+	var wWatcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+	.getService(Components.interfaces.nsIWindowWatcher);
+	if (wWatcher.activeWindow) {
+	  var panel = wWatcher.activeWindow.document.getElementById("view-deck").selectedPanel;
+	  panel.viewElem.refresh();
+	}
+      }
     }
 };
 

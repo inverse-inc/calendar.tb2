@@ -1,3 +1,10 @@
+2008-12-08  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Added src/patches/438964.diff (3rd patch
+	of the bug report) and applied it.
+	* We now correctly refresh our view when
+	ACLs have changed.
+
 2008-12-06  Ludovic Marcotte  <lmarcotte@inverse.ca>	
 
 	* Modified src/calendar/base/src/calDavCalendar.js
