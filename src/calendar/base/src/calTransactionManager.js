@@ -187,6 +187,22 @@ calTransaction.prototype = {
         }
     },
 
+    // Added, which could be useful for bug #457203 -  iTIP overhaul. It'll
+    // correctly reset the participation status of attendees when there's
+    // a major change (ie., SEQUENCE update to the event) or when we create
+    // an exception to a recurring event.
+    resetAttendeesStatus: function cal_itip_resetAttendeesStatus(aItem) {
+      var att = aItem.getAttendees({});
+      aItem.removeAllAttendees();
+      for each (var attendee in att) {
+	  attendee = attendee.clone();
+	  attendee.role = "REQ-PARTICIPANT";
+	  attendee.participationStatus = "NEEDS-ACTION";
+	  attendee.rsvp = true;
+	  aItem.addAttendee(attendee);
+      }
+    },
+
     // Stolen from bug #457203 -  iTIP overhaul
     prepareSequence: function cal_itip_prepareSequence(newItem, oldItem) {
       //if (oldItem.calendar.isInvitation(newItem)) {
@@ -250,6 +266,7 @@ calTransaction.prototype = {
             newItem.setProperty("SEQUENCE",
                                 String(Math.max(oldItem.getProperty("SEQUENCE"),
                                                 newItem.getProperty("SEQUENCE")) + 1));
+	    this.resetAttendeesStatus(newItem);
         }
 
         return newItem;

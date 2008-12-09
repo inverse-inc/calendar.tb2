@@ -582,12 +582,22 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     var originalAtt = (aOriginalItem ? aOriginalItem.getAttendees({}) : []);
     var itemAtt = aItem.getAttendees({});
     var canceledAttendees = [];
+    var addedAttendees = [];
 
     if (itemAtt.length > 0 || originalAtt.length > 0) {
         var attMap = {};
         for each (var att in originalAtt) {
             attMap[att.id.toLowerCase()] = att;
         }
+
+	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	// We need to fix the attendee list so that we send invitation
+	// requests to newly added attendees
+	for each (var addedAtt in itemAtt) {
+	    if (!(addedAtt.id.toLowerCase() in attMap)) {
+	      addedAttendees.push(addedAtt);
+	    }
+	}
 
         for each (var att in itemAtt) {
             if (att.id.toLowerCase() in attMap) {
@@ -603,8 +613,19 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     var autoResponse = false; // confirm to send email
 
     // Check to see if some part of the item was updated, if so, re-send invites
-    if (!aOriginalItem || aItem.generation != aOriginalItem.generation) { // REQUEST
-        var requestItem = aItem.clone();
+    if (!aOriginalItem || aItem.generation != aOriginalItem.generation ||
+	aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE") || addedAttendees.length > 0) {
+        var requestItem = aItem;
+	
+	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        var rID = null;
+	if (aOriginalItem && aOriginalItem.recurrenceId) {
+	  rID = requestItem.getProperty("RECURRENCE-ID");
+	  requestItem.recurrenceId = null;
+	} else {
+	  requestItem = aItem.clone();
+	} 
+		
         if (!requestItem.organizer) {
             var organizer = Components.classes["@mozilla.org/calendar/attendee;1"]
                                       .createInstance(Components.interfaces.calIAttendee);
@@ -618,19 +639,40 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
         // Fix up our attendees for invitations using some good defaults
         var recipients = [];
-        var itemAtt = requestItem.getAttendees({});
+	var itemAtt = [];
+	var attMap = {};
+
+	itemAtt = requestItem.getAttendees({});
         requestItem.removeAllAttendees();
-        for each (var attendee in itemAtt) {
-            attendee = attendee.clone();
+
+	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	for each (var attendee in addedAttendees) {
+	    attMap[attendee.id.toLowerCase()] = attendee;
+	    attendee = attendee.clone();
             attendee.role = "REQ-PARTICIPANT";
             attendee.participationStatus = "NEEDS-ACTION";
             attendee.rsvp = true;
             requestItem.addAttendee(attendee);
             recipients.push(attendee);
+	}
+	
+	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	for each (var attendee in itemAtt) {
+	    if (attendee.id.toLowerCase() in attMap)
+	      continue; // already handled the attendee, we skip it.
+
+            attendee = attendee.clone();
+	    if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
+                attendee.role = "REQ-PARTICIPANT";
+		attendee.participationStatus = "NEEDS-ACTION";
+		attendee.rsvp = true;
+	    }
+            requestItem.addAttendee(attendee);
+            recipients.push(attendee);
         }
 
         if (recipients.length > 0) {
-            calSendItipMessage(transport, requestItem, "REQUEST", recipients, autoResponse);
+	  calSendItipMessage(transport, requestItem, "REQUEST", recipients, autoResponse, rID);
             autoResponse = true; // don't ask again
         }
     }
@@ -645,7 +687,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     }
 }
 
-function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoResponse) {
+function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoResponse, rID) {
     if (aRecipientsList.length == 0) {
         return;
     }
@@ -662,6 +704,11 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
 
     // Initialize and set our properties on the item
     itipItem.init(calGetSerializedItem(item));
+
+    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+    if (rID)
+      itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+
     itipItem.responseMethod = aMethod;
     itipItem.targetCalendar = item.calendar;
     itipItem.autoResponse = (autoResponse

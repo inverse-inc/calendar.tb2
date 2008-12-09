@@ -666,8 +666,9 @@ calDavCalendar.prototype = {
         }
 
         var wasInBoxItem = false;
+	// See https://bugzilla.mozilla.org/show_bug.cgi?id=468723
         if (this.mItemInfoCache[aNewItem.id].isInBoxItem) {
-            aIgnoreEtag = true;
+	    aIgnoreEtag = this.mShouldPollInbox;
             wasInBoxItem = true;
         }
 

@@ -1,3 +1,14 @@
+2008-12-09  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/src/calTransactionManager.js
+	Added a function to reset participation status
+	to "NEEDS-ACTION" when there is a SEQUENCE update.
+	* src/calendar/base/content/calendar-item-editing.js
+	Added more cruft around the ITIP stupidify of 0.9
+	to deal with recurrences.
+	* Added fix for bug
+	https://bugzilla.mozilla.org/show_bug.cgi?id=468723
+
 2008-12-08  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added src/patches/438964.diff (3rd patch
