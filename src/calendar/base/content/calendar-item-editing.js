@@ -482,10 +482,53 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         return;
     }
 
+    var rID = null;
+
     // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-    if (aOriginalItem && aOriginalItem.recurrenceId) {
-      aItem = aItem.clone();
-      aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
+    // We need to see if an EXDATE has been added and if so, during ITIP, we
+    // must send only a RECURRENCE-ID. We do this by checking if we have a new
+    // EXDATE defined inside our new item, comparing it to our old one. If
+    // we have a new EXDATE, we take this, strip the item with the recurring
+    // information and we send it over with the RECURRENCE-ID.
+    var itemEx = [];
+    if (aItem.recurrenceInfo)
+      itemEx = aItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} ); 
+  
+    if (aOriginalItem && aOriginalItem.recurrenceInfo) {
+      var origEx = aOriginalItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} );
+      if (itemEx.length != origEx.length) {
+	var exMap = {};
+	for each (var ex in origEx) {
+	    exMap[ex.date] = ex;
+	}
+
+	// We check for newly created EXDATE
+	for each (var ex in itemEx) {
+	    if (!(ex.date in exMap)) {
+	      var duration;
+
+	      duration = aItem.duration;
+
+	      aItem = aItem.clone();
+	      aItem.recurrenceInfo = null;
+	      rID = ex.date;
+	      
+	      aItem.endDate = ex.date.clone();
+	      aItem.endDate.addDuration(duration);
+	      aItem.startDate = ex.date;
+	      
+	      aOpType = Components.interfaces.calIOperationListener.DELETE;
+	      break;
+	    }
+	}
+      }
+    } 
+    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+    // We must get the proper modified occurence since Lightning pass us
+    // the parent item.
+    else if (aOriginalItem && aOriginalItem.recurrenceId) {
+	aItem = aItem.clone();
+	aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
     }
 
     transport = transport.QueryInterface(Components.interfaces.calIItipTransport);
@@ -496,8 +539,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         if (aItem.calendar.canNotify("REPLY", aItem)) {
             return; // provider does that
         }
-        var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));
-	
+        var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));	    
 	origInvitedAttendee = invitedAttendee;
 	invitedAttendee = invitedAttendee.clone();
         
@@ -535,12 +577,13 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	if (aOriginalItem && aOriginalItem.recurrenceId) {
 	  aItem.organizer = aItem.parentItem.organizer;
 	}
-	
+
         // has this been a PARTSTAT change?
         if (aItem.organizer) { // &&
+
 	    //(!origInvitedAttendee ||
 	    // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
-	    var rID = null;
+	   //var rID = null;
 
 	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
 	    if (aOriginalItem && aOriginalItem.recurrenceId) {
@@ -568,14 +611,16 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         }
         return;
     }
-
-    if (aItem.getProperty("X-MOZ-SEND-INVITATIONS") != "TRUE") { // Only send invitations/cancellations
-                                                                 // if the user checked the checkbox
-        return;
-    }
+ 
+    // HACK - We send invitation inconditionnaly. Why we wouldn't
+    // anyway if we invoked this method?
+    //if (aItem.getProperty("X-MOZ-SEND-INVITATIONS") != "TRUE") { // Only send invitations/cancellations
+    //                                                             // if the user checked the checkbox
+    //    return;
+    // }
 
     if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
-        calSendItipMessage(transport, aItem, "CANCEL", aItem.getAttendees({}));
+        calSendItipMessage(transport, aItem, "CANCEL", aItem.getAttendees({}), false, rID);
         return;
     } // else ADD, MODIFY:
 
@@ -618,7 +663,6 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         var requestItem = aItem;
 	
 	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-        var rID = null;
 	if (aOriginalItem && aOriginalItem.recurrenceId) {
 	  rID = requestItem.getProperty("RECURRENCE-ID");
 	  requestItem.recurrenceId = null;
@@ -706,8 +750,11 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
     itipItem.init(calGetSerializedItem(item));
 
     // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-    if (rID)
+    // We need to add the RECURRENCE-ID _AFTER_ we serialized the item.
+    // Otherwise, we'll get an exception.
+    if (rID) {
       itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+    }
 
     itipItem.responseMethod = aMethod;
     itipItem.targetCalendar = item.calendar;
