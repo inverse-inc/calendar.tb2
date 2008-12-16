@@ -50,7 +50,7 @@
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
 //
-// Fast etag handling.
+// Fast etag handling. See https://bugzilla.mozilla.org/show_bug.cgi?id=469767
 //
 function cdHandler() {
 }
@@ -97,8 +97,6 @@ cdHandler.prototype = {
  
  endElement: function endElement(uri, localName, qName) {
     if (localName == "response") {
-      //var status = parseInt(this.status.split(" ")[1]);
-      //if (status == 200
       if (this.status.indexOf(" 200") > 0
 	  && this.etag.length
 	  && this.href.length) {
@@ -1162,7 +1160,8 @@ calDavCalendar.prototype = {
                 if (str.substr(0,6) == "<?xml ") {
                     str = str.substring(str.indexOf('<', 2));
                 }
-	      //var multistatus = new XML(str);
+
+	      // See https://bugzilla.mozilla.org/show_bug.cgi?id=469767
 	      var parser =
 	      Components.classes["@mozilla.org/saxparser/xmlreader;1"]
 	      .createInstance(Components.interfaces.nsISAXXMLReader);
@@ -1171,6 +1170,7 @@ calDavCalendar.prototype = {
 	      handler.aRefreshEvent = aRefreshEvent;
 	      handler.calendar = thisCalendar;
 	      parser.parseFromString(str, "application/xml");
+	      //var multistatus = new XML(str);
               //  for (var i = 0; i < multistatus.*.length(); i++) {
 	      //    var response = new XML(multistatus.*[i]);
 	      //    var etag = response..D::["getetag"];
@@ -1218,6 +1218,7 @@ calDavCalendar.prototype = {
                     thisCalendar.superCalendar.startBatch();
                 }
                 try { 
+		    // See https://bugzilla.mozilla.org/show_bug.cgi?id=469767
                     // if an item has been deleted from the server, delete it here too
                     for (var path in thisCalendar.mHrefIndex) {
 		         if (aRefreshEvent.itemsReported[path] != true && 
