@@ -1,3 +1,9 @@
+2008-12-17  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog.js
+	We now clone the organizer before setting the SENT-BY
+	* Bumped version number to 0.9.1pre11
+
 2008-12-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 	
 	* Improved ITIP support in calendar-item-editing.js

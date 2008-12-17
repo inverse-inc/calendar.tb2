@@ -1923,7 +1923,9 @@ function saveItem() {
       }
       
       if (!found && entry.userAddresses.length > 0) {
-	item.organizer.setProperty("SENT-BY", entry.userAddresses[0]);
+	var organizer = item.organizer.clone();
+	organizer.setProperty("SENT-BY", entry.userAddresses[0]);
+	item.organizer = organizer;
       }
     }
 
