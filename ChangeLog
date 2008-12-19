@@ -1,3 +1,13 @@
+2008-12-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Included the patch from bug ID
+	https://bugzilla.mozilla.org/show_bug.cgi?id=455260
+	Also finished the use of readOnly and disabled in
+	the whole calDavCalendar.js code
+	* Modified calDavCalendar.js: getProperty() to
+	handle ourself the imip.identity based on what
+	the CalDAV ACL manager has sent us.
+
 2008-12-17  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog.js

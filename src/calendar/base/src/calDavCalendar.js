@@ -152,7 +152,6 @@ function calDavCalendar() {
     this.unmappedProperties = [];
     this.mUriParams = null;
     this.mItemInfoCache = {};
-    this.mDisabled = false;
     this.mCalHomeSet = null;
     this.mInBoxUrl = null;
     this.mOutBoxUrl = null;
@@ -332,8 +331,6 @@ calDavCalendar.prototype = {
     // readonly attribute AUTF8String type;
     get type caldav_get_type() { return "caldav"; },
 
-    mDisabled: true,
-
     mCalendarUserAddress: null,
     get calendarUserAddress caldav_get_calendarUserAddress() {
       return this.mCalendarUserAddress;
@@ -473,6 +470,25 @@ calDavCalendar.prototype = {
 	    
 	    if (entry.isCalendarReady()) {
 	      return entry.ownerIdentities[0].fullName;
+	    }
+	    break;
+	    case "imip.identity":
+	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	    .getService(Components.interfaces.nsISupports)
+	    .wrappedJSObject;
+	    var entry = aclMgr.calendarEntry(this.uri);
+	    
+	    if (entry.isCalendarReady()) {
+	      var displayName = entry.ownerIdentities[0].fullName;
+	      var email = entry.ownerIdentities[0].email;
+	      var newIdentity = Components
+                .classes["@mozilla.org/messenger/identity;1"]
+                .createInstance(Components
+                                .interfaces.nsIMsgIdentity);
+	      newIdentity.identityName = String(displayName + " <" + email + ">");
+	      newIdentity.fullName = String(displayName);
+	      newIdentity.email = String(email);
+	      return newIdentity;
 	    }
 	    break;
             case "itip.transport":
@@ -1072,7 +1088,7 @@ calDavCalendar.prototype = {
     },
 
     getUpdatedItems: function caldav_getUpdatedItems(aRefreshEvent, aChangeLogListener) {
-        if (this.mDisabled) {
+        if (this.disabled) {
 	    // we reset our calendar status
 	    this.setProperty("currentStatus", Components.results.NS_OK);
 
@@ -1396,12 +1412,9 @@ calDavCalendar.prototype = {
                     var isReply = (method == "REPLY");
                     var item = items[0];
                     if (!item) {
-		        thisCalendar.notifyOperationComplete(aListener,
-			  				     Components.results.NS_ERROR_FAILURE,
-		                                             Components.interfaces.calIOperationListener.GET,
-		                                             null,
-							     "failed to retrieve item");
-		        return;
+			LOG("CalDAV: failed to parse retrieved item calendar-data: " + calData);
+			thisCalendar.reportDavError(Components.interfaces.calIErrors.ICS_PARSE);
+		        continue;
                     }
 
                     item.calendar = thisCalendar.superCalendar;
@@ -1616,14 +1629,14 @@ calDavCalendar.prototype = {
             // end of SOGo specialcasing
 
             if (resourceType == kDavResourceTypeNone &&
-                !thisCalendar.mDisabled) {
+                !thisCalendar.disabled) {
                 thisCalendar.completeCheckServerInfo(aChangeLogListener, 
                                                      Components.interfaces.calIErrors.DAV_NOT_DAV);
                 return;
             }
 
             if ((resourceType == kDavResourceTypeCollection) &&
-                !thisCalendar.mDisabled) {
+                !thisCalendar.disabled) {
                 thisCalendar.completeCheckServerInfo(aChangeLogListener, 
                                                      Components.interfaces.calIErrors.DAV_DAV_NOT_CALDAV);
                 return;
@@ -1631,8 +1644,8 @@ calDavCalendar.prototype = {
 
             // if this calendar was previously offline we want to recover
             if ((resourceType == kDavResourceTypeCalendar) &&
-                thisCalendar.mDisabled) {
-                thisCalendar.mDisabled = false;
+                thisCalendar.disabled) {
+                thisCalendar.disabled = false;
                 thisCalendar.readOnly = false;
             }
 
@@ -2035,6 +2048,7 @@ calDavCalendar.prototype = {
         mapError[Components.interfaces.calIErrors.DAV_PUT_ERROR] = "itemPutError";
         mapError[Components.interfaces.calIErrors.DAV_REMOVE_ERROR] = "itemDeleteError";
         mapError[Components.interfaces.calIErrors.DAV_REPORT_ERROR] = "disabledMode";
+	mapError[Components.interfaces.calIErrors.ICS_PARSE] = "icsMalformedError";
 
         var mapModification = {};
         mapModification[Components.interfaces.calIErrors.DAV_NOT_DAV] = false;
@@ -2042,6 +2056,7 @@ calDavCalendar.prototype = {
         mapModification[Components.interfaces.calIErrors.DAV_PUT_ERROR] = true;
         mapModification[Components.interfaces.calIErrors.DAV_REMOVE_ERROR] = true;
         mapModification[Components.interfaces.calIErrors.DAV_REPORT_ERROR] = false;
+	mapModification[Components.interfaces.calIErrors.ICS_PARSE] = false;
 
         var message = mapError[aErrNo];
         var modificationError = mapModification[aErrNo];
@@ -2053,7 +2068,7 @@ calDavCalendar.prototype = {
         }
 
         this.readOnly = true;
-        this.mDisabled = true;
+        this.disabled = true;
         this.notifyError(aErrNo,
                          calGetString("calendar", message , [this.mUri.spec]));
         this.notifyError(modificationError
@@ -2595,8 +2610,11 @@ calDavCalendar.prototype = {
 	var wWatcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
 	.getService(Components.interfaces.nsIWindowWatcher);
 	if (wWatcher.activeWindow) {
-	  var panel = wWatcher.activeWindow.document.getElementById("view-deck").selectedPanel;
-	  panel.viewElem.refresh();
+	  var deck =  wWatcher.activeWindow.document.getElementById("view-deck");
+	  if (deck) {
+	    var panel = deck.selectedPanel;
+	    panel.viewElem.refresh();
+	  }
 	}
       }
     }
