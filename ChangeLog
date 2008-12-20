@@ -1,3 +1,11 @@
+2008-12-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/src/calDavCalendar.js
+	We now remove the ctag op from the sync
+	queue when it failed to complete. See
+	https://bugzilla.mozilla.org/show_bug.cgi?id=463960#c4
+	for all details.
+
 2008-12-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Included the patch from bug ID

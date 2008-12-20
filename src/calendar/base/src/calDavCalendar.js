@@ -1000,7 +1000,12 @@ calDavCalendar.prototype = {
             try {
                 var multistatus = new XML(str);
             } catch (ex) {
-                dump("CalDAV: Failed to get ctag from server");
+                LOG("CalDAV: Failed to get ctag from server");
+		// See https://bugzilla.mozilla.org/show_bug.cgi?id=463960#c4
+		if (thisCalendar.isCached && aChangeLogListener) {
+		  aChangeLogListener.onResult({ status: Components.results.NS_OK },
+					      Components.results.NS_OK);
+		}
                 return;
             }
 
