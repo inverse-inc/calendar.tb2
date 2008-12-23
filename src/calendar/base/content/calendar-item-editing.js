@@ -724,10 +724,14 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     if (canceledAttendees.length > 0) {
         var cancelItem = aOriginalItem.clone();
         cancelItem.removeAllAttendees();
+	if (cancelItem && cancelItem.recurrenceId) {
+	  rID = cancelItem.getProperty("RECURRENCE-ID");
+	  cancelItem.recurrenceId = null;
+	}
         for each (var att in canceledAttendees) {
             cancelItem.addAttendee(att);
         }
-        calSendItipMessage(transport, cancelItem, "CANCEL", canceledAttendees, autoResponse);
+        calSendItipMessage(transport, cancelItem, "CANCEL", canceledAttendees, autoResponse, rID);
     }
 }
 
