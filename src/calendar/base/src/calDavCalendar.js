@@ -982,6 +982,15 @@ calDavCalendar.prototype = {
             try {
                 dump("CalDAV: Status " + aContext.responseStatus +
                     " checking ctag for calendar " + thisCalendar.name);
+		// See https://bugzilla.mozilla.org/show_bug.cgi?id=470934
+		if (aContext.responseStatus == 404) {
+		  LOG("Disabled CalDAV calendar due to 404 error code.");
+		  thisCalendar.completeCheckServerInfo(aChangeLogListener, Components.interfaces.calIErrors.DAV_DAV_NOT_CALDAV);
+		  return;
+		} else if (aContext.responseStatus == 207 && thisCalendar.disabled) {
+		  thisCalendar.reenable(aChangeLogListener);
+		  return;
+		}
             } catch (ex) {
                 dump("CalDAV: Error without status on checking ctag for calendar " +
                     thisCalendar.name);
@@ -1094,19 +1103,9 @@ calDavCalendar.prototype = {
 
     getUpdatedItems: function caldav_getUpdatedItems(aRefreshEvent, aChangeLogListener) {
         if (this.disabled) {
-	    // we reset our calendar status
-	    this.setProperty("currentStatus", Components.results.NS_OK);
-
-            // check if maybe our calendar has become available
-            this.checkDavResourceType(aChangeLogListener);
-
-	    // try to reread the ACLs
-	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	    .getService(Components.interfaces.nsISupports)
-	    .wrappedJSObject;
-	    
-	    aclMgr.refresh(this.uri);
-            return;
+	    // See https://bugzilla.mozilla.org/show_bug.cgi?id=470934
+	    this.reenable(aChangeLogListener);
+	    return;
         }
 	dump("In getUpdatedItems - step 1\n");
 
@@ -2622,6 +2621,22 @@ calDavCalendar.prototype = {
 	  }
 	}
       }
+    },
+
+    // See bug https://bugzilla.mozilla.org/show_bug.cgi?id=470934
+    reenable: function caldav_reenable(aChangeLogListener) {
+      // we reset our calendar status
+      this.setProperty("currentStatus", Components.results.NS_OK);
+      
+      // check if maybe our calendar has become available
+      this.checkDavResourceType(aChangeLogListener);
+      
+      // try to reread the ACLs
+      var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+      .getService(Components.interfaces.nsISupports)
+      .wrappedJSObject;
+      
+      aclMgr.refresh(this.uri);
     }
 };
 

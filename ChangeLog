@@ -1,3 +1,8 @@
+2008-12-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * src/calendar/base/src/calDavCalendar.js
+	Added fix for https://bugzilla.mozilla.org/show_bug.cgi?id=470934
+
 2008-12-20  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js
