@@ -1,0 +1,34 @@
+--- sun-calendar-event-dialog-freebusy.xml	2008-11-18 14:17:35.000000000 -0500
++++ sun-calendar-event-dialog-freebusy.xml.fixed	2008-12-30 11:31:37.000000000 -0500
+@@ -811,8 +811,19 @@
+                   var rangeEnd = entry.interval.end.getInTimezone(kDefaultTimezone);
+                   var fbState = (entry.freeBusyType == Components.interfaces.calIFreeBusyInterval.UNKNOWN ? 0 : 2);
+ 
++		  // Only look at the timespan we're interested in. At least the
++		  // start is required to prevent a negative date later on, which
++		  // would mess things up for DST transitions.
++		  if (rangeStart.compare(start) < 0) {
++		      rangeStart = start.clone();
++		  }
++		  if (rangeEnd.compare(end) > 0) {
++		      rangeEnd = end.clone();
++		  }
++
+                   if (rangeStart.compare(start) >= 0 &&
+                       rangeEnd.compare(end) <= 0) {
++
+                       var rangeDuration = rangeEnd.subtractDate(rangeStart);
+                       var rangeStartHour = rangeStart.hour;
+                       var rangeEndHour = rangeStartHour + (rangeDuration.inSeconds / 3600);
+@@ -841,6 +852,11 @@
+                           offset.addDuration(dayoffset);
+ 
+                           var duration = rangeEnd.subtractDate(rangeStart);
++
++                          // Account for DST transitions within the entry
++                          dst_offset = rangeEnd.timezoneOffset - rangeStart.timezoneOffset;
++                          duration.inSeconds += dst_offset;
++
+                           var start_in_minutes = Math.floor(offset.inSeconds / 60);
+                           var end_in_minutes = Math.ceil((duration.inSeconds / 60) +
+                                                          (offset.inSeconds / 60));

@@ -1,3 +1,9 @@
+2008-12-30  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * Added src/patches/421329.diff
+	src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml
+	to fix the issue with all-day events (on multiple days) + freebusy
+	
 2008-12-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * src/calendar/base/src/calDavCalendar.js
