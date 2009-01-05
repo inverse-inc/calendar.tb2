@@ -24,6 +24,8 @@ function build_osx {
     cd $BASE
     cp -f ./tmp/chrome/content/calendar/calendar-month-view.xml ./src/calendar/base/content/calendar-month-view.xml
     patch -p0 < ./src/patches/inv-invitations-view-2.diff
+    cp -f ./tmp/chrome/content/calendar/calendar-dnd-listener.js ./src/calendar/base/content/calendar-dnd-listener.js
+    patch -p0 < ./src/patches/462109.diff
 
     # We update chrome-related files
     cd $BASE/tmp/chrome/
@@ -54,7 +56,7 @@ function build_osx {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre14/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre15/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
@@ -82,6 +84,8 @@ function build_win32 {
     cd $BASE
     cp -f ./tmp/chrome/content/calendar/calendar-month-view.xml ./src/calendar/base/content/calendar-month-view.xml
     patch -p0 < ./src/patches/inv-invitations-view-2.diff
+    cp -f ./tmp/chrome/content/calendar/calendar-dnd-listener.js ./src/calendar/base/content/calendar-dnd-listener.js
+    patch -p0 < ./src/patches/462109.diff
 
     # We update chrome-related files
     cd $BASE/tmp/chrome/
@@ -112,7 +116,7 @@ function build_win32 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre14/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre15/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
    
@@ -144,6 +148,8 @@ function build_linux {
     cd $BASE
     cp -f ./tmp/chrome/content/calendar/calendar-month-view.xml ./src/calendar/base/content/calendar-month-view.xml
     patch -p0 < ./src/patches/inv-invitations-view-2.diff
+    cp -f ./tmp/chrome/content/calendar/calendar-dnd-listener.js ./src/calendar/base/content/calendar-dnd-listener.js
+    patch -p0 < ./src/patches/462109.diff
 
     # We update chrome-related files
     cd $BASE/tmp/chrome/
@@ -174,7 +180,7 @@ function build_linux {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre14/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre15/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
@@ -202,6 +208,8 @@ function build_linux_x64 {
     cd $BASE
     cp -f ./tmp/chrome/content/calendar/calendar-month-view.xml ./src/calendar/base/content/calendar-month-view.xml
     patch -p0 < ./src/patches/inv-invitations-view-2.diff
+    cp -f ./tmp/chrome/content/calendar/calendar-dnd-listener.js ./src/calendar/base/content/calendar-dnd-listener.js
+    patch -p0 < ./src/patches/462109.diff
 
     # We update chrome-related files
     cd $BASE/tmp/chrome/
@@ -232,7 +240,7 @@ function build_linux_x64 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.1pre14/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.1pre15/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     

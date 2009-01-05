@@ -1,0 +1,32 @@
+--- ./src/calendar/base/content/calendar-dnd-listener.js.orig	2009-01-05 08:42:57.000000000 -0500
++++ ./src/calendar/base/content/calendar-dnd-listener.js	2009-01-05 08:43:15.000000000 -0500
+@@ -45,29 +45,6 @@
+         setDefaultStartEndHour(aItem);
+         setDefaultAlarmValues(aItem);
+ 
+-        function addAttendees(aEmailAddresses) {
+-            var headerParser = Components.classes["@mozilla.org/messenger/headerparser;1"]
+-                                         .getService(Components.interfaces.nsIMsgHeaderParser);
+-            var addresses = {};
+-            var fullNames = {};
+-            var names = {};
+-            var numAddresses =  0;
+-            numAddresses = headerParser.parseHeadersWithArray(
+-                aEmailAddresses, addresses, names, fullNames);
+-            for (var i = 0; i < numAddresses; i++) {
+-                var attendee = createAttendee();
+-                attendee.id = "MAILTO:" + addresses.value[i];
+-                attendee.commonName = names.value[i];
+-                attendee.role = "REQ-PARTICIPANT";
+-                attendee.participationStatus = "NEEDS-ACTION";
+-                attendee.rsvp = true;
+-                aItem.addAttendee(attendee);
+-            }
+-        }
+-
+-        addAttendees(aMessage.recipients);
+-        addAttendees(aMessage.ccList);
+-
+         // XXX It would be great if nsPlainTextParser could take care of this.
+         function htmlToPlainText(html) {
+           var texts = html.split(/(<\/?[^>]+>)/);
