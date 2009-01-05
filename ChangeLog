@@ -1,8 +1,6 @@
 2008-01-05  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
-        * Added
-	"src/calendar/base/content/calendar-dnd-listener.js"
-	"src/patches/462109.diff"
+        * Added "src/patches/462109.diff"
 	so and modified repackage.sh so that we not add
 	attendees to new events / tasks when creating them
 	by conversion.
