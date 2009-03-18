@@ -755,12 +755,17 @@ calStorageCalendar.prototype = {
             sp.start_offset = aRangeStart ? aRangeStart.timezoneOffset * USECS_PER_SECOND : 0;
             sp.end_offset = aRangeEnd ? aRangeEnd.timezoneOffset * USECS_PER_SECOND : 0;
 
-            while (this.mSelectNonRecurringEventsByRange.step()) {
-                var row = this.mSelectNonRecurringEventsByRange.row;
-                var item = this.getEventFromRow(row, {});
-                resultItems.push(item);
+            try {
+                while (this.mSelectNonRecurringEventsByRange.step()) {
+                    let row = this.mSelectNonRecurringEventsByRange.row;
+                    resultItems.push(this.getEventFromRow(row, {}));
+                }
+            } catch (e) {
+                ERROR("Error selecting non recurring events by range!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                this.mSelectNonRecurringEventsByRange.reset();
             }
-            this.mSelectNonRecurringEventsByRange.reset();
 
             // process the non-recurring events:
             for each (var evitem in resultItems) {
@@ -791,11 +796,17 @@ calStorageCalendar.prototype = {
             sp.start_offset = aRangeStart ? aRangeStart.timezoneOffset * USECS_PER_SECOND : 0;
             sp.end_offset = aRangeEnd ? aRangeEnd.timezoneOffset * USECS_PER_SECOND : 0;
 
-            while (this.mSelectNonRecurringTodosByRange.step()) {
-                var row = this.mSelectNonRecurringTodosByRange.row;
-                resultItems.push(this.getTodoFromRow(row, {}));
+            try {
+                while (this.mSelectNonRecurringTodosByRange.step()) {
+                    let row = this.mSelectNonRecurringTodosByRange.row;
+                    resultItems.push(this.getTodoFromRow(row, {}));
+                }
+            } catch (e) {
+                ERROR("Error selecting non recurring todos by range!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                this.mSelectNonRecurringTodosByRange.reset();
             }
-            this.mSelectNonRecurringTodosByRange.reset();
 
             // process the non-recurring todos:
             for each (var todoitem in resultItems) {
@@ -871,22 +882,22 @@ calStorageCalendar.prototype = {
             if (selectSchemaVersion.step()) {
                 version = selectSchemaVersion.row.version;
             }
-            selectSchemaVersion.reset();
 
             if (version !== null) {
                 // This is the only place to leave this function gracefully.
                 return version;
             }
         } catch (e) {
-            if (selectSchemaVersion) {
-                selectSchemaVersion.reset();
-            }
             dump ("++++++++++++ calStorageGetVersion() error: " +
                   this.mDB.lastErrorString + "\n");
             Components.utils.reportError("Error getting storage calendar " +
                                          "schema version! DB Error: " + 
                                          this.mDB.lastErrorString);
             throw e;
+        } finally {
+            if (selectSchemaVersion) {
+                selectSchemaVersion.reset();
+            }
         }
 
         throw "cal_calendar_schema_version SELECT returned no results";
@@ -1778,20 +1789,32 @@ calStorageCalendar.prototype = {
         // for recurring items, we need to query database-wide.. yuck
 
         sp = this.mSelectEventsWithRecurrence.params;
-        while (this.mSelectEventsWithRecurrence.step()) {
-            var row = this.mSelectEventsWithRecurrence.row;
-            var item = this.getEventFromRow(row, {});
-            this.mRecEventCache[item.id] = item;
+        try {
+            while (this.mSelectEventsWithRecurrence.step()) {
+                var row = this.mSelectEventsWithRecurrence.row;
+                var item = this.getEventFromRow(row, {});
+                this.mRecEventCache[item.id] = item;
+            }
+        } catch (e) {
+            ERROR("Error selecting events with recurrence!\n" + e +
+                  "\nDB Error: " + this.mDB.lastErrorString);
+        } finally {
+            this.mSelectEventsWithRecurrence.reset();
         }
-        this.mSelectEventsWithRecurrence.reset();
 
         sp = this.mSelectTodosWithRecurrence.params;
-        while (this.mSelectTodosWithRecurrence.step()) {
-            var row = this.mSelectTodosWithRecurrence.row;
-            var item = this.getTodoFromRow(row, {});
-            this.mRecTodoCache[item.id] = item;
+        try {
+            while (this.mSelectTodosWithRecurrence.step()) {
+                var row = this.mSelectTodosWithRecurrence.row;
+                var item = this.getTodoFromRow(row, {});
+                this.mRecTodoCache[item.id] = item;
+            }
+        } catch (e) {
+            ERROR("Error selecting todos with recurrence!\n" + e +
+                  "\nDB Error: " + this.mDB.lastErrorString);
+        } finally {
+            this.mSelectTodosWithRecurrence.reset();
         }
-        this.mSelectTodosWithRecurrence.reset();
 
         this.mRecItemCacheInited = true;
     },
@@ -1882,15 +1905,22 @@ calStorageCalendar.prototype = {
 
             selectItem.params.item_id = item.id;
 
-            while (selectItem.step()) {
-                var attendee = this.getAttendeeFromRow(selectItem.row);
-                if (attendee.isOrganizer) {
-                    item.organizer = attendee;
-                } else {
-                    item.addAttendee(attendee);
+            try {
+                while (selectItem.step()) {
+                    var attendee = this.getAttendeeFromRow(selectItem.row);
+                    if (attendee.isOrganizer) {
+                        item.organizer = attendee;
+                    } else {
+                        item.addAttendee(attendee);
+                    }
                 }
+            } catch (e) {
+                ERROR("Error getting attendees for item '" +
+                      item.title + "' (" + item.id + ")!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                selectItem.reset();
             }
-            selectItem.reset();
         }
 
         var row;
@@ -1905,24 +1935,31 @@ calStorageCalendar.prototype = {
                 
             selectItem.params.item_id = item.id;
             
-            while (selectItem.step()) {
-                row = selectItem.row;
-                var name = row.key;
-                switch (name) {
-                    case "DURATION":
-                        // for events DTEND/DUE is enforced by calEvent/calTodo, so suppress DURATION:
-                        break;
-                    case "CATEGORIES": {
-                        var cats = categoriesStringToArray(row.value);
-                        item.setCategories(cats.length, cats);
-                        break;
+            try {
+                while (selectItem.step()) {
+                    row = selectItem.row;
+                    var name = row.key;
+                    switch (name) {
+                        case "DURATION":
+                            // for events DTEND/DUE is enforced by calEvent/calTodo, so suppress DURATION:
+                            break;
+                        case "CATEGORIES": {
+                            var cats = categoriesStringToArray(row.value);
+                            item.setCategories(cats.length, cats);
+                            break;
+                        }
+                        default:
+                            item.setProperty(name, row.value);
+                            break;
                     }
-                    default:
-                        item.setProperty(name, row.value);
-                        break;
                 }
+            } catch (e) {
+                ERROR("Error getting extra properties for item '" +
+                      item.title + "' (" + item.id + ")!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                selectItem.reset();
             }
-            selectItem.reset();
         }
 
         var i;
@@ -1933,76 +1970,84 @@ calStorageCalendar.prototype = {
             var rec = null;
 
             this.mSelectRecurrenceForItem.params.item_id = item.id;
-            while (this.mSelectRecurrenceForItem.step()) {
-                row = this.mSelectRecurrenceForItem.row;
+            try {
+                while (this.mSelectRecurrenceForItem.step()) {
+                    row = this.mSelectRecurrenceForItem.row;
 
-                var ritem = null;
+                    var ritem = null;
 
-                if (row.recur_type == null ||
-                    row.recur_type == "x-dateset")
-                {
-                    ritem = new CalRecurrenceDateSet();
+                    if (row.recur_type == null ||
+                        row.recur_type == "x-dateset")
+                    {
+                        ritem = new CalRecurrenceDateSet();
 
-                    var dates = row.dates.split(",");
-                    for (i = 0; i < dates.length; i++) {
-                        var date = textToDate(dates[i]);
-                        ritem.addDate(date);
-                    }
-                } else if (row.recur_type == "x-date") {
-                    ritem = new CalRecurrenceDate();
-                    var d = row.dates;
-                    ritem.date = textToDate(d);
-                } else {
-                    ritem = new CalRecurrenceRule();
+                        var dates = row.dates.split(",");
+                        for (i = 0; i < dates.length; i++) {
+                            var date = textToDate(dates[i]);
+                            ritem.addDate(date);
+                        }
+                    } else if (row.recur_type == "x-date") {
+                        ritem = new CalRecurrenceDate();
+                        var d = row.dates;
+                        ritem.date = textToDate(d);
+                    } else {
+                        ritem = new CalRecurrenceRule();
 
-                    ritem.type = row.recur_type;
-                    if (row.count) {
+                        ritem.type = row.recur_type;
+                        if (row.count) {
+                            try {
+                                ritem.count = row.count;
+                            } catch(exc) {
+                            }
+                        } else {
+                            if (row.end_date)
+                                ritem.endDate = newDateTime(row.end_date);
+                            else
+                                ritem.endDate = null;
+                        }
                         try {
-                            ritem.count = row.count;
+                            ritem.interval = row.interval;
                         } catch(exc) {
                         }
-                    } else {
-                        if (row.end_date)
-                            ritem.endDate = newDateTime(row.end_date);
-                        else
-                            ritem.endDate = null;
-                    }
-                    try {
-                        ritem.interval = row.interval;
-                    } catch(exc) {
-                    }
 
-                    var rtypes = ["second",
-                                  "minute",
-                                  "hour",
-                                  "day",
-                                  "monthday",
-                                  "yearday",
-                                  "weekno",
-                                  "month",
-                                  "setpos"];
+                        var rtypes = ["second",
+                                      "minute",
+                                      "hour",
+                                      "day",
+                                      "monthday",
+                                      "yearday",
+                                      "weekno",
+                                      "month",
+                                      "setpos"];
 
-                    for (i = 0; i < rtypes.length; i++) {
-                        var comp = "BY" + rtypes[i].toUpperCase();
-                        if (row[rtypes[i]]) {
-                            var rstr = row[rtypes[i]].toString().split(",");
-                            var rarray = [];
-                            for (var j = 0; j < rstr.length; j++) {
-                                rarray[j] = parseInt(rstr[j]);
+                        for (i = 0; i < rtypes.length; i++) {
+                            var comp = "BY" + rtypes[i].toUpperCase();
+                            if (row[rtypes[i]]) {
+                                var rstr = row[rtypes[i]].toString().split(",");
+                                var rarray = [];
+                                for (var j = 0; j < rstr.length; j++) {
+                                    rarray[j] = parseInt(rstr[j]);
+                                }
+
+                                ritem.setComponent (comp, rarray.length, rarray);
                             }
-
-                            ritem.setComponent (comp, rarray.length, rarray);
                         }
                     }
-                }
 
-                if (row.is_negative)
-                    ritem.isNegative = true;
-                if (rec == null) {
-                    rec = new CalRecurrenceInfo();
-                    rec.item = item;
+                    if (row.is_negative)
+                        ritem.isNegative = true;
+                    if (rec == null) {
+                        rec = new CalRecurrenceInfo();
+                        rec.item = item;
+                    }
+                    rec.appendRecurrenceItem(ritem);
                 }
-                rec.appendRecurrenceItem(ritem);
+            } catch (e) {
+                ERROR("Error getting recurrence for item '" +
+                      item.title + "' (" + item.id + ")!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                this.mSelectRecurrenceForItem.reset();
             }
 
             if (rec == null) {
@@ -2010,7 +2055,6 @@ calStorageCalendar.prototype = {
             }
             item.recurrenceInfo = rec;
 
-            this.mSelectRecurrenceForItem.reset();
         }
 
         if (flags & CAL_ITEM_FLAG_HAS_EXCEPTIONS) {
@@ -2024,20 +2068,34 @@ calStorageCalendar.prototype = {
 
             if (isEvent(item)) {
                 this.mSelectEventExceptions.params.id = item.id;
-                while (this.mSelectEventExceptions.step()) {
-                    var row = this.mSelectEventExceptions.row;
-                    var exc = this.getEventFromRow(row, {}, true /*isException*/);
-                    rec.modifyException(exc, true);
+                try {
+                    while (this.mSelectEventExceptions.step()) {
+                        var row = this.mSelectEventExceptions.row;
+                        var exc = this.getEventFromRow(row, {}, true /*isException*/);
+                        rec.modifyException(exc, true);
+                    }
+                } catch (e) {
+                    ERROR("Error getting exceptions for event '" +
+                          item.title + "' (" + item.id + ")!\n" + e +
+                          "\nDB Error: " + this.mDB.lastErrorString);
+                } finally {
+                    this.mSelectEventExceptions.reset();
                 }
-                this.mSelectEventExceptions.reset();
             } else if (isToDo(item)) {
                 this.mSelectTodoExceptions.params.id = item.id;
-                while (this.mSelectTodoExceptions.step()) {
-                    var row = this.mSelectTodoExceptions.row;
-                    var exc = this.getTodoFromRow(row, {}, true /*isException*/);
-                    rec.modifyException(exc, true);
+                try {
+                    while (this.mSelectTodoExceptions.step()) {
+                        var row = this.mSelectTodoExceptions.row;
+                        var exc = this.getTodoFromRow(row, {}, true /*isException*/);
+                        rec.modifyException(exc, true);
+                    }
+                } catch (e) {
+                    ERROR("Error getting exceptions for task '" +
+                          item.title + "' (" + item.id + ")!\n" + e +
+                          "\nDB Error: " + this.mDB.lastErrorString);
+                } finally {
+                    this.mSelectTodoExceptions.reset();
                 }
-                this.mSelectTodoExceptions.reset();
             } else {
                 throw Components.results.NS_ERROR_UNEXPECTED;
             }
@@ -2047,23 +2105,37 @@ calStorageCalendar.prototype = {
             var selectAttachment = this.mSelectAttachmentsForItem;
             selectAttachment.params.item_id = item.id;
 
-            while (selectAttachment.step()) {
-                var row = selectAttachment.row;
-                var attachment = this.getAttachmentFromRow(row);
-                item.addAttachment(attachment);
+            try { 
+                while (selectAttachment.step()) {
+                    var row = selectAttachment.row;
+                    var attachment = this.getAttachmentFromRow(row);
+                    item.addAttachment(attachment);
+                }
+            } catch (e) {
+                ERROR("Error getting attachments for item '" +
+                      item.title + "' (" + item.id + ")!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                selectAttachment.reset();
             }
-            selectAttachment.reset();
         }
 
         if (flags & CAL_ITEM_FLAG_HAS_RELATIONS) {
             var selectRelation = this.mSelectRelationsForItem;
             selectRelation.params.item_id = item.id;
-            while (selectRelation.step()) {
-                var row = selectRelation.row;
-                var relation = this.getRelationFromRow(row);
-                item.addRelation(relation);
+            try {
+                while (selectRelation.step()) {
+                    var row = selectRelation.row;
+                    var relation = this.getRelationFromRow(row);
+                    item.addRelation(relation);
+                }
+            } catch (e) {
+                ERROR("Error getting relations for item '" +
+                      item.title + "' (" + item.id + ")!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                selectRelation.reset();
             }
-            selectRelation.reset();
         }
 
         // Restore the saved modification time
@@ -2126,16 +2198,30 @@ calStorageCalendar.prototype = {
 
         // try events first
         this.mSelectEvent.params.id = aID;
-        if (this.mSelectEvent.step())
-            item = this.getEventFromRow(this.mSelectEvent.row, flags);
-        this.mSelectEvent.reset();
+        try {
+            if (this.mSelectEvent.step()) {
+                item = this.getEventFromRow(this.mSelectEvent.row, flags);
+            }
+        } catch (e) {
+            ERROR("Error selecting item by id " + aID + "!\n" + e +
+                  "\nDB Error: " + this.mDB.lastErrorString);
+        } finally {
+            this.mSelectEvent.reset();
+        }
 
         // try todo if event fails
         if (!item) {
             this.mSelectTodo.params.id = aID;
-            if (this.mSelectTodo.step())
-                item = this.getTodoFromRow(this.mSelectTodo.row, flags);
-            this.mSelectTodo.reset();
+            try {
+                if (this.mSelectTodo.step()) {
+                    item = this.getTodoFromRow(this.mSelectTodo.row, flags);
+                }
+            } catch (e) {
+                ERROR("Error selecting item by id " + aID + "!\n" + e +
+                      "\nDB Error: " + this.mDB.lastErrorString);
+            } finally {
+                this.mSelectTodo.reset();
+            }
         }
 
         return item;
@@ -2560,13 +2646,16 @@ calStorageCalendar.prototype = {
     },
 
     getMetaData: function stor_getMetaData(id) {
-        var query = this.mSelectMetaData;
+        let query = this.mSelectMetaData;
         query.params.item_id = id;
-        var value = null;
+        let value = null;
         try {
             if (query.step()) {
                 value = query.row.value;
             }
+        } catch (e) {
+            ERROR("Error getting metadata for id " + id + "!\n" + e +
+                  "\nDB Error: " + this.mDB.lastErrorString);
         } finally {
             query.reset();
         }
@@ -2584,6 +2673,9 @@ calStorageCalendar.prototype = {
                 ids.push(query.row.item_id);
                 values.push(query.row.value);
             }
+        } catch (e) {
+            ERROR("Error getting all metadata!\n" + e +
+                  "\nDB Error: " + this.mDB.lastErrorString);
         } finally {
             query.reset();
         }
