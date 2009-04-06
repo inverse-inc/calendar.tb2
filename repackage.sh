@@ -56,13 +56,13 @@ function build_osx {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
     # We regenerate the xpi
     cd $BASE/tmp
-    zip -r ../output/lightning-0.9.2-inverse.mac.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
+    zip -r ../output/lightning-0.9.3-inverse.mac.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
     cd $BASE; rm -rf ./tmp/*
     
     # We exit
@@ -116,7 +116,7 @@ function build_win32 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
    
@@ -126,7 +126,7 @@ function build_win32 {
 
     # We regenerate the xpi
     cd $BASE/tmp
-    zip -r ../output/lightning-0.9.2-inverse.win32.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
+    zip -r ../output/lightning-0.9.3-inverse.win32.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
     cd $BASE; rm -rf ./tmp/*
     
     # We exit
@@ -180,13 +180,13 @@ function build_linux {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
     # We regenerate the xpi
     cd $BASE/tmp
-    zip -r ../output/lightning-0.9.2-inverse.linux-i686.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
+    zip -r ../output/lightning-0.9.3-inverse.linux-i686.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
     cd $BASE; rm -rf ./tmp/*
     
     # We exit
@@ -240,13 +240,13 @@ function build_linux_x64 {
     # We update the RDF file
     cd $BASE/tmp
     sed s/2008091721/$DATE/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
-    sed s/0.9/0.9.2/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
+    sed s/0.9/0.9.3/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"name>Lightning<"/"name>Lightning (Inverse Edition)<"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     sed s/"http\:\/\/www.mozilla.org\/projects\/calendar\/releases\/lightning0\.9\.html"/"http\:\/\/inverse.ca\/contributions\/lightning\.html"/ install.rdf > install.rdf.tmp; mv -f install.rdf.tmp install.rdf
     
     # We regenerate the xpi
     cd $BASE/tmp
-    zip -r ../output/lightning-0.9.2-inverse.linux-x86_64.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
+    zip -r ../output/lightning-0.9.3-inverse.linux-x86_64.xpi chrome chrome.manifest components defaults install.rdf js platform timezones.sqlite
     cd $BASE; rm -rf ./tmp/*
     
     # We exit

@@ -1,0 +1,41 @@
+diff --git a/calendar/base/content/calendar-daypicker.xml b/calendar/base/content/calendar-daypicker.xml
+--- a/calendar/base/content/calendar-daypicker.xml
++++ b/calendar/base/content/calendar-daypicker.xml
+@@ -16,16 +16,17 @@
+    -
+    - The Initial Developer of the Original Code is Sun Microsystems.
+    - Portions created by the Initial Developer are Copyright (C) 2006
+    - the Initial Developer. All Rights Reserved.
+    -
+    - Contributor(s):
+    -   Michael Buettner <michael.buettner@sun.com>
+    -   Berend Cornelius <berend.cornelius@sun.com>
++   -   Martin Schroeder <mschroeder@mozilla.x-home.org>
+    -
+    - Alternatively, the contents of this file may be used under the terms of
+    - either the GNU General Public License Version 2 or later (the "GPL"), or
+    - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+    - in which case the provisions of the GPL or the LGPL are applicable instead
+    - of those above. If you wish to allow use of your version of this file only
+    - under the terms of either the GPL or the LGPL, and not to allow others to
+    - use your version of this file under the terms of the MPL, indicate your
+@@ -263,17 +264,18 @@
+               var numChilds = row.childNodes.length;
+               for (var j = 0; j < numChilds; j++) {
+                   var child = row.childNodes[j];
+                   child.removeAttribute("checked");
+                   days.push(child);
+               }
+           }
+           for (i = 0; i < val.length; i++) {
+-              days[val[i]-1].setAttribute("checked", "true");
++              let index = (val[i] < 0 ? val[i] + days.length : val[i] - 1);
++              days[index].setAttribute("checked", "true");
+           }
+           return val;
+         ]]></setter>
+         <getter><![CDATA[
+           var mainbox =
+               document.getAnonymousElementByAttribute(
+                   this, "anonid", "mainbox");
+           var numRows = mainbox.childNodes.length;
