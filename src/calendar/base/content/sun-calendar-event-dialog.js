@@ -1895,25 +1895,30 @@ function saveItem() {
     // If it's different, that is because someone is acting on behalf of
     // the organizer.
     if (item.calendar.type == "caldav" && item.organizer) {
-      var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	.getService(Components.interfaces.nsISupports)
-	.wrappedJSObject;
-      
-      var entry = aclMgr.calendarEntry(item.calendar.uri);		
-      var found = false;
-      var identity;
-      
-      for (var i = 0; i < entry.userAddresses.length; i++) {
-	identity = entry.userAddresses[i].toLowerCase();
-	if (item.organizer.id.toLowerCase() == identity) {
-	  found = true;
+      // Inverse inc. ACL addition
+      try {
+	var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	  .getService(Components.interfaces.nsISupports)
+	  .wrappedJSObject;
+	
+	var entry = aclMgr.calendarEntry(item.calendar.uri);		
+	var found = false;
+	var identity;
+	
+	for (var i = 0; i < entry.userAddresses.length; i++) {
+	  identity = entry.userAddresses[i].toLowerCase();
+	  if (item.organizer.id.toLowerCase() == identity) {
+	    found = true;
+	  }
 	}
-      }
-      
-      if (!found && entry.userAddresses.length > 0) {
-	var organizer = item.organizer.clone();
-	organizer.setProperty("SENT-BY", entry.userAddresses[0]);
-	item.organizer = organizer;
+	
+	if (!found && entry.userAddresses.length > 0) {
+	  var organizer = item.organizer.clone();
+	  organizer.setProperty("SENT-BY", entry.userAddresses[0]);
+	  item.organizer = organizer;
+	}
+      } catch (ex) {
+	// No ACL support
       }
     }
 

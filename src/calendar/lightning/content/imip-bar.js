@@ -61,14 +61,21 @@ const onItipItem = {
 function createItipCompositeCalendar() {
     var compCal = Components.classes["@mozilla.org/calendar/calendar;1?type=composite"]
                             .createInstance(Components.interfaces.calICompositeCalendar);
-    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-      .getService(Components.interfaces.nsISupports)
-      .wrappedJSObject;
+    var aclMgr = null;
+    
+    // Inverse inc. ACL addition
+    try {
+      aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	.getService(Components.interfaces.nsISupports)
+	.wrappedJSObject;
+    } catch (ex) {
+      // No ACL support
+    }
     getCalendarManager().getCalendars({}).filter(isCalendarWritable).forEach(
         function(cal) {
 
 	  // We only add calendars for which we are the owner
-	  if (cal.type == "caldav") {
+	  if (aclMgr && cal.type == "caldav") {
 	    var entry = aclMgr.calendarEntry(cal.uri);
 	    if (entry.isCalendarReady() && entry.userIsOwner())
 	      compCal.addCalendar(cal);

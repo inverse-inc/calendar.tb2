@@ -553,23 +553,28 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	// If they aren't equal, it means that someone is accepting invitations
 	// on behalf of an other user.
 	if (aItem.calendar.type == "caldav") {
-	  var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	    .getService(Components.interfaces.nsISupports)
-	    .wrappedJSObject;
-	  
-	  var entry = aclMgr.calendarEntry(aItem.calendar.uri);		
-	  var found = false;
-	  var identity;
-	  
-	  for (var i = 0; i < entry.userAddresses.length; i++) {
-	    identity = entry.userAddresses[i].toLowerCase();
-	    if (invitedAttendee.id.toLowerCase() == identity) {
-	      found = true;
+	  try {
+	    // Inverse inc. ACL addition
+	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	      .getService(Components.interfaces.nsISupports)
+	      .wrappedJSObject;
+	    
+	    var entry = aclMgr.calendarEntry(aItem.calendar.uri);		
+	    var found = false;
+	    var identity;
+	    
+	    for (var i = 0; i < entry.userAddresses.length; i++) {
+	      identity = entry.userAddresses[i].toLowerCase();
+	      if (invitedAttendee.id.toLowerCase() == identity) {
+		found = true;
+	      }
 	    }
-	  }
-	  
-	  if (!found && entry.userAddresses.length > 0) {
-	    invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
+	    
+	    if (!found && entry.userAddresses.length > 0) {
+	      invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
+	    }
+	  } catch (ex) {
+	    // NO ACL support
 	  }
 	}
 
@@ -612,7 +617,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         return;
     }
  
-    // HACK - We send invitation inconditionnaly. Why we wouldn't
+    // HACK - We send invitation unconditionally. Why we wouldn't
     // anyway if we invoked this method?
     //if (aItem.getProperty("X-MOZ-SEND-INVITATIONS") != "TRUE") { // Only send invitations/cancellations
     //                                                             // if the user checked the checkbox

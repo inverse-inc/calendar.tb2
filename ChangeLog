@@ -1,3 +1,13 @@
+2009-05-01  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Bumped version to v0.9.4
+	* Modified the code to handle the fact that
+	the ACL manager from SOGo Connector could
+	potentially not be present and we fallback in
+	this case to what we had before (ie., prior
+	to the ACL support addition)
+	* Added fix for bug #486789
+
 2009-04-06  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Bumped the version number to v0.9.3
