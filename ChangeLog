@@ -1,3 +1,9 @@
+2009-05-05  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/lightning/content/imip-bar.js 
+	Make sure that the IMIP bar is present before
+	trying to collapse it in imipOnUnload()
+
 2009-05-01  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Bumped version to v0.9.4

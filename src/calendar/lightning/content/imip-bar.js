@@ -155,10 +155,13 @@ function imipOnLoad() {
 
 function imipOnUnload() {
     var imipBar = document.getElementById("imip-bar");
-    imipBar.setAttribute("collapsed", "true");
-    hideElement("imip-button1");
-    hideElement("imip-button2");
-    hideElement("imip-button3");
+
+    if (imipBar) {
+      imipBar.setAttribute("collapsed", "true");
+      hideElement("imip-button1");
+      hideElement("imip-button2");
+      hideElement("imip-button3");
+    }
 
     var observerSvc = Components.classes["@mozilla.org/observer-service;1"]
                                 .getService(Components.interfaces.nsIObserverService);
