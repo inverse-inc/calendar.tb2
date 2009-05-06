@@ -1098,6 +1098,7 @@ function editAttendees() {
 }
 
 function editPrivacy(target) {
+    gPrivacy = target.getAttribute("privacy");
     updateShowTimeAs();
     updatePrivacy();
 }
