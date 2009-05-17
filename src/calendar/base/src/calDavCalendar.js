@@ -509,7 +509,8 @@ calDavCalendar.prototype = {
 	      // No ACL support.
 	    }
 	    break;
-
+	    case "cache.updateTimer":
+	        return getPrefSafe("calendar.autorefresh.timeout");
             case "itip.transport":
                 if (this.hasAutoScheduling) {
                     return null;
