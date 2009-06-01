@@ -1,3 +1,7 @@
+2009-06-01  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+        * Added fix for bug #488720
+
 2009-05-17  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added CalDAV fix for bug #455939
