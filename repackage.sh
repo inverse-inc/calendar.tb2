@@ -39,7 +39,7 @@ function build_osx {
     cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
     jar -cvf lightning.jar content skin
     rm -rf content skin
-    
+
     # We update the preference file
     cd $BASE
     cp -f src/calendar/lightning/content/lightning.js tmp/defaults/preferences/lightning.js
@@ -47,6 +47,9 @@ function build_osx {
     # We update the JavaScript core files
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
+
+    cd $BASE/tmp/
+    patch -p0 < ../src/patches/inv-network-errors.diff
 
     # We update the french locale
     cd $BASE/src/calendar
@@ -108,6 +111,9 @@ function build_win32 {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
     
+    cd $BASE/tmp/
+    patch -p0 < ../src/patches/inv-network-errors.diff
+
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
@@ -163,7 +169,7 @@ function build_linux {
     cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
     jar -cvf lightning.jar content skin
     rm -rf content skin
-    
+   
     # We update the preference file
     cd $BASE
     cp -f src/calendar/lightning/content/lightning.js tmp/defaults/preferences/lightning.js
@@ -172,6 +178,9 @@ function build_linux {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
 
+    cd $BASE/tmp/
+    patch -p0 < ../src/patches/inv-network-errors.diff
+ 
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
@@ -223,7 +232,7 @@ function build_linux_x64 {
     cp -fr ../../src/calendar/lightning/content/imip-bar.js content/lightning/
     jar -cvf lightning.jar content skin
     rm -rf content skin
-    
+
     # We update the preference file
     cd $BASE
     cp -f src/calendar/lightning/content/lightning.js tmp/defaults/preferences/lightning.js
@@ -232,6 +241,9 @@ function build_linux_x64 {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
 
+    cd $BASE/tmp/
+    patch -p0 < ../src/patches/inv-network-errors.diff
+    
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
