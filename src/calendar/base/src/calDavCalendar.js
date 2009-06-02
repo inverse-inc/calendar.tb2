@@ -1421,7 +1421,16 @@ calDavCalendar.prototype = {
 
                     var parser = Components.classes["@mozilla.org/calendar/ics-parser;1"]
                                            .createInstance(Components.interfaces.calIIcsParser);
-                    parser.parseString(calData, null);
+		    try {
+		      parser.parseString(calData, null);
+		    } catch (e) {
+		      // Warn and continue.
+		      // TODO As soon as we have activity manager integration,
+		      // this should be replace with logic to notify that a
+		      // certain event failed.
+		      LOG("Failed to parse item: " + response.toXMLString());
+		      continue;
+		    }
                     // with CalDAV there really should only be one item here
                     var items = parser.getItems({});
                     var propertiesList = parser.getProperties({});

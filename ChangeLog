@@ -1,3 +1,7 @@
+2009-06-02  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* Added fix for bug #457206
+
 2009-06-01  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * Added fix for bug #488720
