@@ -48,9 +48,6 @@ function build_osx {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
 
-    cd $BASE/tmp/
-    patch -p0 < ../src/patches/inv-network-errors.diff
-
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
@@ -111,9 +108,6 @@ function build_win32 {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
     
-    cd $BASE/tmp/
-    patch -p0 < ../src/patches/inv-network-errors.diff
-
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
@@ -178,9 +172,6 @@ function build_linux {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
 
-    cd $BASE/tmp/
-    patch -p0 < ../src/patches/inv-network-errors.diff
- 
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale
@@ -241,9 +232,6 @@ function build_linux_x64 {
     cd $BASE
     cp -f src/calendar/base/src/*.js tmp/js
 
-    cd $BASE/tmp/
-    patch -p0 < ../src/patches/inv-network-errors.diff
-    
     # We update the french locale
     cd $BASE/src/calendar
     jar -cvf calendar-fr.jar locale

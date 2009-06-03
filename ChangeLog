@@ -1,3 +1,8 @@
+2009-06-02  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* Added fix in calDavCalendar.js for better handling of network
+	errors.
+
 2009-06-02  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added fix for bug #457206

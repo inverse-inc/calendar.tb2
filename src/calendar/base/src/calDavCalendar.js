@@ -1013,6 +1013,11 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on checking ctag for calendar " +
                     thisCalendar.name);
+		if (thisCalendar.isCached && aChangeLogListener) {
+		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
+						Components.results.NS_ERROR_FAILURE);
+		}
+		return;
             }
 
             var str = convertByteArray(aResult, aResultLength);
@@ -1181,7 +1186,11 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on getetag for calendar " +
                     thisCalendar.name);
-                responseStatus = "none";
+		if (thisCalendar.isCached && aChangeLogListener) {
+		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
+						Components.results.NS_ERROR_FAILURE);
+		}
+		return;
             }
 
             if (responseStatus == 207) {
@@ -1363,7 +1372,11 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status fetching calendar-data for calendar " +
                     thisCalendar.name);
-                responseStatus = "none";
+		if (thisCalendar.isCached && aChangeLogListener) {
+		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
+						Components.results.NS_ERROR_FAILURE);
+		}
+		return;
             }
             responseStatus = aContext.responseStatus;
             if (responseStatus != 207) {
@@ -1581,6 +1594,11 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on initial PROPFIND for calendar " +
                     thisCalendar.name);
+		if (thisCalendar.isCached && aChangeLogListener) {
+		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
+						Components.results.NS_ERROR_FAILURE);
+		}
+		return;
             }
             var wwwauth;
             try {
