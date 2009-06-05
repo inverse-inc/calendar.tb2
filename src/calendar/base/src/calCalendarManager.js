@@ -534,10 +534,23 @@ calCalendarManager.prototype = {
             var calendar = Components.classes["@mozilla.org/calendar/calendar;1?type=" + type]
                                      .createInstance(Components.interfaces.calICalendar);
             calendar.uri = uri;
-	    
-	    // See https://bugzilla.mozilla.org/show_bug.cgi?id=466686
-	    if (cached == true)
-	      calendar = new calCachedCalendar(calendar);
+
+            // See https://bugzilla.mozilla.org/show_bug.cgi?id=466686
+            //   until its applied, the mgr object must be accessed with
+            //   wrappedJSObject otherwise we face the the XPCOM
+            //   interface which hides the "cached" parameter.
+            if (cached) {
+                // We register te calendar here because the cached instance
+                // will need a calendar id. We must however skip the initial
+                // refresh, otherwise the cached calendar will put its
+                // metadata in a memory calendar, discarding the advantage of
+                // instantiating a cached version here. Finally, the refresh
+                // skipped in registerCalendar will happen during the
+                // instantiation of the cached calendar. So many work-around
+                // for such a simple feature!
+                this.registerCalendar(calendar, true);
+                calendar = new calCachedCalendar(calendar);
+            }
 
             return calendar;
         } catch (ex) {
@@ -580,7 +593,7 @@ calCalendarManager.prototype = {
         }
     },
 
-    registerCalendar: function(calendar) {
+    registerCalendar: function(calendar, skipRefresh) {
         // bail if this calendar (or one that looks identical to it) is already registered
         if (calendar.id > 0) {
             dump ("registerCalendar: calendar already registered\n");
@@ -616,8 +629,8 @@ calCalendarManager.prototype = {
         }
         this.mCalendarCount++;
 
-        if (!calendar.getProperty("disabled") && calendar.canRefresh) {
-            calendar.refresh();
+        if (!skipRefresh && !calendar.getProperty("disabled") && calendar.canRefresh) {
+             calendar.refresh();
         }
 
         this.notifyObservers("onCalendarRegistered", [calendar]);
