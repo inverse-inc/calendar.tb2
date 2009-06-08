@@ -1441,16 +1441,16 @@ calDavCalendar.prototype = {
 
                     var parser = Components.classes["@mozilla.org/calendar/ics-parser;1"]
                                            .createInstance(Components.interfaces.calIIcsParser);
-		    try {
-		      parser.parseString(calData, null);
-		    } catch (e) {
-		      // Warn and continue.
-		      // TODO As soon as we have activity manager integration,
-		      // this should be replace with logic to notify that a
-		      // certain event failed.
-		      LOG("Failed to parse item: " + response.toXMLString());
-		      continue;
-		    }
+                    try {
+                        parser.parseString(calData, null);
+                    } catch (e) {
+                        // Warn and continue.
+                        // TODO As soon as we have activity manager integration,
+                        // this should be replace with logic to notify that a
+                        // certain event failed.
+                        LOG("Failed to parse item: " + response.toXMLString());
+                        continue;
+                    }
                     // with CalDAV there really should only be one item here
                     var items = parser.getItems({});
                     var propertiesList = parser.getProperties({});
@@ -1464,9 +1464,9 @@ calDavCalendar.prototype = {
                     var isReply = (method == "REPLY");
                     var item = items[0];
                     if (!item) {
-			LOG("CalDAV: failed to parse retrieved item calendar-data: " + calData);
-			thisCalendar.reportDavError(Components.interfaces.calIErrors.ICS_PARSE);
-		        continue;
+                        LOG("CalDAV: failed to parse retrieved item calendar-data: " + calData);
+                        thisCalendar.reportDavError(Components.interfaces.calIErrors.ICS_PARSE);
+                        continue;
                     }
 
                     item.calendar = thisCalendar.superCalendar;
@@ -1479,7 +1479,7 @@ calDavCalendar.prototype = {
 
                     var pathLength = decodeURIComponent(aUri.path).length;
                     var locationPath = decodeURIComponent(resourcePath).substr(pathLength);
-		    var isInboxItem = thisCalendar.isInBox(aUri.spec);
+                    var isInboxItem = thisCalendar.isInBox(aUri.spec);
                     if (thisCalendar.mItemInfoCache[item.id]) {
                         thisCalendar.mItemInfoCache[item.id].isNew = false;
                     } else {
@@ -1602,11 +1602,11 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on initial PROPFIND for calendar " +
                     thisCalendar.name);
-		if (thisCalendar.isCached && aChangeLogListener) {
-		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
-						Components.results.NS_ERROR_FAILURE);
-		}
-		return;
+                if (thisCalendar.isCached && aChangeLogListener) {
+                    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
+                                                Components.results.NS_ERROR_FAILURE);
+                }
+                return;
             }
             var wwwauth;
             try {
