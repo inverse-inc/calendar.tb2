@@ -1047,7 +1047,9 @@ calDavCalendar.prototype = {
 
             var ctag = multistatus..CS::getctag.toString();
             if (!ctag.length || ctag != thisCalendar.mCtag) {
+                LOG("first ctag");
                 // ctag mismatch, need to fetch calendar-data
+                thisCalendar.mOldCtag = thisCalendar.mCtag;
                 thisCalendar.mCtag = ctag;
                 thisCalendar.mTargetCalendar.setMetaData("ctag", ctag);
                 var refreshEvent = thisCalendar.prepRefresh();
@@ -1059,6 +1061,7 @@ calDavCalendar.prototype = {
                          + "\n");
                 }
             } else {
+                LOG("ctag: received: " + ctag + "; current: " + thisCalendar.mCtag);
                 if (thisCalendar.verboseLogging()) {
                     dump("CalDAV: ctag matches, no need to fetch data for calendar "
                          + thisCalendar.name + "\n");
@@ -1190,6 +1193,10 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on getetag for calendar " +
                      thisCalendar.name + "\n");
+                LOG("reverting ctag to " + thisCalendar.mOldCtag);
+                thisCalendar.mCtag = thisCalendar.mOldCtag;
+                thisCalendar.mTargetCalendar.setMetaData("ctag",
+                                                         thisCalendar.mOldCtag);
                 if (thisCalendar.isCached && aChangeLogListener) {
                     aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
                                                 Components.results.NS_ERROR_FAILURE);
@@ -1239,18 +1246,24 @@ calDavCalendar.prototype = {
                 //}
                 //dump("PARSING - DONE: " + ((new Date()).getTime() - parsingT) + " count: " + multistatus.*.length() + "\n");
                 dump("PARSING - DONE: " + ((new Date()).getTime() - parsingT) + "\n");
-            } else if (Math.floor(responseStatus / 100) == 4) {
-                // A 4xx error probably means the server doesn't support this
-                // type of query. Disable it for this session. This doesn't
-                // really match the spec (which requires a 207), but it works
-                // around bugs in Google and eGroupware 1.6.
-                dump("CalDAV: Server doesn't support " + itemType + "s\n");
-                var itemTypeIndex = thisCalendar.supportedItemTypes.indexOf(itemType);
-                if (itemTypeIndex > -1) {
-                    thisCalendar.supportedItemTypes.splice(itemTypeIndex, 1);
-                }
             } else {
-                aRefreshEvent.unhandledErrors++;
+                LOG("reverting ctag to " + thisCalendar.mOldCtag);
+                thisCalendar.mCtag = thisCalendar.mOldCtag;
+                thisCalendar.mTargetCalendar.setMetaData("ctag",
+                                                         thisCalendar.mOldCtag);
+                if (Math.floor(responseStatus / 100) == 4) {
+                    // A 4xx error probably means the server doesn't support
+                    // this type of query. Disable it for this session. This
+                    // doesn't really match the spec (which requires a 207),
+                    // but it works around bugs in Google and eGroupware 1.6.
+                    dump("CalDAV: Server doesn't support " + itemType + "s\n");
+                    var itemTypeIndex = thisCalendar.supportedItemTypes.indexOf(itemType);
+                    if (itemTypeIndex > -1) {
+                        thisCalendar.supportedItemTypes.splice(itemTypeIndex, 1);
+                    }
+                } else {
+                    aRefreshEvent.unhandledErrors++;
+                }
             }
 
             aRefreshEvent.queryStatuses.push(responseStatus);
@@ -1376,6 +1389,9 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status fetching calendar-data for calendar " +
                     thisCalendar.name + "\n");
+                LOG("reverting ctag to " + thisCalendar.mOldCtag);
+                thisCalendar.mCtag = thisCalendar.mOldCtag;
+                thisCalendar.mTargetCalendar.setMetaData("ctag", thisCalendar.mOldCtag);
 		if (thisCalendar.isCached && aChangeLogListener) {
 		    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
 						Components.results.NS_ERROR_FAILURE);
@@ -1660,6 +1676,8 @@ calDavCalendar.prototype = {
                 if (ctag == thisCalendar.mCtag) {
                     thisCalendar.mFirstRefreshDone = true;
                 }
+                LOG("second ctag");
+                thisCalendar.mOldCtag = thisCalendar.mCtag;
                 thisCalendar.mCtag = ctag;
                 thisCalendar.mTargetCalendar.setMetaData("ctag", ctag);
                 if (thisCalendar.verboseLogging()) {
