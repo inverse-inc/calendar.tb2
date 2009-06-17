@@ -218,55 +218,60 @@ calTransaction.prototype = {
                 return newItem;
             }
         }
-        function hashMajorProps(aItem) {
+        function hashFromProps(aItem, props) {
             var propStrings = [];
+            
             function addProps(item) {
                 if (item) {
-                    const majorProps = {
-                        DTSTART: true,
-                        DTEND: true,
-                        DURATION: true,
-                        DUE: true,
-                        RDATE: true,
-                        RRULE: true,
-                        EXDATE: true,
-                        STATUS: true,
-                        LOCATION: true
-                    };
+                    propHash = {};
+                    for each (var prop in props) {
+                        propHash[prop] = true;
+                    }
                     calIterateIcalComponent(
-                        item.icalComponent,
-                        function(subComp) {
-                            for (var prop = subComp.getFirstProperty("ANY");
-                                 prop;
-                                 prop = subComp.getNextProperty("ANY")) {
-                                if (majorProps[prop.propertyName]) {
-                                    propStrings.push(item.recurrenceId + "#" + prop.icalString);
-                                }
-                            }
-                        });
+                                            item.icalComponent,
+                                            function(subComp) {
+                                                for (var prop = subComp.getFirstProperty("ANY");
+                                                     prop;
+                                                     prop = subComp.getNextProperty("ANY")) {
+                                                    if (propHash[prop.propertyName]) {
+                                                        propStrings.push(item.recurrenceId + "#" + prop.icalString);
+                                                    }
+                                                }
+                                            });
                 }
             }
-            addProps(aItem);
+
+
+            addProps(aItem, props);
             var rec = (aItem && aItem.recurrenceInfo);
             if (rec) {
                 rec.getExceptionIds({}).forEach(
                     function(rid) {
-                        addProps(rec.getExceptionFor(rid, false));
+                        addProps(rec.getExceptionFor(rid, false), props);
                     });
             }
             propStrings.sort();
             return propStrings.join("");
         }
 
-        var h1 = hashMajorProps(newItem);
-        var h2 = hashMajorProps(oldItem);
+        const seqProps = [ "DTSTART", "DTEND", "DURATION", "DUE", "RDATE",
+                           "RRULE", "EXDATE", "STATUS", "LOCATION" ];
+        var h1 = hashFromProps(newItem, seqProps);
+        var h2 = hashFromProps(oldItem, seqProps);
         if (h1 != h2) {
             newItem = newItem.clone();
             // bump SEQUENCE, it never decreases (mind undo scenario here)
             newItem.setProperty("SEQUENCE",
                                 String(Math.max(oldItem.getProperty("SEQUENCE"),
-                                                newItem.getProperty("SEQUENCE")) + 1));
-	    this.resetAttendeesStatus(newItem);
+                                                newItem.getProperty("SEQUENCE"))+ 1));
+
+            const partStatProps = [ "DTSTART", "DTEND", "DURATION", "DUE",
+                                    "RRULE", "LOCATION" ];
+            h1 = hashFromProps(newItem, partStatProps);
+            h2 = hashFromProps(oldItem, partStatProps);
+            if (h1 != h2) {
+                this.resetAttendeesStatus(newItem);
+            }
         }
 
         return newItem;
