@@ -60,6 +60,8 @@ function calAlarmService() {
     this.mLoadedCalendars = {};
     this.mTimerLookup = {};
     this.mObservers = new calListenerBag(Components.interfaces.calIAlarmServiceObserver);
+    this.mPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+                       .getService(Components.interfaces.nsIPrefService);
 
     this.calendarObserver = {
         alarmService: this,
@@ -164,6 +166,7 @@ calAlarmService.prototype = {
     mStarted: false,
     mTimerLookup: null,
     mObservers: null,
+    mPrefService: null,
 
     QueryInterface: function cas_QueryInterface(aIID) {
         if (aIID.equals(Components.interfaces.nsIClassInfo))
@@ -467,16 +470,25 @@ calAlarmService.prototype = {
             this.addTimer(aItem, newTimerWithCallback(callbackObj, timeout, false));
             LOG("[calAlarmService] adding alarm timeout (" + timeout + ") for " + aItem);
         } else {
-            var lastAck = aItem.alarmLastAck || aItem.parentItem.alarmLastAck;
-            LOG("[calAlarmService] last ack was: " + lastAck);
-            // This alarm is in the past.  See if it has been previously ack'd
-            if (lastAck && lastAck.compare(alarmTime) >= 0) {
-                LOG("[calAlarmService] " + aItem.title + " - alarm previously ackd.");
-                return;
-            } else { // Fire!
-                LOG("[calAlarmService] alarm is in the past and unack'd, firing now!");
-                this.alarmFired(aItem);
+            var showMissed = true;
+            try {
+                showMissed = this.mPrefService.getBoolPref("calendar.alarms.showmissed");
+            } catch(e) {};
+            if (showMissed) {
+                LOG("[calAlarmService] we show missed alarms");
+                var lastAck = aItem.alarmLastAck || aItem.parentItem.alarmLastAck;
+                LOG("[calAlarmService] last ack was: " + lastAck);
+                // This alarm is in the past.  See if it has been previously ack'd
+                if (lastAck && lastAck.compare(alarmTime) >= 0) {
+                    LOG("[calAlarmService] " + aItem.title + " - alarm previously ackd.");
+                    return;
+                } else { // Fire!
+                    LOG("[calAlarmService] alarm is in the past and unack'd, firing now!");
+                    this.alarmFired(aItem);
+                }
             }
+            else
+                LOG("[calAlarmService] we SKIP missed alarms");
         }
     },
 
