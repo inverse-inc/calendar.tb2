@@ -1,3 +1,8 @@
+2009-06-19  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/src/calDavCalendar.js: implemented webdav sync
+	spec support. (implements #498690 and makes #498731 a non-issue)
+
 2009-06-02  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* Added fix in calDavCalendar.js for better handling of network
