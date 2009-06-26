@@ -87,6 +87,46 @@ var minimonthBusyListener = {
         }
     },
 
+    parseBoxBusy: function mBL_parseBoxBusy(aBox) {
+        var boxBusy = {};
+
+        var busyStr = aBox.getAttribute("busy");
+        if (busyStr && busyStr.length > 0) {
+            var calChunks = busyStr.split(";");
+            for each (var chunk in calChunks) {
+                var expr = chunk.split("=");
+                boxBusy[expr[0]] = parseInt(expr[1]);
+            }
+        }
+
+        return boxBusy;
+    },
+    updateBoxBusy: function mBL_parseBoxBusy(aBox, aBoxBusy) {
+        var calChunks = [];
+
+        for (var calId in aBoxBusy) {
+            if (aBoxBusy[calId]) {
+                calChunks.push(calId + "=" + aBoxBusy[calId]);
+            }
+        }
+
+        if (calChunks.length > 0) {
+            busyStr = calChunks.join(";");
+            aBox.setAttribute("busy", busyStr);
+        }
+        else {
+            aBox.removeAttribute("busy");
+        }
+    },
+
+    removeCalendarFromBoxBusy: function mBL_parseBoxBusy(aBox, aCalendar) {
+        var boxBusy = this.parseBoxBusy(aBox);
+        if (boxBusy[aCalendar.id]) {
+            delete boxBusy[aCalendar.id];
+        }
+        this.updateBoxBusy(aBox, boxBusy);
+    },
+
     setBusyDaysForOccurrence: function mBL_setBusyDaysForOccurrence(aOccurrence,
                                                                     aState) {
         if (aOccurrence.getProperty("TRANSP") == "TRANSPARENT") {
@@ -117,13 +157,11 @@ var minimonthBusyListener = {
         while (current.compare(end) < compareResult) {
             var box = minimonth.getBoxForDate(current.jsDate);
             if (box) {
-                var n = parseInt(box.getAttribute("busy") || 0) +
-                        (aState ? 1 : -1);
-                if (n > 0) {
-                    box.setAttribute("busy", n);
-                } else {
-                    box.removeAttribute("busy");
-                }
+                var busyCalendars = this.parseBoxBusy(box);
+                if (!busyCalendars[aOccurrence.calendar.id])
+                    busyCalendars[aOccurrence.calendar.id] = 0;
+                busyCalendars[aOccurrence.calendar.id] += (aState ? 1 : -1);
+                this.updateBoxBusy(box, busyCalendars);
             }
 
             current.day++;
@@ -168,37 +206,47 @@ var minimonthBusyListener = {
 
     // calICompositeObserver methods
     onCalendarAdded: function mBL_onCalendarAdded(aCalendar) {
-        var minimonth = getMinimonth();
-        minimonth.resetAttributesForDate();
-        monthChangeListener({ target: minimonth });
+         if (!aCalendar.getProperty("disabled")) {
+             var minimonth = getMinimonth();
+             monthChangeListener({ target: minimonth }, aCalendar);
+         }
     },
 
     onCalendarRemoved: function mBL_onCalendarRemoved(aCalendar) {
-        var minimonth = getMinimonth();
-        minimonth.resetAttributesForDate();
-        monthChangeListener({ target: minimonth });
+        if (!aCalendar.getProperty("disabled")) {
+            var minimonth = getMinimonth();
+            for (var day in minimonth.mDayMap) {
+                this.removeCalendarFromBoxBusy(minimonth.mDayMap[day], aCalendar);
+            }
+        }
     },
 
     onDefaultCalendarChanged: function mBL_onDefaultCalendarChanged(aNew) {}
 };
 
-function monthChangeListener(event) {
+function monthChangeListener(event, aCalendar) {
     // The minimonth automatically clears extra styles on a month change.
     // Therefore we only need to fill the minimonth with new info.
     var start = event.target.firstDate;
     var end = event.target.lastDate;
 
-    var composite = getCompositeCalendar();
-    var filter = composite.ITEM_FILTER_COMPLETED_ALL |
-                 composite.ITEM_FILTER_CLASS_OCCURRENCES |
-                 composite.ITEM_FILTER_ALL_ITEMS;
+    var calendar;
+    if (aCalendar) {
+        calendar = aCalendar;
+    }
+    else {
+        calendar = getCompositeCalendar();
+    }
+    var filter = calendar.ITEM_FILTER_COMPLETED_ALL |
+                 calendar.ITEM_FILTER_CLASS_OCCURRENCES |
+                 calendar.ITEM_FILTER_ALL_ITEMS;
 
     // Get new info
-    composite.getItems(filter,
-                       0,
-                       jsDateToDateTime(start),
-                       jsDateToDateTime(end),
-                       minimonthBusyListener);
+    calendar.getItems(filter,
+                      0,
+                      jsDateToDateTime(start),
+                      jsDateToDateTime(end),
+                      minimonthBusyListener);
 }
 
 function minimonthOnLoad() {

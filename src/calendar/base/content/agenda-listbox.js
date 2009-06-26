@@ -382,6 +382,21 @@ function deleteItem(aItem, aMoveSelection) {
     return isSelected;
 }
 
+agendaListbox.deleteItemsFromCalendar =
+function deleteItemsFromCalendar(aCalendar) {
+    var deleteNodes = [];
+    var childNodes = this.agendaListboxControl.childNodes;
+    for each (var childNode in childNodes) {
+        if (childNode && childNode.occurrence
+            && childNode.occurrence.calendar == aCalendar) {
+            deleteNodes.push(childNode);
+        }
+    }
+    for each (var childNode in deleteNodes) {
+        this.agendaListboxControl.removeChild(childNode);
+    }
+};
+
 agendaListbox.isSameEvent =
 function isSameEvent(aItem, aCompItem) {
     return ((aItem.id == aCompItem.id) &&
@@ -436,9 +451,8 @@ function enableAgendaPopupMenu(aPopupMenu){
     return true;
 }
 
-
 agendaListbox.refreshCalendarQuery =
-function refreshCalendarQuery(aStart, aEnd) {
+function refreshCalendarQuery(aStart, aEnd, aCalendar) {
     var pendingRefresh = this.pendingRefresh;
     if (pendingRefresh) {
         if (calInstanceOf(pendingRefresh, Components.interfaces.calIOperation)) {
@@ -448,7 +462,7 @@ function refreshCalendarQuery(aStart, aEnd) {
             return;
         }
     }
-    if ((!aStart) && (!aEnd)) {
+    if ((!aStart) && (!aEnd) && (!aCalendar)) {
         this.removeListItems();
     }
     if (!aStart) {
@@ -461,8 +475,14 @@ function refreshCalendarQuery(aStart, aEnd) {
         var filter = this.calendar.ITEM_FILTER_CLASS_OCCURRENCES |
                      this.calendar.ITEM_FILTER_TYPE_EVENT;
         this.pendingRefresh = true;
-        pendingRefresh = this.calendar.getItems(filter, 0, aStart, aEnd,
-                                                this.calendarOpListener);
+        var refreshCalendar;
+        if (aCalendar)
+            refreshCalendar = aCalendar;
+        else
+            refreshCalendar = this.calendar;
+        
+        pendingRefresh = refreshCalendar.getItems(filter, 0, aStart, aEnd,
+                                                  this.calendarOpListener);
         if (pendingRefresh && pendingRefresh.isPending) { // support for calIOperation
             this.pendingRefresh = pendingRefresh;
         }
@@ -759,12 +779,16 @@ agendaListbox.calendarObserver.onPropertyDeleting = function(aCalendar, aName) {
 
 agendaListbox.calendarObserver.onCalendarRemoved =
 function agenda_calRemove(aCalendar) {
-    this.agendaListbox.refreshCalendarQuery();
+    if (!aCalendar.getProperty("disabled")) {
+        this.agendaListbox.deleteItemsFromCalendar(aCalendar);
+    }
 };
 
 agendaListbox.calendarObserver.onCalendarAdded =
 function agenda_calAdd(aCalendar) {
-    this.agendaListbox.refreshCalendarQuery();
+    if (!aCalendar.getProperty("disabled")) {
+        this.agendaListbox.refreshCalendarQuery(null, null, aCalendar);
+    }
 };
 
 agendaListbox.calendarObserver.onDefaultCalendarChanged = function(aCalendar) {

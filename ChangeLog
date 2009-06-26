@@ -1,3 +1,13 @@
+2009-06-26  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-unifinder.js,
+	src/calendar/base/content/agenda-listbox.js,
+	src/calendar/base/content/calendar-minimonth-busy.js,
+	src/calendar/base/content/calendar-month-view.xml,
+	src/calendar/base/content/calendar-multiday-view.xml: modified
+	onCalendarAdded and /-Removed to add or delete items from the
+	relevant calendar only. (fixes #500718)
+
 2009-06-19  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js: implemented webdav sync

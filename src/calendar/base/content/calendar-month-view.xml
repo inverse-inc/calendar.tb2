@@ -1170,8 +1170,6 @@
           if (!this.startDate || !this.endDate)
             return;
 
-          this.relayout();
-
           if (!this.mCalendar)
             return;
 
@@ -1188,11 +1186,16 @@
             filter |= this.mCalendar.ITEM_FILTER_TYPE_EVENT;
 
           this.mRefreshPending = true;
-          pendingRefresh = this.mCalendar.getItems(filter,
-                                                   0,
-                                                   this.startDate,
-                                                   this.queryEndDate,
-                                                   this.mOperationListener);
+          var refreshCalendar = refreshJob.calendar;
+          if (!refreshCalendar) {
+            refreshCalendar = this.mCalendar;
+            this.relayout();
+          }
+          pendingRefresh = refreshCalendar.getItems(filter,
+                                                    0,
+                                                    this.startDate,
+                                                    this.queryEndDate,
+                                                    this.mOperationListener);
           if (pendingRefresh && pendingRefresh.isPending) { // support for calIOperation
               this.mRefreshPending = pendingRefresh;
           }
@@ -1204,6 +1207,33 @@
           var refreshJob = {};
           this.mRefreshQueue.push(refreshJob);
           this.popRefreshQueue();
+        ]]></body>
+      </method>
+
+      <method name="addItemsFromCalendar">
+        <parameter name="aCalendar"/>
+        <body><![CDATA[
+          var refreshJob = { calendar: aCalendar };
+          this.mRefreshQueue.push(refreshJob);
+          this.popRefreshQueue();
+        ]]></body>
+      </method>
+
+      <method name="deleteItemsFromCalendar">
+        <parameter name="aCalendar"/>
+        <body><![CDATA[
+          var deleteHash = {};
+          for each (var box in this.mDateBoxes) {
+            for (var i = box.box.mItemData.length; i > 0; i--) {
+              var item = box.box.mItemData[i-1].item;
+              if (!deleteHash[item.hashId] && item.calendar == aCalendar) {
+                deleteHash[item.hashId] = item;
+              }
+            }
+          }
+          for (var hashId in deleteHash) {
+            this.doDeleteItem(deleteHash[hashId]);
+          }
         ]]></body>
       </method>
 
@@ -1666,13 +1696,13 @@
           //
           onCalendarAdded: function (aCalendar) {
             if (!aCalendar.getProperty("disabled")) {
-                this.calView.refresh();
+                this.calView.addItemsFromCalendar(aCalendar);
             }
           },
 
           onCalendarRemoved: function (aCalendar) {
             if (!aCalendar.getProperty("disabled")) {
-                this.calView.refresh();
+              this.calView.deleteItemsFromCalendar(aCalendar);
             }
           },
 

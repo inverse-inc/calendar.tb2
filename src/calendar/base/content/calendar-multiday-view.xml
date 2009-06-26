@@ -2546,13 +2546,13 @@
             //
             onCalendarAdded: function onCalendarAdded(aCalendar) {
                 if (!aCalendar.getProperty("disabled")) {
-                    this.calView.refresh();
+                   this.calView.addItemsFromCalendar(aCalendar);
                 }
             },
 
             onCalendarRemoved: function onCalendarRemoved(aCalendar) {
                 if (!aCalendar.getProperty("disabled")) {
-                    this.calView.refresh();
+                   this.calView.deleteItemsFromCalendar(aCalendar);
                 }
             },
 
@@ -3156,9 +3156,6 @@
           if (!this.startDate || !this.endDate)
             return;
 
-          // recreate our columns
-          this.relayout();
-
           if (!this.mCalendar)
               return;
 
@@ -3179,11 +3176,17 @@
             filter |= this.mCalendar.ITEM_FILTER_TYPE_EVENT;
 
           this.mRefreshPending = true;
-          pendingRefresh = this.mCalendar.getItems(filter,
-                                                   0,
-                                                   this.startDate,
-                                                   this.queryEndDate,
-                                                   this.mOperationListener);
+          var refreshCalendar = refreshJob.calendar;
+          if (!refreshCalendar) {
+            refreshCalendar = this.mCalendar;
+            // recreate our columns
+            this.relayout();
+          }
+          pendingRefresh = refreshCalendar.getItems(filter,
+                                                    0,
+                                                    this.startDate,
+                                                    this.queryEndDate,
+                                                    this.mOperationListener);
           if (pendingRefresh && pendingRefresh.isPending) { // support for calIOperation
               this.mRefreshPending = pendingRefresh;
           }
@@ -3195,6 +3198,33 @@
           var refreshJob = {};
           this.mRefreshQueue.push(refreshJob);
           this.popRefreshQueue();
+        ]]></body>
+      </method>
+
+      <method name="addItemsFromCalendar">
+        <parameter name="aCalendar"/>
+        <body><![CDATA[
+          var refreshJob = { calendar: aCalendar };
+          this.mRefreshQueue.push(refreshJob);
+          this.popRefreshQueue();
+        ]]></body>
+      </method>
+
+      <method name="deleteItemsFromCalendar">
+        <parameter name="aCalendar"/>
+        <body><![CDATA[
+          var deleteHash = {};
+          for each (var col in this.mDateColumns) {
+            for each (var info in col.column.mEventInfos) {
+              var event = info.event;
+              if (!deleteHash[event.hashId] && event.calendar == aCalendar) {
+                deleteHash[event.hashId] = event;
+              }
+            }
+          }
+          for (var hashId in deleteHash) {
+            this.doDeleteEvent(deleteHash[hashId]);
+          }
         ]]></body>
       </method>
 
