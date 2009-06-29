@@ -92,7 +92,7 @@ var minimonthBusyListener = {
 
         var busyStr = aBox.getAttribute("busy");
         if (busyStr && busyStr.length > 0) {
-            var calChunks = busyStr.split(";");
+            var calChunks = busyStr.split("\u001A");
             for each (var chunk in calChunks) {
                 var expr = chunk.split("=");
                 boxBusy[expr[0]] = parseInt(expr[1]);
@@ -111,7 +111,7 @@ var minimonthBusyListener = {
         }
 
         if (calChunks.length > 0) {
-            busyStr = calChunks.join(";");
+            busyStr = calChunks.join("\u001A");
             aBox.setAttribute("busy", busyStr);
         }
         else {

@@ -898,7 +898,7 @@ function deleteItemsFromCalendar(aCalendar) {
 
     for (var i = unifinderTreeView.eventArray.length; i > 0; i--) {
         var item = unifinderTreeView.eventArray[i-1];
-        if (item.calendar == aCalendar)
+        if (item.calendar.id == aCalendar.id)
             items.push(item);
     }
     unifinderTreeView.removeItems(items.filter(fixAlldayDates));

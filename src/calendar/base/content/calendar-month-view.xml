@@ -1224,15 +1224,14 @@
         <body><![CDATA[
           var deleteHash = {};
           for each (var box in this.mDateBoxes) {
-            for (var i = box.box.mItemData.length; i > 0; i--) {
-              var item = box.box.mItemData[i-1].item;
-              if (!deleteHash[item.hashId] && item.calendar == aCalendar) {
-                deleteHash[item.hashId] = item;
+            var boxItemData = box.box.mItemData.concat([]);
+            for each (var itemData in boxItemData) {
+              var item = itemData.item;
+              if (!deleteHash[item.hashId] && item.calendar.id == aCalendar.id) {
+                deleteHash[item.hashId] = true;
+                this.doDeleteItem(item);
               }
             }
-          }
-          for (var hashId in deleteHash) {
-            this.doDeleteItem(deleteHash[hashId]);
           }
         ]]></body>
       </method>

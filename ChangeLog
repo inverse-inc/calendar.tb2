@@ -1,3 +1,26 @@
+2009-06-29  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-invitations-manager.js:
+	only refreshs the enabled calendars (first inclusion).
+
+	* src/calendar/base/content/calendar-multiday-view.xml
+	(deleteItemsFromCalendar): duplicate the mEventInfos array so as
+	to be able to wander through the array "normally" without having
+	to keep the index count up-to-date.
+
+	* src/calendar/base/content/calendar-month-view.xml
+	(deleteItemsFromCalendar): use the "deleteHash" only to flag the
+	current item as deleted.
+
+	* src/calendar/base/content/calendar-minimonth-busy.js
+	(parseBoxBusy, updateBoxBusy): use "\u001a" as separator instead
+	of ";".: 
+
+	* src/calendar/base/content/agenda-listbox.js
+	(agendaListbox.deleteItemsFromCalendar) duplicate the childNodes
+	array so that we can delete the childNode directly without having
+	to maintain an index count.
+
 2009-06-26  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-unifinder.js,

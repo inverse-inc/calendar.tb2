@@ -3215,15 +3215,14 @@
         <body><![CDATA[
           var deleteHash = {};
           for each (var col in this.mDateColumns) {
-            for each (var info in col.column.mEventInfos) {
+            var eventInfos = col.column.mEventInfos.concat([]);
+            for each (var info in eventInfos) {
               var event = info.event;
-              if (!deleteHash[event.hashId] && event.calendar == aCalendar) {
-                deleteHash[event.hashId] = event;
+              if (!deleteHash[event.hashId] && event.calendar.id == aCalendar.id) {
+                deleteHash[event.hashId] = true;
+                this.doDeleteEvent(event);
               }
             }
-          }
-          for (var hashId in deleteHash) {
-            this.doDeleteEvent(deleteHash[hashId]);
           }
         ]]></body>
       </method>
