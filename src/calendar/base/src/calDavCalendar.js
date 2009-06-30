@@ -193,12 +193,8 @@ cdWebDAVSyncResponseHandler.prototype = {
             this.calendar.mWebdavSyncToken = this.newSyncToken;
             this.calendar.mTargetCalendar.setMetaData("sync-token",
                                                       this.newSyncToken);
-            if (this.calendar.isCached && this.aChangeLogListener) {
-                this.aChangeLogListener.onResult({ status: Components.results.NS_OK },
-                                                 Components.results.NS_OK);
-            } else {
-                this.calendar.mObservers.notify("onLoad", [this.calendar]);
-            }
+
+            this.calendar.finalizeUpdatedItems(this.aChangeLogListener);
         }
     },
 
@@ -244,10 +240,10 @@ cdWebDAVSyncResponseHandler.prototype = {
                         oldEtag = this.calendar.mItemInfoCache[itemId].etag;
                     }
                     if (oldEtag && oldEtag == etag) { 
-                        LOG("[CalDAV websync - skipping new/updated"
+                        LOG("[CalDAV websync] - skipping new/updated"
                             +" item (etag matches)");
                     } else {
-                        LOG("[CalDAV websync - adding new/updated item");
+                        LOG("[CalDAV websync] - adding new/updated item");
                         this.calendar.addDAVItem(href, calendarData, etag,
                                                  null);
                     }
@@ -256,10 +252,15 @@ cdWebDAVSyncResponseHandler.prototype = {
                     this.aRefreshEvent.unhandledErrors++;
                 }
             } else if (status == 404) {
-                LOG("[CalDAV websync - deleting item");
-                this.calendar.deleteDAVItem(href, this.aRefreshEvent);
+                if (this.calendar.mHrefIndex[href]) {
+                    LOG("[CalDAV] websync - deleting item");
+                    this.calendar.deleteDAVItem(href, this.aRefreshEvent);
+                }
+                else {
+                    LOG("[CalDAV] websync - skipping unfound deleted item");
+                }
             } else {
-                LOG("[CalDAV websync - err: unhandled status code " + status);
+                LOG("[CalDAV] websync - err: unhandled status code " + status);
                 this.aRefreshEvent.unhandledErrors++;
             }
         }
@@ -1187,7 +1188,6 @@ calDavCalendar.prototype = {
 
             var ctag = multistatus..CS::getctag.toString();
             if (!ctag.length || ctag != thisCalendar.mCtag) {
-                LOG("first ctag");
                 // ctag mismatch, need to fetch calendar-data
                 thisCalendar.mOldCtag = thisCalendar.mCtag;
                 thisCalendar.mCtag = ctag;
@@ -1772,24 +1772,7 @@ calDavCalendar.prototype = {
                 }
             }
 
-            if (thisCalendar.isCached) {
-                if (aChangeLogListener)
-                    aChangeLogListener.onResult({ status: Components.results.NS_OK },
-                                                Components.results.NS_OK);
-            } else {
-                thisCalendar.mObservers.notify("onLoad", [thisCalendar]);
-            }
-
-            thisCalendar.mFirstRefreshDone = true;
-            while (thisCalendar.mQueuedQueries.length) {
-                var query = thisCalendar.mQueuedQueries.pop();
-                thisCalendar.mTargetCalendar.getItems
-                            .apply(thisCalendar.mTargetCalendar, query);
-            }
-            if (thisCalendar.hasScheduling &&
-                !thisCalendar.isInBox(aUri.spec)) {
-                thisCalendar.pollInBox();
-            }
+            thisCalendar.finalizeUpdatedItems(aChangeLogListener);
         };
 
         if (this.verboseLogging()) {
@@ -1804,6 +1787,28 @@ calDavCalendar.prototype = {
         httpchannel.setRequestHeader("Depth", "1", false);
         var streamLoader = createStreamLoader();
         calSendHttpRequest(streamLoader, httpchannel, caldataListener);
+    },
+
+    finalizeUpdatedItems: function calDav_finalizeUpdatedItems(aChangeLogListener) {
+        if (this.isCached) {
+            if (aChangeLogListener)
+                aChangeLogListener.onResult({ status: Components.results.NS_OK },
+                                            Components.results.NS_OK);
+        } else {
+            this.mObservers.notify("onLoad", [thisCalendar]);
+        }
+
+        LOG("setting mFirstRefreshDone");
+        this.mFirstRefreshDone = true;
+        while (this.mQueuedQueries.length) {
+            var query = this.mQueuedQueries.pop();
+            this.mTargetCalendar.getItems
+                .apply(this.mTargetCalendar, query);
+        }
+        if (this.hasScheduling &&
+            !this.isInBox(aUri.spec)) {
+            this.pollInBox();
+        }
     },
 
     /**
@@ -1918,13 +1923,12 @@ calDavCalendar.prototype = {
             // check for server-side ctag support
             var ctag = multistatus..CS::["getctag"].toString();
             if (ctag.length) {
-              // We compare the stored ctag with the one we just got, if
-              // they don't match, we update the items in safeRefresh.
-              // See:  https://bugzilla.mozilla.org/show_bug.cgi?id=463961
+                // We compare the stored ctag with the one we just got, if
+                // they don't match, we update the items in safeRefresh.
+                // See:  https://bugzilla.mozilla.org/show_bug.cgi?id=463961
                 if (ctag == thisCalendar.mCtag) {
                     thisCalendar.mFirstRefreshDone = true;
                 }
-                LOG("second ctag");
                 thisCalendar.mOldCtag = thisCalendar.mCtag;
                 thisCalendar.mCtag = ctag;
                 thisCalendar.mTargetCalendar.setMetaData("ctag", ctag);

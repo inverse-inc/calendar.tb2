@@ -1,5 +1,11 @@
 2009-06-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js: webdav sync: do not try
+	to delete items which are not present in the item id cache. Added
+	new "finalizeUpdatedItems" with code executed when a safeRefresh
+	is concluded. Call that new method from the
+	getUpdatedItem_WebdavSync method too.
+
 	* src/calendar/base/src/calCalendarManager.js: we do not post
 	"onCalendarRegistered" notifications on new calendars before their
 	cache is initialized.
