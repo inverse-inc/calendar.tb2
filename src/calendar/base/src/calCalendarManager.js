@@ -550,6 +550,7 @@ calCalendarManager.prototype = {
                 // for such a simple feature!
                 this.registerCalendar(calendar, true);
                 calendar = new calCachedCalendar(calendar);
+                this.notifyObservers("onCalendarRegistered", [calendar]);
             }
 
             return calendar;
@@ -593,7 +594,7 @@ calCalendarManager.prototype = {
         }
     },
 
-    registerCalendar: function(calendar, skipRefresh) {
+    registerCalendar: function(calendar, isCached) {
         // bail if this calendar (or one that looks identical to it) is already registered
         if (calendar.id > 0) {
             dump ("registerCalendar: calendar already registered\n");
@@ -629,11 +630,16 @@ calCalendarManager.prototype = {
         }
         this.mCalendarCount++;
 
-        if (!skipRefresh && !calendar.getProperty("disabled") && calendar.canRefresh) {
-             calendar.refresh();
+        /* Some operations cannot happen on new "cached" calendars,
+           because their cache has not been initialized yet and we only handle
+           the uncached instance here here... Those operations must thus be
+           handled later. */
+        if (!isCached) {
+            if (!calendar.getProperty("disabled") && calendar.canRefresh) {
+                calendar.refresh();
+            }
+            this.notifyObservers("onCalendarRegistered", [calendar]);
         }
-
-        this.notifyObservers("onCalendarRegistered", [calendar]);
     },
 
     unregisterCalendar: function(calendar) {
