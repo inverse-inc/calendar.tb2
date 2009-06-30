@@ -1795,7 +1795,7 @@ calDavCalendar.prototype = {
                 aChangeLogListener.onResult({ status: Components.results.NS_OK },
                                             Components.results.NS_OK);
         } else {
-            this.mObservers.notify("onLoad", [thisCalendar]);
+            this.mObservers.notify("onLoad", [this]);
         }
 
         LOG("setting mFirstRefreshDone");
@@ -1806,7 +1806,7 @@ calDavCalendar.prototype = {
                 .apply(this.mTargetCalendar, query);
         }
         if (this.hasScheduling &&
-            !this.isInBox(aUri.spec)) {
+            !this.isInBox(this.calendarUri.spec)) {
             this.pollInBox();
         }
     },
