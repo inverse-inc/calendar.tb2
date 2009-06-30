@@ -1,5 +1,9 @@
 2009-06-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calStorageCalendar.js (writeEvent): be
+	tolerant for events which don't have a start or an end date.
+	Replace them with an empty string.
+
 	* src/calendar/base/src/calDavCalendar.js: webdav sync: do not try
 	to delete items which are not present in the item id cache. Added
 	new "finalizeUpdatedItems" with code executed when a safeRefresh

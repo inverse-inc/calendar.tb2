@@ -2291,10 +2291,12 @@ calStorageCalendar.prototype = {
         var ip = this.mInsertEvent.params;
         this.setupItemBaseParams(item, olditem,ip);
 
-        this.setDateParamHelper(ip, "event_start", item.startDate);
-        this.setDateParamHelper(ip, "event_end", item.endDate);
+        var startDate = item.startDate || "";
+        this.setDateParamHelper(ip, "event_start", startDate);
+        var endDate = item.endDate || "";
+        this.setDateParamHelper(ip, "event_end", endDate);
 
-        if (item.startDate.isDate)
+        if (startDate && startDate.isDate)
             flags |= CAL_ITEM_FLAG_EVENT_ALLDAY;
 
         ip.flags = flags;
