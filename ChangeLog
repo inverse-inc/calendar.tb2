@@ -1,5 +1,9 @@
 2009-06-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calIcsParser.js: added a new
+	"saniticeICSValue" that pre-parse the ICS string in order to fix
+	errors that are not handled by libical.
+
 	* src/calendar/base/src/calStorageCalendar.js (writeEvent): be
 	tolerant for events which don't have a start or an end date.
 	Replace them with an empty string.

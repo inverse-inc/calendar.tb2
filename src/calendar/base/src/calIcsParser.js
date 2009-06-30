@@ -53,9 +53,45 @@ function QueryInterface(aIID) {
     return this;
 };
 
+function sanitizeDTValue(aDateValue) {
+    return aDateValue.replace("-", "", "g");
+}
+
+calIcsParser.prototype.sanitizeICSValue = function
+    ip_sanitizeICSValue(aICSString, aValueName, aFunction) {
+    valueLineIdx = aICSString.indexOf(aValueName);
+    if (valueLineIdx > -1) {
+        valueIdx = valueLineIdx + aICSString.substr(valueLineIdx).indexOf(":") + 1;
+        valueEndIdx = valueIdx + aICSString.substr(valueIdx).indexOf("\n");
+        if (aICSString[valueEndIdx-1] == "\r")
+            valueEndIdx--;
+        valueLength = valueEndIdx - valueIdx;
+        value = aFunction(aICSString.substr(valueIdx, valueLength));
+        if (value) {
+            aICSString = aICSString.substr(0, valueIdx) + value + aICSString.substr(valueEndIdx);
+        }
+    }
+
+    return aICSString;
+}
+
+calIcsParser.prototype.sanitizeICSString = function
+    ip_sanitizeICSString(aICSString) {
+    LOG("aICSString (bad):\n" + aICSString);
+    aICSString = this.sanitizeICSValue(aICSString,
+                                       "DTSTART", sanitizeDTValue);
+    aICSString = this.sanitizeICSValue(aICSString,
+                                       "DTEND", sanitizeDTValue);
+
+    LOG("aICSString (sane):\n" + aICSString);
+
+    return aICSString;
+};
+
 calIcsParser.prototype.parseString =
 function ip_parseString(aICSString, aTzProvider) {
-    var rootComp = getIcsService().parseICS(aICSString, aTzProvider);
+    var saneICSString = this.sanitizeICSString(aICSString);
+    var rootComp = getIcsService().parseICS(saneICSString, aTzProvider);
     var calComp;
     // libical returns the vcalendar component if there is just one vcalendar.
     // If there are multiple vcalendars, it returns an xroot component, with
