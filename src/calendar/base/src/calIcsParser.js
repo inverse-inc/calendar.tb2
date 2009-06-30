@@ -77,13 +77,13 @@ calIcsParser.prototype.sanitizeICSValue = function
 
 calIcsParser.prototype.sanitizeICSString = function
     ip_sanitizeICSString(aICSString) {
-    LOG("aICSString (bad):\n" + aICSString);
+//     LOG("aICSString (bad):\n" + aICSString);
     aICSString = this.sanitizeICSValue(aICSString,
                                        "DTSTART", sanitizeDTValue);
     aICSString = this.sanitizeICSValue(aICSString,
                                        "DTEND", sanitizeDTValue);
 
-    LOG("aICSString (sane):\n" + aICSString);
+//     LOG("aICSString (sane):\n" + aICSString);
 
     return aICSString;
 };
