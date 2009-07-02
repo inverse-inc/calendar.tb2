@@ -306,6 +306,9 @@ function calDavCalendar() {
     // By default, support both events and todos.
     this.supportedItemTypes = ["VEVENT", "VTODO"];
 
+    this.readOnly = true;
+    this.disabled = true;
+
     // Inverse inc. ACL addition
     var observerService = Components.classes["@mozilla.org/observer-service;1"]
       .getService(Components.interfaces.nsIObserverService);
@@ -1146,12 +1149,14 @@ calDavCalendar.prototype = {
                     " checking ctag for calendar " + thisCalendar.name
                      + "\n");
                 // See https://bugzilla.mozilla.org/show_bug.cgi?id=470934
-                if (aContext.responseStatus == 404) {
-                    LOG("Disabled CalDAV calendar due to 404 error code.");
+                if (aContext.responseStatus == 207) {
+                    if (thisCalendar.disabled) {
+                        thisCalendar.reenable(aChangeLogListener);
+                        return;
+                    }
+                } else if (aContext.responseStatus > 399) {
+                    LOG("Disabled CalDAV calendar due to " + aContext.responseStatus + " error code.");
                     thisCalendar.completeCheckServerInfo(aChangeLogListener, Components.interfaces.calIErrors.DAV_DAV_NOT_CALDAV);
-                    return;
-                } else if (aContext.responseStatus == 207 && thisCalendar.disabled) {
-                    thisCalendar.reenable(aChangeLogListener);
                     return;
                 }
             } catch (ex) {
