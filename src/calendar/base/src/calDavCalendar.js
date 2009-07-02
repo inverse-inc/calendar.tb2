@@ -1330,14 +1330,14 @@ calDavCalendar.prototype = {
                                                           aResult) {
                 var responseStatus;
                 try {
-                    dump("CalDAV: Status " + aContext.responseStatus
+                    LOG("CalDAV: Status " + aContext.responseStatus
                          + " on webdav sync-query for calendar "
-                         + thisCalendar.name + "\n");
+                         + thisCalendar.name);
                     responseStatus = aContext.responseStatus;
                 } catch (ex) {
-                    dump("CalDAV: Error without status on webdav sync-query"
-                         + " for calendar " + thisCalendar.name + "\n");
-                    LOG("reverting ctag to " + thisCalendar.mOldCtag);
+                    LOG("CalDAV: Error without status on webdav sync-query"
+                         + " for calendar " + thisCalendar.name);
+                    LOG("  reverting ctag to " + thisCalendar.mOldCtag);
                     thisCalendar.mCtag = thisCalendar.mOldCtag;
                     thisCalendar.mTargetCalendar.setMetaData("ctag",
                                                              thisCalendar.mOldCtag);
@@ -1805,7 +1805,6 @@ calDavCalendar.prototype = {
             this.mObservers.notify("onLoad", [this]);
         }
 
-        LOG("setting mFirstRefreshDone");
         this.mFirstRefreshDone = true;
         while (this.mQueuedQueries.length) {
             var query = this.mQueuedQueries.pop();
