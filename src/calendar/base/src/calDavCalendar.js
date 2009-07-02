@@ -446,7 +446,7 @@ calDavCalendar.prototype = {
                 if (itemDataArray.length == 3) {
                     this.mHrefIndex[resourcePath] = itemId;
                     var locationPath = decodeURIComponent(resourcePath)
-                        .substr(this.mLocationPath.length);
+                                       .substr(this.mLocationPath.length);
             // See https://bugzilla.mozilla.org/show_bug.cgi?id=464344
                     var item = { etag: etag,
                                  isNew: false,
@@ -1629,7 +1629,7 @@ calDavCalendar.prototype = {
             return;
         }
 
-        var pathLength = decodeURIComponent(this.mUri.path).length;
+        var pathLength = decodeURIComponent(this.mLocationPath).length;
         var locationPath = decodeURIComponent(href).substr(pathLength);
         var isInboxItem = this.isInBox(this.mUri.spec);
         if (this.mItemInfoCache[item.id]) {
@@ -1639,17 +1639,17 @@ calDavCalendar.prototype = {
         }
         this.mItemInfoCache[item.id].locationPath = locationPath;
         this.mItemInfoCache[item.id].isInBoxItem = isInboxItem;
-        
+
         var hrefPath = this.ensurePath(href);
         this.mHrefIndex[hrefPath] = item.id;
         this.mItemInfoCache[item.id].etag = etag;
-        
+
         if (this.mItemInfoCache[item.id].isNew) {
             this.mTargetCalendar.adoptItem(item, aListener);
         } else {
             this.mTargetCalendar.modifyItem(item, null, aListener);
         }
-        
+
         if (this.isCached) {
             this.setMetaData(item.id, href, etag, isInboxItem);
         }
