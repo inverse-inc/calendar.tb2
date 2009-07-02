@@ -169,8 +169,10 @@ cdWebDAVSyncResponseHandler.prototype = {
         if (this.calendar.isCached) {
             this.calendar.superCalendar.startBatch();
         }
+        LOG("[CalDAV] websync - start: " + new Date());
     },
     endDocument: function endDocument() {
+        LOG("[CalDAV] websync - stop: " + new Date());
         if (this.calendar.isCached) {
             this.calendar.superCalendar.endBatch();
         }
