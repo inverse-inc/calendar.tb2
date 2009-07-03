@@ -5,6 +5,10 @@
 	with Array.splice with Mozilla 1.8, therefore we wander the
 	nodeList reversely.
 
+2009-07-03  Ludovic Marcotte <lmarcotte@inverse.ca>
+
+	* Added patch for bug #453145
+
 2009-07-02  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js (safeRefresh): fixed
@@ -13,7 +17,7 @@
 2009-06-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calIcsParser.js: added a new
-	"saniticeICSValue" that pre-parse the ICS string in order to fix
+	"sanitizeICSValue" that pre-parse the ICS string in order to fix
 	errors that are not handled by libical.
 
 	* src/calendar/base/src/calStorageCalendar.js (writeEvent): be
