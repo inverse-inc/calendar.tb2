@@ -384,8 +384,9 @@ function deleteItem(aItem, aMoveSelection) {
 
 agendaListbox.deleteItemsFromCalendar =
 function deleteItemsFromCalendar(aCalendar) {
-    var childNodes = Array.splice(this.agendaListboxControl.childNodes);
-    for each (var childNode in childNodes) {
+    var childNodes = this.agendaListboxControl.childNodes;
+    for (var i = childNodes.length; i > 0; i--) {
+        var childNode = childNodes[i-1];
         if (childNode && childNode.occurrence
             && childNode.occurrence.calendar.id == aCalendar.id) {
             this.agendaListboxControl.removeChild(childNode);
