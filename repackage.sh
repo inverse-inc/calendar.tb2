@@ -46,6 +46,7 @@ function build_osx {
 
     # We update the JavaScript core files
     cp -f src/calendar/base/src/*.js tmp/js/
+    cp -f src/calendar/providers/composite/*.js tmp/components/
 
     # We update the french locale
     cd $BASE/src/calendar
@@ -105,6 +106,7 @@ function build_win32 {
 
     # We update the JavaScript core files
     cp -f src/calendar/base/src/*.js tmp/js/
+    cp -f src/calendar/providers/composite/*.js tmp/components/
 
     # We copy the missing XPT file
     cd $BASE
@@ -173,6 +175,7 @@ function build_linux {
 
     # We update the JavaScript core files
     cp -f src/calendar/base/src/*.js tmp/js/
+    cp -f src/calendar/providers/composite/*.js tmp/components/
     
     # We update the french locale
     cd $BASE/src/calendar
@@ -237,6 +240,7 @@ function build_linux_x64 {
 
     # We update the JavaScript core files
     cp -f src/calendar/base/src/*.js tmp/js/
+    cp -f src/calendar/providers/composite/*.js tmp/components/
     
     # We update the french locale
     cd $BASE/src/calendar
