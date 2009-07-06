@@ -414,14 +414,14 @@ calDavCalendar.prototype = {
     // in calIGenericOperationListener aListener
     replayChangesOn: function caldav_replayChangesOn(aDestination, aChangeLogListener) {
 //         dump("replayChanges\n");
-	if (!this.mTargetCalendar) {
-	    this.mTargetCalendar = aDestination.wrappedJSObject;
-	    this.fetchItemVersions();
-	    //             dump("replayChangeOn: initial ctag: " + this.mCtag + "\n");
-	    this.checkDavResourceType(aChangeLogListener);
-	} else {
-	    this.safeRefresh(aChangeLogListener);
-	}
+        if (!this.mTargetCalendar) {
+            this.mTargetCalendar = aDestination.wrappedJSObject;
+            this.fetchItemVersions();
+            // dump("replayChangeOn: initial ctag: " + this.mCtag + "\n");
+            this.checkDavResourceType(aChangeLogListener);
+        } else {
+            this.safeRefresh(aChangeLogListener);
+        }
     },
 
     fetchItemVersions: function caldav_fetchItemVersions() {
@@ -1110,17 +1110,14 @@ calDavCalendar.prototype = {
 
     safeRefresh: function caldav_safeRefresh(aChangeLogListener) {
         if (!this.mHasACLLoaded) {
-	    LOG("first safeRefresh with ACL");
-	    this.mACLRefreshData = { changeLogListener: aChangeLogListener };
-	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	                 .getService(Components.interfaces.nsISupports)
-	                 .wrappedJSObject;
-	    var entry = aclMgr.calendarEntry(this.uri);
-	    return;
+            this.mACLRefreshData = { changeLogListener: aChangeLogListener };
+            var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                         .getService(Components.interfaces.nsISupports)
+                         .wrappedJSObject;
+            var entry = aclMgr.calendarEntry(this.uri);
+            return;
         }
 
-	LOG("safeRefresh");
-	LOG(STACK(100));
         this.ensureTargetCalendar();
 //         dump("SAFE REFRESH 1\n");
         if (this.mAuthScheme == "Digest") {
@@ -2988,15 +2985,14 @@ calDavCalendar.prototype = {
       // Inverse inc. ACL addition
       if (aTopic == "caldav-acl-loaded"
           && this.uri.spec == aData) {
-	  LOG("coucou: " + aData);
           if (this.mHasACLLoaded) {
-	      LOG("unexpected, should refresh?");
-	  }
+              LOG("unexpected, should refresh?");
+          }
           else {
-	      this.mHasACLLoaded = true;
+              this.mHasACLLoaded = true;
               this.safeRefresh(this.mACLRefreshData.changeLogListener);
-	      delete this.mACLReplayData;
-	  }
+              delete this.mACLReplayData;
+          }
       }
     },
 
