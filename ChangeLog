@@ -1,5 +1,9 @@
 2009-07-06  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/providers/composite/calCompositeCalendar.js: when
+	calendars implement calISyncCalendar, we don't allow getItems
+	operations on them as long as they are not "loaded".
+
 	* src/calendar/base/src/calDavCalendar.js: bypass safeRefresh as
 	long as the ACLs are not loaded (Inverse edition).
 

@@ -60,6 +60,7 @@ calCompositeCalendarObserverHelper.prototype = {
 
     onLoad: function(calendar) {
         // avoid unnecessary onLoad events:
+        this.compCalendar.mCanGetItems[calendar.id] = true;
         if (this.pendingLoads[calendar.id]) {
             // don't forward if caused by composite:
             delete this.pendingLoads[calendar.id];
@@ -105,6 +106,8 @@ function calCompositeCalendar () {
     this.mObservers = new calListenerBag(Components.interfaces.calIObserver);
     this.mDefaultCalendar = null;
     this.mStatusObserver = null;
+
+    this.mCanGetItems = {};
 }
 
 calCompositeCalendar.prototype = {
@@ -179,7 +182,17 @@ calCompositeCalendar.prototype = {
                 this.addCalendar(c);
             if (c.getProperty(this.mDefaultPref))
                 this.setDefaultCalendar(c, false);
-        }, this);
+
+            var realCalendar = c.getProperty("cache.uncachedCalendar");
+            if (!realCalendar) {
+                realCalendar = aCalendar;
+            }
+            if (realCalendar.wrappedJSObject.replayChangesOn) {
+                this.mCanGetItems[c.id] = false;
+            } else {
+                this.mCanGetItems[realCalendar.id] = true;
+            }
+            }, this);
     },
 
     get prefPrefix () {
@@ -434,11 +447,13 @@ calCompositeCalendar.prototype = {
 
         for each (var cal in enabledCalendars) {
             try {
-                cmpListener.opGroup.add(cal.getItems(aItemFilter,
-                                                     aCount,
-                                                     aRangeStart,
-                                                     aRangeEnd,
-                                                     cmpListener));
+                if (this.mCanGetItems[cal.id]) {
+                    cmpListener.opGroup.add(cal.getItems(aItemFilter,
+                                                         aCount,
+                                                         aRangeStart,
+                                                         aRangeEnd,
+                                                         cmpListener));
+                }
             } catch (exc) {
                 ASSERT(false, exc);
             }
