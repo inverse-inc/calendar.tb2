@@ -169,10 +169,10 @@ cdWebDAVSyncResponseHandler.prototype = {
         if (this.calendar.isCached) {
             this.calendar.superCalendar.startBatch();
         }
-        LOG("[CalDAV] websync - start: " + new Date());
+        LOG("[CalDAV] websync - start: " + (new Date()).getTime());
     },
     endDocument: function endDocument() {
-        LOG("[CalDAV] websync - stop: " + new Date());
+        LOG("[CalDAV] websync - stop: " + (new Date()).getTime());
         if (this.calendar.isCached) {
             this.calendar.superCalendar.endBatch();
         }
@@ -414,14 +414,14 @@ calDavCalendar.prototype = {
     // in calIGenericOperationListener aListener
     replayChangesOn: function caldav_replayChangesOn(aDestination, aChangeLogListener) {
 //         dump("replayChanges\n");
-        if (!this.mTargetCalendar) {
-            this.mTargetCalendar = aDestination.wrappedJSObject;
-            this.fetchItemVersions();
-//             dump("replayChangeOn: initial ctag: " + this.mCtag + "\n");
-            this.checkDavResourceType(aChangeLogListener);
-        } else {
-            this.safeRefresh(aChangeLogListener);
-        }
+	if (!this.mTargetCalendar) {
+	    this.mTargetCalendar = aDestination.wrappedJSObject;
+	    this.fetchItemVersions();
+	    //             dump("replayChangeOn: initial ctag: " + this.mCtag + "\n");
+	    this.checkDavResourceType(aChangeLogListener);
+	} else {
+	    this.safeRefresh(aChangeLogListener);
+	}
     },
 
     fetchItemVersions: function caldav_fetchItemVersions() {
@@ -564,6 +564,9 @@ calDavCalendar.prototype = {
 
     mHasWebdavSyncSupport: false,
     mWebdavSyncToken: null,
+
+    mHasACLLoaded: false,
+    mACLReplayData: null,
 
     mTargetCalendar: null,
 
@@ -1106,6 +1109,18 @@ calDavCalendar.prototype = {
     },
 
     safeRefresh: function caldav_safeRefresh(aChangeLogListener) {
+        if (!this.mHasACLLoaded) {
+	    LOG("first safeRefresh with ACL");
+	    this.mACLRefreshData = { changeLogListener: aChangeLogListener };
+	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+	                 .getService(Components.interfaces.nsISupports)
+	                 .wrappedJSObject;
+	    var entry = aclMgr.calendarEntry(this.uri);
+	    return;
+        }
+
+	LOG("safeRefresh");
+	LOG(STACK(100));
         this.ensureTargetCalendar();
 //         dump("SAFE REFRESH 1\n");
         if (this.mAuthScheme == "Digest") {
@@ -2374,11 +2389,11 @@ calDavCalendar.prototype = {
             this.mCheckedServerInfo = true;
 
             if (this.isCached) {
-                this.safeRefresh(aChangeLogListener);
-            } else {
-                this.refresh();
-            }
-        } else {
+              this.safeRefresh(aChangeLogListener);
+	    } else {
+              this.refresh();
+	    }
+	} else {
             this.reportDavError(aError);
             if (this.isCached && aChangeLogListener) {
                 aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
@@ -2971,25 +2986,17 @@ calDavCalendar.prototype = {
 
     observe: function(aSubject, aTopic, aData) {
       // Inverse inc. ACL addition
-      if (aTopic == "caldav-acl-loaded" &&
-          this.uri.spec == aData) {
-        
-        // We always mark our calendar as writable. The ACL code will handle correctly
-        // all the cases where one can delete components but not modify them and more.
-        this.readOnly = false;
-        
-        // We refresh our view after the ACL reload. We do NOT call onLoad since
-        // it'll trigger a safeRefresh call and thus, reload the ctag for no
-        // good reason.
-        var wWatcher = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
-        .getService(Components.interfaces.nsIWindowWatcher);
-        if (wWatcher.activeWindow) {
-          var deck =  wWatcher.activeWindow.document.getElementById("view-deck");
-          if (deck) {
-            var panel = deck.selectedPanel;
-            panel.viewElem.refresh();
-          }
-        }
+      if (aTopic == "caldav-acl-loaded"
+          && this.uri.spec == aData) {
+	  LOG("coucou: " + aData);
+          if (this.mHasACLLoaded) {
+	      LOG("unexpected, should refresh?");
+	  }
+          else {
+	      this.mHasACLLoaded = true;
+              this.safeRefresh(this.mACLRefreshData.changeLogListener);
+	      delete this.mACLReplayData;
+	  }
       }
     },
 
