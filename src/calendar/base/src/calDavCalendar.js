@@ -566,7 +566,7 @@ calDavCalendar.prototype = {
     mWebdavSyncToken: null,
 
     mHasACLLoaded: false,
-    mACLReplayData: null,
+    mACLRefreshData: null,
 
     mTargetCalendar: null,
 
@@ -2982,18 +2982,25 @@ calDavCalendar.prototype = {
     },
 
     observe: function(aSubject, aTopic, aData) {
-      // Inverse inc. ACL addition
-      if (aTopic == "caldav-acl-loaded"
-          && this.uri.spec == aData) {
-          if (this.mHasACLLoaded) {
-              LOG("unexpected, should refresh?");
-          }
-          else {
-              this.mHasACLLoaded = true;
-              this.safeRefresh(this.mACLRefreshData.changeLogListener);
-              delete this.mACLReplayData;
-          }
-      }
+        // Inverse inc. ACL addition
+        if (this.uri.spec == aData) {
+            LOG("[caldav] received acl notification: " + aTopic);
+            if (aTopic == "caldav-acl-loaded") {
+                if (!this.mHasACLLoaded) {
+                    this.mHasACLLoaded = true;
+                }
+            } else if (aTopic == "caldav-acl-reset"
+                       && this.mACLRefreshData) {
+                /* An error occured during the refresh of ACL. Since it may be
+                   due to the lack of support for ACLS, we go on with the
+                   refresh.*/
+            }
+            if (this.mACLRefreshData
+                && this.mACLRefreshData.changeLogListener) {
+                this.safeRefresh(this.mACLRefreshData.changeLogListener);
+                delete this.mACLRefreshData;
+            }
+        }
     },
 
     // See bug https://bugzilla.mozilla.org/show_bug.cgi?id=470934
