@@ -4,6 +4,9 @@
 	modified to handle the new "caldav-acl-reset" notification. The
 	code was also simplified by triggering a refresh whenever the
 	mACLRefreshData ivar is set.
+	Completed the webdav sync implementation by handling the case
+	where a 403 error code would be return with a "valid-sync-token"
+	DAV error.
 
 2009-07-06  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 

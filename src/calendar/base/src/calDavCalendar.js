@@ -154,6 +154,8 @@ cdWebDAVSyncResponseHandler.prototype = {
     aRefreshEvent: null,
     aChangeLogListener: null,
     calendar: null,
+    syncMode: null,
+    reportedItems: null,
 
     characters: function characters(value) {
         this.response[this.activeResponse] += value;
@@ -165,6 +167,7 @@ cdWebDAVSyncResponseHandler.prototype = {
         this.index = 0;
         this.newSyncToken = null;
         this.response = {};
+        this.reportedItems = {};
 
         if (this.calendar.isCached) {
             this.calendar.superCalendar.startBatch();
@@ -173,9 +176,6 @@ cdWebDAVSyncResponseHandler.prototype = {
     },
     endDocument: function endDocument() {
         LOG("[CalDAV] websync - stop: " + (new Date()).getTime());
-        if (this.calendar.isCached) {
-            this.calendar.superCalendar.endBatch();
-        }
         if (this.aRefreshEvent.unhandledErrors) {
             LOG("[CalDAV] websync - processing unhandled error "
                 + this.aRefreshEvent.unhandledErrors);
@@ -190,6 +190,9 @@ cdWebDAVSyncResponseHandler.prototype = {
                                                  Components.results.NS_ERROR_FAILURE);
             }
         } else {
+            if (this.syncMode == "reset") {
+                this.deleteUnreportedItems();
+            }
             LOG("[CalDAV] websync - processed responses: " + this.count);
             LOG("[CalDAV] websync - storing new token " + this.newSyncToken);
             this.calendar.mWebdavSyncToken = this.newSyncToken;
@@ -197,6 +200,9 @@ cdWebDAVSyncResponseHandler.prototype = {
                                                       this.newSyncToken);
 
             this.calendar.finalizeUpdatedItems(this.aChangeLogListener);
+        }
+        if (this.calendar.isCached) {
+            this.calendar.superCalendar.endBatch();
         }
     },
 
@@ -236,10 +242,13 @@ cdWebDAVSyncResponseHandler.prototype = {
                 var calendarData = this.response["prop-calendar-data"];
                 var etag = this.response["prop-getetag"];
                 if (etag.length && calendarData.length) {
-                    var oldEtag = null;
+                    var oldEtag;
+                    this.reportedItems[href] = true;
                     var itemId = this.calendar.mHrefIndex[href];
                     if (itemId) {
                         oldEtag = this.calendar.mItemInfoCache[itemId].etag;
+                    } else {
+                        oldEtag = null;
                     }
                     if (oldEtag && oldEtag == etag) { 
                         LOG("[CalDAV websync] - skipping new/updated"
@@ -277,6 +286,15 @@ cdWebDAVSyncResponseHandler.prototype = {
     ignorableWhitespace: function ignorableWhitespace(whitespace) {
     },
     processingInstruction: function processingInstruction(target, data) {
+    },
+
+    deleteUnreportedItems: function deleteUnreportedItems() {
+        for (var path in this.calendar.mHrefIndex) {
+            if (!this.reportedItems[path]
+                && path.indexOf(this.aRefreshEvent.uri.path) == 0) {
+                this.calendar.deleteDAVItem(path, this.aRefreshEvent);
+            }
+        }
     },
  
     QueryInterface: function QueryInterface(aIID) {
@@ -1314,6 +1332,7 @@ calDavCalendar.prototype = {
         var C = new Namespace("C", "urn:ietf:params:xml:ns:caldav");
         var D = new Namespace("D", "DAV:");
         default xml namespace = D;
+        var syncMode = "reset";
 
         var syncQueryXml = 
           <sync-collection xmlns:C={C}>
@@ -1326,6 +1345,7 @@ calDavCalendar.prototype = {
 
         if (this.mWebdavSyncToken && this.mWebdavSyncToken.length > 0) {
             syncQueryXml.D::["sync-token"] = this.mWebdavSyncToken;
+            syncMode = "update";
         }
 
         if (this.verboseLogging()) {
@@ -1360,22 +1380,29 @@ calDavCalendar.prototype = {
                     return;
                 }
 
-                if (responseStatus == 207) {
-                    var str = convertByteArray(aResult, aResultLength);
-                    if (str.substr(0,6) == "<?xml ") {
-                        str = str.substring(str.indexOf('<', 2));
-                    }
+                var str = convertByteArray(aResult, aResultLength);
+                if (str.substr(0,6) == "<?xml ") {
+                    str = str.substring(str.indexOf('<', 2));
+                }
 
+                if (responseStatus == 207) {
                     var parser = Components.classes["@mozilla.org/saxparser/xmlreader;1"]
                                  .createInstance(Components.interfaces.nsISAXXMLReader);
                     var handler = new cdWebDAVSyncResponseHandler();
+                    handler.syncMode = syncMode;
                     handler.aRefreshEvent = aRefreshEvent;
                     handler.aChangeLogListener = aChangeLogListener;
                     handler.calendar = thisCalendar;
                     parser.contentHandler = handler;
                     parser.parseFromString(str, "application/xml");
-                }
-                else {
+                } else if (responseStatus == 403 && syncMode == "update"
+                           && str.indexOf("valid-sync-token") > -1) {
+                    LOG("[CalDAV] webdav sync: invalid sync token,"
+                        + " we need to reset");
+                    thisCalendar.mWebdavSyncToken = null;
+                    thisCalendar.getUpdatedItems_WebdavSync(aRefreshEvent,
+                                                            aChangeLogListener);
+                } else {
                     aRefreshEvent.unhandledErrors++;
                     aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
                                                 Components.results.NS_ERROR_FAILURE);
