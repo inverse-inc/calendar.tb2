@@ -1,3 +1,15 @@
+2009-07-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/providers/composite/calCompositeCalendar.js
+	(getItems): instead of testing each calendar to see whether it's
+	ready, we only take the "readyCalendars" into account. This
+	enables views to receive an onOperationComplete event when no
+	calendar is available yet.
+	(calCompositeGetListenerHelper): the amount of pending requests
+	depends on the amount of enabled calendars that are declared ready.
+	(readyCalendars): new accessor that returns the amount of enabled
+	calendars that are declared ready.
+
 2009-07-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js: the observe method was
