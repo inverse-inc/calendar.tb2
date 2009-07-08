@@ -333,9 +333,18 @@ function calDavCalendar() {
     this.disabled = true;
 
     // Inverse inc. ACL addition
-    var observerService = Components.classes["@mozilla.org/observer-service;1"]
-      .getService(Components.interfaces.nsIObserverService);
-    observerService.addObserver(this, "caldav-acl-loaded", false);
+    this.mACLMgr = null;
+    try {
+        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                     .getService(Components.interfaces.nsISupports)
+                     .wrappedJSObject;
+        var observerService = Components.classes["@mozilla.org/observer-service;1"]
+                              .getService(Components.interfaces.nsIObserverService);
+        observerService.addObserver(this, "caldav-acl-loaded", false);
+        observerService.addObserver(this, "caldav-acl-reset", false);
+        this.mACLMgr = aclMgr;
+    } catch(e) {
+    }
 }
 
 // some shorthand
@@ -620,66 +629,56 @@ calDavCalendar.prototype = {
     },
 
     getProperty: function caldav_getProperty(aName) {
-        switch (aName) {
-        case "organizerId":
-        // Inverse inc. ACL addition
-            try {
-                var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                                       .getService(Components.interfaces.nsISupports)
-                                       .wrappedJSObject;
-                var entry = aclMgr.calendarEntry(this.uri);
-            
+        if (this.mACLMgr) {
+            // Inverse inc. ACL addition
+            switch (aName) {
+            case "organizerId":
+                var entry = this.mACLMgr.calendarEntry(this.uri);
                 if (entry.isCalendarReady() && entry.hasAccessControl) {
                     return "mailto:" + entry.ownerIdentities[0].email;
+                } else if (this.calendarUserAddress) {
+                    return this.calendarUserAddress;
                 }
-                return this.calendarUserAddress;
-            } catch (ex) {
-                // No ACL support.
-            }
-            if (this.calendarUserAddress) {
-                return this.calendarUserAddress;
-            } // else use configured email identity
-        break;
+                break;
 
-        case "organizerCN":
-            // Inverse inc. ACL addition
-            try {
-                var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                                       .getService(Components.interfaces.nsISupports)
-                                       .wrappedJSObject;
-                var entry = aclMgr.calendarEntry(this.uri);
-              
+            case "organizerCN":
+                var entry = this.mACLMgr.calendarEntry(this.uri);
                 if (entry.isCalendarReady()) {
                     return entry.ownerIdentities[0].fullName;
                 }
-            } catch (ex) {
-                // No ACL support.
-            }
-            return null; // xxx todo
-        break;
+                break;
 
-        case "imip.identity":
-            // Inverse inc. ACL addition
-            try {
-                var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                                       .getService(Components.interfaces.nsISupports)
-                                       .wrappedJSObject;
-                var entry = aclMgr.calendarEntry(this.uri);
-              
+            case "imip.identity":
+                var entry = this.mACLMgr.calendarEntry(this.uri);
                 if (entry.isCalendarReady()) {
                     var displayName = entry.ownerIdentities[0].fullName;
                     var email = entry.ownerIdentities[0].email;
                     var newIdentity = Components.classes["@mozilla.org/messenger/identity;1"]
-                                                .createInstance(Components.interfaces.nsIMsgIdentity);
+                                      .createInstance(Components.interfaces.nsIMsgIdentity);
                     newIdentity.identityName = String(displayName + " <" + email + ">");
                     newIdentity.fullName = String(displayName);
                     newIdentity.email = String(email);
                     return newIdentity;
                 }
-            } catch (ex) {
-                // No ACL support.
+                break;
             }
-            break;
+        } else {
+            switch (aName) {
+            case "organizerId":
+                if (this.calendarUserAddress) {
+                    return this.calendarUserAddress;
+                }
+                break;
+
+            case "organizerCN":
+                break;
+
+            case "imip.identity":
+                break;
+            }
+        }
+
+        switch(aName) {
         case "cache.updateTimer":
             return getPrefSafe("calendar.autorefresh.timeout");
         case "itip.transport":
@@ -1130,12 +1129,12 @@ calDavCalendar.prototype = {
     },
 
     safeRefresh: function caldav_safeRefresh(aChangeLogListener) {
-        if (!this.mHasACLLoaded) {
+        if (!this.mHasACLLoaded && this.mACLMgr) {
+            /* We request the acl manager to load the relevant ACL entries.
+               Whenever a notification is posted, the refresh will start
+               again. */
             this.mACLRefreshData = { changeLogListener: aChangeLogListener };
-            var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                         .getService(Components.interfaces.nsISupports)
-                         .wrappedJSObject;
-            var entry = aclMgr.calendarEntry(this.uri);
+            this.mACLMgr.calendarEntry(this.uri);
             return;
         }
 
@@ -2915,97 +2914,80 @@ calDavCalendar.prototype = {
     },
 
     isInvitation: function caldav_isInvitation(aItem) {
-      // Inverse inc. ACL addition
-      var aclMgr = null;
-      try {
-        aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-          .getService(Components.interfaces.nsISupports)
-          .wrappedJSObject;
-      } catch (ex) {
-        // No ACL support - fallback to the old mehtod
-        var id = this.getProperty("organizerId");
-        if (id) {
+        if (this.mACLMgr) {
+            // Inverse inc. ACL addition
+            var entry = this.mACLMgr.calendarEntry(this.uri);
             var org = aItem.organizer;
-            if (!org || (org.id.toLowerCase() == id.toLowerCase())) {
+      
+            if (!org) {
+                // HACK
+                // if we don't have an organizer, this is perhaps because it's an exception
+                // to a recurring event. We check the parent item.
+                if (aItem.parentItem) {
+                    org = aItem.parentItem.organizer;
+                    if (!org) return false;
+                }
+                else
+                    return false;
+            }
+      
+            // If our server does not support ACLs, we rollback to the previous method
+            // of checking if it's an invitation (code from calProviderBase.js)
+            if (!entry.hasAccessControl) {
+                var id = this.getProperty("organizerId");
+                if (id) {
+                    if (!org || (org.id.toLowerCase() == id.toLowerCase())) {
+                        return false;
+                    }
+                    return (aItem.getAttendeeById(id) != null);
+                }
                 return false;
             }
-            return (aItem.getAttendeeById(id) != null);
-        }
-        return false;
-      }
-      
-      var entry = aclMgr.calendarEntry(this.uri);
-      var org = aItem.organizer;
-      
-      if (!org) {
-        // HACK
-        // if we don't have an organizer, this is perhaps because it's an exception
-        // to a recurring event. We check the parent item.
-        if (aItem.parentItem) {
-          org = aItem.parentItem.organizer;
-          if (!org) return false;
-        }
-        else
-          return false;
-      }
-      
-      // If our server does not support ACLs, we rollback to the previous method
-      // of checking if it's an invitation (code from calProviderBase.js)
-      if (!entry.hasAccessControl)
-        {
-          var id = this.getProperty("organizerId");
-          if (id) {
 
-            if (!org || (org.id.toLowerCase() == id.toLowerCase())) {
-                return false;
+            // We check if :
+            // - the organizer of the event is NOT within the owner's identities of this calendar
+            // - if the one of the owner's identities of this calendar is in the attendees
+            if (entry.isCalendarReady()) {
+                var identity;
+                for (var i = 0; i < entry.ownerIdentities.length; i++) {
+                    identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
+                    if (org.id.toLowerCase() == identity)
+                        return false;
+                    
+                    if (aItem.getAttendeeById(identity) != null)
+                        return true;
+                }
             }
-            return (aItem.getAttendeeById(id) != null);
-          }
-          return false;
-        }
-
-      // We check if :
-      // - the organizer of the event is NOT within the owner's identities of this calendar
-      // - if the one of the owner's identities of this calendar is in the attendees
-      if (entry.isCalendarReady()) {
-        var identity;
-        for (var i = 0; i < entry.ownerIdentities.length; i++) {
-          identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
-          if (org.id.toLowerCase() == identity)
+            
             return false;
-          
-          if (aItem.getAttendeeById(identity) != null)
-            return true;
+        } else {
+            // No ACL support - fallback to the old mehtod
+            var id = this.getProperty("organizerId");
+            if (id) {
+                var org = aItem.organizer;
+                if (!org || (org.id.toLowerCase() == id.toLowerCase())) {
+                    return false;
+                }
+                return (aItem.getAttendeeById(id) != null);
+            }
+            return false;
         }
-      }
-
-      return false;
     },
 
     getInvitedAttendee: function caldav_getInvitedAttendee(aItem) {
       var id = this.getProperty("organizerId");
       var attendee = (id ? aItem.getAttendeeById(id) : null);
 
-      if (!attendee) {
-        try {
-          // Inverse inc. ACL addition
-          var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-            .getService(Components.interfaces.nsISupports)
-            .wrappedJSObject;
-          
-          var entry = aclMgr.calendarEntry(this.uri);
+      if (!attendee && this.mACLMgr) {
+          var entry = this.mACLMgr.calendarEntry(this.uri);
           
           if (entry.isCalendarReady()) {
-            var identity;
-            for (var i = 0; i < entry.ownerIdentities.length; i++) {
-              identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
-              attendee = aItem.getAttendeeById(identity);
-              if (attendee) return attendee;
-            }
+              var identity;
+              for (var i = 0; i < entry.ownerIdentities.length; i++) {
+                  identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
+                  attendee = aItem.getAttendeeById(identity);
+              }
           }
-        } catch (ex) {
-          // No ACL support.
-        }
       }
 
       return attendee;
@@ -3014,17 +2996,26 @@ calDavCalendar.prototype = {
     observe: function(aSubject, aTopic, aData) {
         // Inverse inc. ACL addition
         if (this.uri.spec == aData) {
+            if (!this.mHasACLLoaded) {
+                this.mHasACLLoaded = true;
+            }
             if (aTopic == "caldav-acl-loaded") {
-                if (!this.mHasACLLoaded) {
-                    this.mHasACLLoaded = true;
+                var entry = this.mACLMgr.calendarEntry(this.uri);
+                if (!entry.hasAccessControl) {
+                    LOG("[caldav] server has no access control\n");
+                    this.readOnly = false;
                 }
             } else if (aTopic == "caldav-acl-reset"
                        && this.mACLRefreshData) {
                 /* An error occured during the refresh of ACL. Since it may be
                    due to the lack of support for ACLS, we go on with the
                    refresh.*/
+                LOG("[caldav] calendar " + this.id + " '"
+                    + this.calendarUri.spec
+                    + "' does not support ACL");
             }
             if (this.mACLRefreshData) {
+                LOG("[caldav] calendar " + this.id + " proceed with refresh");
                 this.safeRefresh(this.mACLRefreshData.changeLogListener);
                 delete this.mACLRefreshData;
             }
@@ -3040,15 +3031,8 @@ calDavCalendar.prototype = {
       this.checkDavResourceType(aChangeLogListener);
       
       // try to reread the ACLs
-      try {
-        // Inverse inc. ACL addition
-        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-          .getService(Components.interfaces.nsISupports)
-          .wrappedJSObject;
-        
-        aclMgr.refresh(this.uri);
-      } catch (ex) {
-        // No ACL support
+      if (this.mACLMgr) {
+          this.mACLMgr.refresh(this.uri);
       }
     }
 };

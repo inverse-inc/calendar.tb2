@@ -6,6 +6,9 @@
 	Also, we don't need to test for the presence of the
 	changeLogListener in the mACLRefreshData ivar, only for the ivar
 	itself.
+	The acl manager is only instantiated once, we can thus use it later
+	as indicator to whether it is available or not. We also allow
+	write access to calendars without ACL support.
 
 	* src/calendar/providers/composite/calCompositeCalendar.js
 	(getItems): instead of testing each calendar to see whether it's
