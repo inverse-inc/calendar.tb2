@@ -1,5 +1,12 @@
 2009-07-08  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js: webdav sync handler: we
+	trigger the "endBatch" event BEFORE the finalization of the
+	update to avoid locking problems in the cache database.
+	Also, we don't need to test for the presence of the
+	changeLogListener in the mACLRefreshData ivar, only for the ivar
+	itself.
+
 	* src/calendar/providers/composite/calCompositeCalendar.js
 	(getItems): instead of testing each calendar to see whether it's
 	ready, we only take the "readyCalendars" into account. This

@@ -177,6 +177,9 @@ cdWebDAVSyncResponseHandler.prototype = {
     endDocument: function endDocument() {
         LOG("[CalDAV] websync - stop: " + (new Date()).getTime());
         if (this.aRefreshEvent.unhandledErrors) {
+            if (this.calendar.isCached) {
+                this.calendar.superCalendar.endBatch();
+            }
             LOG("[CalDAV] websync - processing unhandled error "
                 + this.aRefreshEvent.unhandledErrors);
             LOG("  reverting ctag to " + this.calendar.mOldCtag);
@@ -193,6 +196,9 @@ cdWebDAVSyncResponseHandler.prototype = {
             if (this.syncMode == "reset") {
                 this.deleteUnreportedItems();
             }
+            if (this.calendar.isCached) {
+                this.calendar.superCalendar.endBatch();
+            }
             LOG("[CalDAV] websync - processed responses: " + this.count);
             LOG("[CalDAV] websync - storing new token " + this.newSyncToken);
             this.calendar.mWebdavSyncToken = this.newSyncToken;
@@ -200,9 +206,6 @@ cdWebDAVSyncResponseHandler.prototype = {
                                                       this.newSyncToken);
 
             this.calendar.finalizeUpdatedItems(this.aChangeLogListener);
-        }
-        if (this.calendar.isCached) {
-            this.calendar.superCalendar.endBatch();
         }
     },
 
@@ -2413,11 +2416,11 @@ calDavCalendar.prototype = {
             this.mCheckedServerInfo = true;
 
             if (this.isCached) {
-              this.safeRefresh(aChangeLogListener);
-	    } else {
-              this.refresh();
-	    }
-	} else {
+                this.safeRefresh(aChangeLogListener);
+            } else {
+                this.refresh();
+            }
+        } else {
             this.reportDavError(aError);
             if (this.isCached && aChangeLogListener) {
                 aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
@@ -3011,7 +3014,6 @@ calDavCalendar.prototype = {
     observe: function(aSubject, aTopic, aData) {
         // Inverse inc. ACL addition
         if (this.uri.spec == aData) {
-            LOG("[caldav] received acl notification: " + aTopic);
             if (aTopic == "caldav-acl-loaded") {
                 if (!this.mHasACLLoaded) {
                     this.mHasACLLoaded = true;
@@ -3022,8 +3024,7 @@ calDavCalendar.prototype = {
                    due to the lack of support for ACLS, we go on with the
                    refresh.*/
             }
-            if (this.mACLRefreshData
-                && this.mACLRefreshData.changeLogListener) {
+            if (this.mACLRefreshData) {
                 this.safeRefresh(this.mACLRefreshData.changeLogListener);
                 delete this.mACLRefreshData;
             }
