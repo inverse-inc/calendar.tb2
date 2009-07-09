@@ -634,7 +634,7 @@ calDavCalendar.prototype = {
             switch (aName) {
             case "organizerId":
                 var entry = this.mACLMgr.calendarEntry(this.uri);
-                if (entry.isCalendarReady() && entry.hasAccessControl) {
+                if (entry.isCalendarReady() && entry.hasAccessControl && entry.ownerIdentities) {
                     return "mailto:" + entry.ownerIdentities[0].email;
                 } else if (this.calendarUserAddress) {
                     return this.calendarUserAddress;
@@ -643,14 +643,14 @@ calDavCalendar.prototype = {
 
             case "organizerCN":
                 var entry = this.mACLMgr.calendarEntry(this.uri);
-                if (entry.isCalendarReady()) {
+                if (entry.isCalendarReady() && entry.ownerIdentities) {
                     return entry.ownerIdentities[0].fullName;
                 }
                 break;
 
             case "imip.identity":
                 var entry = this.mACLMgr.calendarEntry(this.uri);
-                if (entry.isCalendarReady()) {
+                if (entry.isCalendarReady() && entry.ownerIdentities) {
                     var displayName = entry.ownerIdentities[0].fullName;
                     var email = entry.ownerIdentities[0].email;
                     var newIdentity = Components.classes["@mozilla.org/messenger/identity;1"]
