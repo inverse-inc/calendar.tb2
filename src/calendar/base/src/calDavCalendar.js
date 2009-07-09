@@ -1196,10 +1196,8 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on checking ctag for calendar " +
                      thisCalendar.name + "\n");
-                if (thisCalendar.isCached && aChangeLogListener) {
-                    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
-                                                Components.results.NS_ERROR_FAILURE);
-                }
+                thisCalendar.completeCheckServerInfo(aChangeLogListener,
+                                                     Components.results.NS_ERROR_FAILURE);
                 return;
             }
 
@@ -1218,10 +1216,8 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 LOG("CalDAV: Failed to get ctag from server");
                 // See https://bugzilla.mozilla.org/show_bug.cgi?id=463960#c4
-                if (thisCalendar.isCached && aChangeLogListener) {
-                    aChangeLogListener.onResult({ status: Components.results.NS_OK },
-                                                Components.results.NS_OK);
-                }
+                thisCalendar.completeCheckServerInfo(aChangeLogListener,
+                                                     Components.results.NS_ERROR_FAILURE);
                 return;
             }
 
@@ -1372,6 +1368,8 @@ calDavCalendar.prototype = {
                     LOG("CalDAV: Error without status on webdav sync-query"
                          + " for calendar " + thisCalendar.name);
                     LOG("  reverting ctag to " + thisCalendar.mOldCtag);
+                    thisCalendar.disabled = true;
+                    thisCalendar.readOnly = true;
                     thisCalendar.mCtag = thisCalendar.mOldCtag;
                     thisCalendar.mTargetCalendar.setMetaData("ctag",
                                                              thisCalendar.mOldCtag);
@@ -1474,6 +1472,8 @@ calDavCalendar.prototype = {
                 thisCalendar.mCtag = thisCalendar.mOldCtag;
                 thisCalendar.mTargetCalendar.setMetaData("ctag",
                                                          thisCalendar.mOldCtag);
+                thisCalendar.disabled = true;
+                thisCalendar.readOnly = true;
                 if (thisCalendar.isCached && aChangeLogListener) {
                     aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
                                                 Components.results.NS_ERROR_FAILURE);
@@ -1746,6 +1746,8 @@ calDavCalendar.prototype = {
                 LOG("reverting ctag to " + thisCalendar.mOldCtag);
                 thisCalendar.mCtag = thisCalendar.mOldCtag;
                 thisCalendar.mTargetCalendar.setMetaData("ctag", thisCalendar.mOldCtag);
+                thisCalendar.disabled = true;
+                thisCalendar.readOnly = true;
                 if (thisCalendar.isCached && aChangeLogListener) {
                     aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
                                                 Components.results.NS_ERROR_FAILURE);
@@ -1917,10 +1919,8 @@ calDavCalendar.prototype = {
             } catch (ex) {
                 dump("CalDAV: Error without status on initial PROPFIND for calendar " +
                     thisCalendar.name);
-                if (thisCalendar.isCached && aChangeLogListener) {
-                    aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
-                                                Components.results.NS_ERROR_FAILURE);
-                }
+                thisCalendar.completeCheckServerInfo(aChangeLogListener,
+                                                     Components.results.NS_ERROR_FAILURE);
                 return;
             }
             var wwwauth;
@@ -2410,6 +2410,7 @@ calDavCalendar.prototype = {
     completeCheckServerInfo: function caldav_completeCheckServerInfo(aChangeLogListener, aError) {
 //         dump("in completeCheckServerInfo\n");
         if (Components.isSuccessCode(aError)) {
+            
             // "undefined" is a successcode, so all is good
 //             dump("setting mCheckedServerInfo to true\n");
             this.mCheckedServerInfo = true;
@@ -2423,7 +2424,7 @@ calDavCalendar.prototype = {
             this.reportDavError(aError);
             if (this.isCached && aChangeLogListener) {
                 aChangeLogListener.onResult({ status: Components.results.NS_ERROR_FAILURE },
-                                            Components.results.NS_ERROR_FAILURE);
+                                            aError);
             }
         }
     },
@@ -2452,14 +2453,15 @@ calDavCalendar.prototype = {
         var message = mapError[aErrNo];
         var modificationError = mapModification[aErrNo];
 
+        this.readOnly = true;
+        this.disabled = true;
+
         if (!message) {
             // If we don't have a message for this, then its not important
             // enough to notify.
             return;
         }
 
-        this.readOnly = true;
-        this.disabled = true;
         this.notifyError(aErrNo,
                          calGetString("calendar", message , [this.mUri.spec]));
         this.notifyError(modificationError
@@ -3005,14 +3007,13 @@ calDavCalendar.prototype = {
                     LOG("[caldav] server has no access control\n");
                     this.readOnly = false;
                 }
-            } else if (aTopic == "caldav-acl-reset"
-                       && this.mACLRefreshData) {
+            } else if (aTopic == "caldav-acl-reset") {
                 /* An error occured during the refresh of ACL. Since it may be
                    due to the lack of support for ACLS, we go on with the
                    refresh.*/
                 LOG("[caldav] calendar " + this.id + " '"
                     + this.calendarUri.spec
-                    + "' does not support ACL");
+                    + "' does not support ACL (or server failure occured)");
             }
             if (this.mACLRefreshData) {
                 LOG("[caldav] calendar " + this.id + " proceed with refresh");
@@ -3026,6 +3027,8 @@ calDavCalendar.prototype = {
     reenable: function caldav_reenable(aChangeLogListener) {
       // we reset our calendar status
       this.setProperty("currentStatus", Components.results.NS_OK);
+      this.readOnly = false;
+      this.disabled = false;
       
       // check if maybe our calendar has become available
       this.checkDavResourceType(aChangeLogListener);
