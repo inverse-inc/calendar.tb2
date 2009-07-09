@@ -1,5 +1,10 @@
 2009-07-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js: it may happen that ACL
+	are loaded before the refresh starts. In that case, we used to
+	wait indefinitely for the a notification that has already passed.
+	This is now fixed.
+
 	* src/calendar/base/content/calendar-task-editing.js: check the
 	value of getSelectedCalendar() to avoid exceptions on null values.
 

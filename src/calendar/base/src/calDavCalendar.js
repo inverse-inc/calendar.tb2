@@ -1129,13 +1129,23 @@ calDavCalendar.prototype = {
     },
 
     safeRefresh: function caldav_safeRefresh(aChangeLogListener) {
-        if (!this.mHasACLLoaded && this.mACLMgr) {
-            /* We request the acl manager to load the relevant ACL entries.
-               Whenever a notification is posted, the refresh will start
-               again. */
-            this.mACLRefreshData = { changeLogListener: aChangeLogListener };
-            this.mACLMgr.calendarEntry(this.uri);
-            return;
+        if (!this.mHasACLLoaded) {
+            if (this.mACLMgr) {
+                /* We request the acl manager to load the relevant ACL entries.
+                   Whenever a notification is posted, the refresh will start
+                   again. */
+                this.mACLRefreshData = { changeLogListener: aChangeLogListener };
+                var entry = this.mACLMgr.calendarEntry(this.uri);
+                if (entry.isCalendarReady) {
+                    LOG("[caldav] ACL were already initialized for this calendar");
+                    this.mHasACLLoaded = true;
+                }
+                else {
+                    return;
+                }
+            }
+            else
+                this.mHasACLLoaded = true;
         }
 
         this.ensureTargetCalendar();
@@ -2998,9 +3008,7 @@ calDavCalendar.prototype = {
     observe: function(aSubject, aTopic, aData) {
         // Inverse inc. ACL addition
         if (this.uri.spec == aData) {
-            if (!this.mHasACLLoaded) {
-                this.mHasACLLoaded = true;
-            }
+            this.mHasACLLoaded = true;
             if (aTopic == "caldav-acl-loaded") {
                 var entry = this.mACLMgr.calendarEntry(this.uri);
                 if (!entry.hasAccessControl) {
@@ -3016,7 +3024,7 @@ calDavCalendar.prototype = {
                     + "' does not support ACL (or server failure occured)");
             }
             if (this.mACLRefreshData) {
-                LOG("[caldav] calendar " + this.id + " proceed with refresh");
+                LOG("[caldav] calendar " + this.id + ": proceed with refresh");
                 this.safeRefresh(this.mACLRefreshData.changeLogListener);
                 delete this.mACLRefreshData;
             }
