@@ -2,6 +2,8 @@
 
 	* src/calendar/base/content/calendar-ui-utils.js: extracted file
 	for further modification
+	(appendCalendarItems) add a "tooltiptext" to the calendar menu
+	items for large calendar names.
 
 	* src/calendar/base/content/sun-calendar-event-dialog.xul: (new
 	file) assigned "id" field and value to the status bar privacy

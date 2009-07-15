@@ -258,6 +258,7 @@ function appendCalendarItems(aItem, aCalendarMenuParent, aCalendarToUse, aOnComm
              isItemSupported(aItem, calendar))) {
             var menuitem = addMenuItem(aCalendarMenuParent, calendar.name, calendar.name);
             menuitem.calendar = calendar;
+            menuitem.setAttribute("tooltiptext", calendar.name);
             index++;
             if (aOnCommand) {
                 menuitem.setAttribute("oncommand", aOnCommand);
