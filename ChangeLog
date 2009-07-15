@@ -1,5 +1,8 @@
 2009-07-15  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-ui-utils.js: extracted file
+	for further modification
+
 	* src/calendar/base/content/sun-calendar-event-dialog.xul: (new
 	file) assigned "id" field and value to the status bar privacy
 	labels.
