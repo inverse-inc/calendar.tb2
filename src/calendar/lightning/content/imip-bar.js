@@ -378,17 +378,18 @@ function checkCalendarOwningItem(calendar, item, imipMethod) {
         var calEntry = aclMgr.calendarEntry(calendar.uri);
         if (calEntry.hasAccessControl) {
             var realCalendar = calendar.getProperty("cache.uncachedCalendar");
-            if (realCalendar) {
+            if (!realCalendar) {
                 realCalendar = calendar;
             }
             realCalendar = realCalendar.wrappedJSObject;
             var cache = realCalendar.mItemInfoCache;
             var compURL = cache[item.id].location;
             var componentObserver
-                = imipCalDAVComponentACLEntryObserver(calendar, compURL,
-                                                      imipMethod);
+                = new imipCalDAVComponentACLEntryObserver(calendar,
+                                                          compURL,
+                                                          imipMethod);
             var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                .getService(Components.interfaces.nsIObserverService);
+                             .getService(Components.interfaces.nsIObserverService);
             obsService.addObserver(componentObserver,
                                    "caldav-component-acl-loaded", false);
             obsService.addObserver(componentObserver,
