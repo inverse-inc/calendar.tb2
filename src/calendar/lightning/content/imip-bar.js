@@ -372,6 +372,10 @@ imipCalDAVComponentACLEntryObserver.prototype = {
 function checkCalendarOwningItem(calendar, item, imipMethod) {
     var proceed = true;
     if (calendar.type == "caldav") {
+        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                     .getService(Components.interfaces.nsISupports)
+                     .wrappedJSObject;
+        var calEntry = aclMgr.calendarEntry(calendar.uri);
         if (calEntry.hasAccessControl) {
             var realCalendar = calendar.getProperty("cache.uncachedCalendar");
             if (realCalendar) {
