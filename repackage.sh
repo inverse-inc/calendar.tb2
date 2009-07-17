@@ -3,7 +3,7 @@
 # Variables
 BASE=`pwd`
 DATE=`date +%Y%m%d%H`
-VERSION=0.9.5
+VERSION=0.9.6
 
 # Cleanin up the leftovers
 alias cp=cp
