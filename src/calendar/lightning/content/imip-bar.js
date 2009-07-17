@@ -1,3 +1,4 @@
+/* -*- Mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +38,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+/* wsourdeau@inverse.ca - bugs: 
+   - must work without caldav-acl-manager;
+   - handle the case when the caldav calendar containing the item is
+     unavailable
+   - handle the methods != "REQUEST"
+   - we must ignore the calendar containing the item IF the sequence number
+     is too old */
+
 /**
  * This bar lives inside the message window.
  * Its lifetime is the lifetime of the main thunderbird message window.
@@ -44,6 +53,9 @@
 
 var gItipItem;
 var gCalItemsArrayFound = [];
+
+var gIMIPCalendars;
+var gIdentities = null;
 
 const onItipItem = {
     observe: function observe(subject, topic, state) {
@@ -53,38 +65,43 @@ const onItipItem = {
     }
 };
 
-/**
- * Function to get a composite calendar of all registered read-write calendars.
- *
- * @return composite calendar
- */
-function createItipCompositeCalendar() {
-    var compCal = Components.classes["@mozilla.org/calendar/calendar;1?type=composite"]
-                            .createInstance(Components.interfaces.calICompositeCalendar);
-    var aclMgr = null;
-    
-    // Inverse inc. ACL addition
-    try {
-      aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	.getService(Components.interfaces.nsISupports)
-	.wrappedJSObject;
-    } catch (ex) {
-      // No ACL support
-    }
-    getCalendarManager().getCalendars({}).filter(isCalendarWritable).forEach(
-        function(cal) {
 
-	  // We only add calendars for which we are the owner
-	  if (aclMgr && cal.type == "caldav") {
-	    var entry = aclMgr.calendarEntry(cal.uri);
-	    if (entry.isCalendarReady() && entry.userIsOwner())
-	      compCal.addCalendar(cal);
-	  }
-	  else
-	    compCal.addCalendar(cal);
-        });
-    return compCal;
+function idump(X) {
+    dump("[imip-bar] " + X + "\n");
 }
+
+// /**
+//  * Function to get a composite calendar of all registered read-write calendars.
+//  *
+//  * @return composite calendar
+//  */
+// function createItipCompositeCalendar() {
+//     var compCal = Components.classes["@mozilla.org/calendar/calendar;1?type=composite"]
+//                             .createInstance(Components.interfaces.calICompositeCalendar);
+//     var aclMgr = null;
+
+//     // Inverse inc. ACL addition
+//     try {
+//       aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+//                .getService(Components.interfaces.nsISupports)
+//                .wrappedJSObject;
+//     } catch (ex) {
+//       // No ACL support
+//     }
+//     getCalendarManager().getCalendars({}).forEach(function(cal) {
+//             // We only add calendars for which we are the owner
+//             if (aclMgr && cal.type == "caldav") {
+//                 var entry = aclMgr.calendarEntry(cal.uri);
+//                 if (entry.isCalendarReady() && entry.userIsOwner()) {
+//                     compCal.addCalendar(cal);
+//                 }
+//             }
+//             else
+//                 compCal.addCalendar(cal);
+//         });
+
+//     return compCal;
+// }
 
 function checkForItipItem(subject) {
     var itipItem;
@@ -130,13 +147,11 @@ function checkForItipItem(subject) {
 
     // XXX Bug 351742: no S/MIME or spoofing protection yet
     // handleImipSecurity(imipMethod);
-
-    setupBar(imipMethod);
+    setupIMIPCalendars(imipMethod);
 }
 
 window.addEventListener("load", imipOnLoad, true);
 window.addEventListener("unload", imipOnUnload, true);
-
 
 /**
  * Add self to gMessageListeners defined in msgHdrViewOverlay.js
@@ -191,6 +206,256 @@ function onImipEndHeaders() {
     // no-op
 }
 
+function recipientMatchIdentities(identities) {
+    setupMsgIdentities();
+    var matchIdentities = false;
+
+    idump("recipientMatchIdentities");
+
+    for (var i = 0; !matchIdentities && i < gIdentities.Count(); i++) {
+        var testIdentity = gIdentities.GetElementAt(i)
+                           .QueryInterface(Components.interfaces.nsIMsgIdentity);
+        idump("test identity: " + testIdentity.email);
+        for (var j = 0; !matchIdentities && j < identities.length; j++) {
+            idump("  identity: " + identities[j].email);
+            matchIdentities = (identities[j].email == testIdentity.email);
+        }
+    }
+
+    return matchIdentities;
+}
+
+function allUserCalendars() {
+    var allCalendars = [];
+
+    var mgr = getCalendarManager();
+    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                 .getService(Components.interfaces.nsISupports)
+                 .wrappedJSObject;
+    var cals = mgr.getCalendars({}).forEach(function(cal) {
+        if (isCalendarWritable(cal)) {
+            if (cal.type == "caldav") {
+                idump("  uri: " + cal.uri.spec);
+                var entry = aclMgr.calendarEntry(cal.uri);
+                var calIdentities;
+                if (entry.isCalendarReady()) {
+                    calIdentities = entry.ownerIdentities;
+                } else {
+                    calIdentities = [];
+                    var imipIdentity = cal.getProperty["imip.identity"];
+                    if (imipIdentity) {
+                        calIdentities.push(imipIdentity);
+                    }
+                }
+                if (recipientMatchIdentities(calIdentities)) {
+                    allCalendars.push(cal);
+                }
+            } else {
+                idump("non-caldav calendar: " + cal.name);
+                allCalendars.push(cal);
+            }
+        }
+    });
+
+    return allCalendars;
+}
+
+function findItipItemCalendar(calendars) {
+    var foundCalendar = null;
+    var calendarItem = null;
+
+    var onFindItemListener = {
+        found: [],
+        onOperationComplete: function ooc(aCalendar, aStatus, aOperationType, aId, aDetail) {
+        },
+
+        onGetResult: function ogr(aCalendar, aStatus, aItemType, aDetail,
+                                  aCount, aItems) {
+            if (aCount > 0) {
+                foundCalendar = aCalendar;
+                calendarItem = aItems[0];
+            }
+        }
+    };
+
+    var itemList = gItipItem.getItemList({});
+    for (var i = 0; !foundCalendar && i < calendars.length; i++) {
+        calendars[i].getItem(itemList[0].id, onFindItemListener);
+    }
+
+    if (foundCalendar) {
+        return [foundCalendar, calendarItem];
+    } else {
+        return null;
+    }
+}
+
+function imipBarRefreshObserver(calendars, callback, data) {
+    this.callback = callback;
+    this.data = data;
+    this.pendingRefresh = calendars.length;
+
+    this.allCalendars = calendars;
+    this.calendars = {};
+    for each (var cal in calendars) {
+        idump("  added " + cal.uri.spec);
+        this.calendars[cal.uri.spec] = true;
+    }
+}
+
+imipBarRefreshObserver.prototype = {
+    onLoad: function(aCalendar) {
+        var uri = aCalendar.uri.spec;
+        if (this.calendars[uri]) {
+            delete this.calendars[uri];
+            aCalendar.removeObserver(this);
+            this.pendingRefresh--;
+            idump("refresh done on " + aCalendar.name);
+            if (this.pendingRefresh == 0) {
+                this.callback(this.allCalendars, this.data);
+            }
+        }
+    },
+
+    onStartBatch: function() {},
+    onEndBatch: function() {},
+    onAddItem: function(aItem) {},
+    onModifyItem: function(aNewItem, aOldItem) {},
+    onDeleteItem: function(aDeletedItem) {},
+    onError: function(aCalendar, aErrNo, aMessage) {},
+    onPropertyChanged: function(aCalendar, aName, aValue, aOldValue) {},
+    onPropertyDeleting: function(aCalendar, aName) {}
+};
+
+function refreshCalendars(calendars, callback, data) {
+    var refreshObserver = new imipBarRefreshObserver(calendars,
+                                                     callback,
+                                                     data);
+    for each (var cal in calendars) {
+        cal.addObserver(refreshObserver);
+        if (cal.getProperty("requiresNetwork")) {
+            idump("refresh requested on " + cal.name);
+            cal.refresh();
+        } else {
+            idump("refresh not needed for " + cal.name);
+            refreshObserver.onLoad(cal);
+        }
+    }
+}
+
+function imipCalDAVComponentACLEntryObserver(calendar, componentURL,
+                                             imipMethod) {
+    this.calendar = calendar;
+    this.componentURL = componentURL;
+    this.imipMethod = imipMethod;
+}
+
+imipCalDAVComponentACLEntryObserver.prototype = {
+ observe: function(aSubject, aTopic, aData) {
+        if (aData.component && this.componentURL == aData.component) {
+            var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                             .getService(Components.interfaces.nsIObserverService);
+            obsService.removeObserver(this,
+                                      "caldav-component-acl-loaded", false);
+            obsService.removeObserver(this,
+                                      "caldav-component-acl-reset", false);
+            if (aTopic == "caldav-component-acl-loaded") {
+                var entry = aData.entry;
+                if (entry.userCanModify() || entry.userCanRespond()) {
+                    gIMIPCalendars = [this.calendar];
+                }
+            }
+        }
+    }
+};
+
+function checkCalendarOwningItem(calendar, item, imipMethod) {
+    var proceed = true;
+    if (calendar.type == "caldav") {
+        if (calEntry.hasAccessControl) {
+            var realCalendar = calendar.getProperty("cache.uncachedCalendar");
+            if (realCalendar) {
+                realCalendar = calendar;
+            }
+            realCalendar = realCalendar.wrappedJSObject;
+            var cache = realCalendar.mItemInfoCache;
+            var compURL = cache[item.id].location;
+            var componentObserver
+                = imipCalDAVComponentACLEntryObserver(calendar, compURL,
+                                                      imipMethod);
+            var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                .getService(Components.interfaces.nsIObserverService);
+            obsService.addObserver(componentObserver,
+                                   "caldav-component-acl-loaded", false);
+            obsService.addObserver(componentObserver,
+                                   "caldav-component-acl-reset", false);
+            var compEntry = aclMgr.componentEntry(calendar.uri, compURL);
+            if (compEntry.isComponentReady()) {
+                obsService.removeObserver(componentObserver,
+                                          "caldav-component-acl-loaded",
+                                          false);
+                obsService.removeObserver(componentObserver,
+                                          "caldav-component-acl-reset",
+                                          false);
+                if (!(compEntry.userCanModify() || compEntry.userCanRespond())) {
+                    proceed = false;
+                    gIMIPCalendars = [calendar];
+                }
+            } else {
+                proceed = false;
+            }
+        }
+    }
+    if (proceed) {
+        gIMIPCalendars = [calendar];
+        setupBar(imipMethod);
+    }
+}
+
+function refreshItemCalendarCallback(calendars, data) {
+    checkCalendarOwningItem(calendars[0], data.item, data.method);
+}
+
+function refreshAllCalendarsCallback(calendars, imipMethod) {
+    var foundTuple = findItipItemCalendar(calendars);
+    if (foundTuple) {
+        var calendar = foundTuple[0];
+        var item = foundTuple[1];
+        checkCalendarOwningItem(calendar, item, imipMethod);
+    } else {
+        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                     .getService(Components.interfaces.nsISupports)
+                     .wrappedJSObject;
+        var imipCalendars = [];
+        for each (var cal in calendars) {
+            var calEntry = aclMgr.calendarEntry(cal.uri);
+            if (!calEntry.hasAccessControl
+                || calEntry.userCanAddComponents()) {
+                imipCalendars.push(cal);
+            }
+        }
+        gIMIPCalendars = imipCalendars;
+        setupBar(imipMethod);
+    }
+}
+
+function setupIMIPCalendars(imipMethod) {
+    var ready = false;
+
+    var allCalendars = allUserCalendars();
+    var foundTuple = findItipItemCalendar(allCalendars);
+    if (foundTuple) {
+        refreshCalendars([foundTuple[0]],
+                         refreshItemCalendarCallback,
+                         {item: foundTuple[1], method: imipMethod});
+    } else {
+        refreshCalendars(allCalendars,
+                         refreshAllCalendarsCallback, imipMethod);
+    }
+
+    return ready;
+}
+
 function setupBar(imipMethod) {
     // XXX - Bug 348666 - Currently we only do REQUEST requests
     // In the future this function will set up the proper actions
@@ -198,6 +463,7 @@ function setupBar(imipMethod) {
     var imipBar = document.getElementById("imip-bar");
     imipBar.setAttribute("collapsed", "false");
 
+    idump("setupBar. method = " + imipMethod.toUpperCase());
     if (imipMethod.toUpperCase() == "REQUEST") {
         // Check if this is an update or initial request and display things accordingly
         processRequestMsg();
@@ -227,7 +493,7 @@ function processCancelMsg() {
     var imipBar = document.getElementById("imip-bar");
     imipBar.setAttribute("label", ltnGetString("lightning", "imipBarCancelText"));
 
-    var compCal = createItipCompositeCalendar();
+//     var compCal = createItipCompositeCalendar();
     // Per iTIP spec (new Draft 4), multiple items in an iTIP message MUST have
     // same ID, this simplifies our searching, we can just look for Item[0].id
     var itemList = gItipItem.getItemList({});
@@ -251,9 +517,10 @@ function processCancelMsg() {
 
 function processReplyMsg() {
     var imipBar = document.getElementById("imip-bar");
-    imipBar.setAttribute("label", ltnGetString("lightning", "imipBarReplyText"));
+    imipBar.setAttribute("label",
+                         ltnGetString("lightning", "imipBarReplyText"));
 
-    var compCal = createItipCompositeCalendar();
+//     var compCal = createItipCompositeCalendar();
     // Per iTIP spec (new Draft 4), multiple items in an iTIP message MUST have
     // same ID, this simplifies our searching, we can just look for Item[0].id
     var itemList = gItipItem.getItemList({});
@@ -281,6 +548,8 @@ function processReplyMsg() {
         }
     };
     gCalItemsArrayFound = [];
+
+    idump("itemList.length: " + itemList.length);
     // Search for item:
     compCal.getItem(itemList[0].id, onFindItemListener);
 }
@@ -354,6 +623,23 @@ function getMsgImipMethod() {
     return messenger.msgHdrFromURI(GetLoadedMessage()).getStringProperty("imip_method");
 }
 
+function setupMsgIdentities() {
+    if (!gIdentities) {
+        var acctmgr = Components.classes["@mozilla.org/messenger/account-manager;1"]
+                      .getService(Components.interfaces.nsIMsgAccountManager);
+        var msgURI = GetLoadedMessage();
+        var msgHdr = messenger.msgHdrFromURI(msgURI);
+        if (msgHdr.accountKey) {
+            // First, check if the message has an account key. If so, we can use the
+            // account identities to find the correct recipient
+            gIdentities = acctmgr.getAccount(msgHdr.accountKey).identities;
+        } else {
+            // Without an account key, we have to revert back to using the server
+            gIdentities = acctmgr.GetIdentitiesForServer(msgHdr.folder.server);
+        }
+    }
+}
+
 function getMsgRecipient() {
     var imipRecipient = "";
     var msgURI = GetLoadedMessage();
@@ -362,20 +648,9 @@ function getMsgRecipient() {
         return null;
     }
 
-    var acctmgr = Components.classes["@mozilla.org/messenger/account-manager;1"]
-                            .getService(Components.interfaces.nsIMsgAccountManager);
-    var identities;
-    if (msgHdr.accountKey) {
-        // First, check if the message has an account key. If so, we can use the
-        // account identities to find the correct recipient
-        identities = acctmgr.getAccount(msgHdr.accountKey).identities;
-    } else {
-        // Without an account key, we have to revert back to using the server
-        identities = acctmgr.GetIdentitiesForServer(msgHdr.folder.server);
-    }
-
+    setupMsgIdentities();
     var emailMap = {};
-    if (identities.Count() == 0) {
+    if (gIdentities.Count() == 0) {
         // If we were not able to retrieve identities above, then we have no
         // choice but to revert to the default identity
         var acctMgr = Components.classes["@mozilla.org/messenger/account-manager;1"]
@@ -397,9 +672,9 @@ function getMsgRecipient() {
         emailMap[identity.email.toLowerCase()] = true;
     } else {
         // Build a map of usable email addresses
-        for (var i = 0; i < identities.Count(); i++) {
-            var identity = identities.GetElementAt(i)
-                                     .QueryInterface(Components.interfaces.nsIMsgIdentity);
+        for (var i = 0; i < gIdentities.Count(); i++) {
+            var identity = gIdentities.GetElementAt(i)
+                           .QueryInterface(Components.interfaces.nsIMsgIdentity);
             emailMap[identity.email.toLowerCase()] = true;
         }
     }
@@ -431,46 +706,49 @@ function getMsgRecipient() {
     return null;
 }
 
-/**
- * Call the calendar picker
- */
+// /**
+//  * Call the calendar picker
+//  */
+// function getTargetCalendar() {
+//     function filterCalendars(c) {
+//         // Only consider calendars that are writable and have a transport.
+//         return isCalendarWritable(c) &&
+//                c.getProperty("itip.transport") != null;
+//     }
+
+//     var calendarToReturn;
+//     var calendars = getCalendarManager().getCalendars({}).filter(filterCalendars);
+//     // XXXNeed an error message if there is no writable calendar
+
+//     // try to further limit down the list to those calendars that are configured to a matching attendee;
+//     var item = gItipItem.getItemList({})[0];
+//     var matchingCals = calendars.filter(
+//         function(cal) {
+//             var identity = cal.getProperty("imip.identity");
+//             if (identity !== null) {
+//                 identity = identity.QueryInterface(Components.interfaces.nsIMsgIdentity).email;
+//                 return ((gItipItem.identity && (identity.toLowerCase() == gItipItem.identity.toLowerCase())) ||
+//                         item.getAttendeeById("mailto:" + identity));
+//             }
+//             return false;
+//         });
+//     // if there's none, we will show the whole list of calendars:
+//     if (matchingCals.length > 0) {
+//         calendars = matchingCals;
+//     }
+
 function getTargetCalendar() {
-    function filterCalendars(c) {
-        // Only consider calendars that are writable and have a transport.
-        return isCalendarWritable(c) &&
-               c.getProperty("itip.transport") != null;
-    }
+    var calendarToReturn = null;
 
-    var calendarToReturn;
-    var calendars = getCalendarManager().getCalendars({}).filter(filterCalendars);
-    // XXXNeed an error message if there is no writable calendar
-
-    // try to further limit down the list to those calendars that are configured to a matching attendee;
-    var item = gItipItem.getItemList({})[0];
-    var matchingCals = calendars.filter(
-        function(cal) {
-            var identity = cal.getProperty("imip.identity");
-            if (identity !== null) {
-                identity = identity.QueryInterface(Components.interfaces.nsIMsgIdentity).email;
-                return ((gItipItem.identity && (identity.toLowerCase() == gItipItem.identity.toLowerCase())) ||
-                        item.getAttendeeById("mailto:" + identity));
-            }
-            return false;
-        });
-    // if there's none, we will show the whole list of calendars:
-    if (matchingCals.length > 0) {
-        calendars = matchingCals;
-    }
-
-    if (calendars.length == 1) {
+    if (gIMIPCalendars.length == 1) {
         // There's only one calendar, so it's silly to ask what calendar
         // the user wants to import into.
-        calendarToReturn = calendars[0];
+        calendarToReturn = gIMIPCalendars[0];
     } else {
         // Ask what calendar to import into
         var args = new Object();
         var aCal;
-        args.calendars = calendars;
+        args.gIMIPCalendars = gIMIPCalendars;
         args.onOk = function selectCalendar(aCal) { calendarToReturn = aCal; };
         args.promptText = calGetString("calendar", "importPrompt");
         openDialog("chrome://calendar/content/chooseCalendarDialog.xul",
@@ -484,6 +762,7 @@ function getTargetCalendar() {
             gItipItem.identity = identity.QueryInterface(Components.interfaces.nsIMsgIdentity).email;
         }
     }
+
     return calendarToReturn;
 }
 
@@ -637,7 +916,8 @@ function processRequestMsg() {
     // them all. :-(
     var existingItemSequence = -1;
 
-    var compCal = createItipCompositeCalendar();
+    idump("processRequestMsg");
+//     var compCal = createItipCompositeCalendar();
 
     // Per iTIP spec (new Draft 4), multiple items in an iTIP message MUST have
     // same ID, this simplifies our searching, we can just look for Item[0].id
@@ -654,16 +934,14 @@ function processRequestMsg() {
     var onFindItemListener = {
         onOperationComplete:
         function ooc(aCalendar, aStatus, aOperationType, aId, aDetail) {
-            if (!this.processedId){
-                // Then the ID doesn't exist, don't call us twice
-                this.processedId = true;
-                displayRequestMethod(newSequence, -1);
-            }
+            idump("onOperationComplete");
         },
 
         onGetResult:
         function ogr(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
+            idump("onGetResult");
             if (aCount && aItems[0] && !this.processedId) {
+                idump("  blabla");
                 this.processedId = true;
                 var existingSequence = aItems[0].getProperty("SEQUENCE");
 
@@ -681,12 +959,24 @@ function processRequestMsg() {
             }
         }
     };
-    // Search
-    compCal.getItem(itemList[0].id, onFindItemListener);
+
+    if (gIMIPCalendars.length > 0) {
+        // Search
+        for each (var cal in gIMIPCalendars) {
+            cal.getItem(itemList[0].id, onFindItemListener);
+        }
+        if (!onFindItemListener.processedId) {
+            displayRequestMethod(newSequence, -1);
+        }
+    } else {
+        displayRequestMethod(0, 1);
+    }
 }
 
 function displayRequestMethod(newItemSequence, existingItemSequence) {
-
+    idump("displayRequestMethod (" + newItemSequence
+          + ", " + existingItemSequence + ")");
+    idump(STACK(50));
     // Three states here:
     // 0 = the new event does not exist on the calendar (therefore, this is an add)
     //     (Item does not exist yet: existingItemSequence == -1)
@@ -704,6 +994,7 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
         updateValue = 2;
     }
 
+    idump("updateValue: " + updateValue );
     // now display the proper message for this update type:
 
     var imipBar = document.getElementById("imip-bar");
