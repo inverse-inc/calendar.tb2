@@ -1,5 +1,9 @@
 2009-07-17  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calCachedCalendar.js: commented out the
+	update timer for cached calendars, since the timer for the views
+	already achieves the same effect.
+
 	* src/calendar/lightning/content/imip-bar.js: make better use of
 	the CalDAV acls. Ensure the calendars are updated before searching
 	the related event.

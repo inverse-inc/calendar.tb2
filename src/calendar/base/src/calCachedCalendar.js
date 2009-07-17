@@ -110,26 +110,26 @@ function calCachedCalendar(uncachedCalendar) {
     this.mUncachedCalendar = uncachedCalendar;
     this.setupCachedCalendar();
 
-    if (this.supportsChangeLog) {
-        var updateTimer = this.getProperty("cache.updateTimer");
-        if (updateTimer === null) {
-            updateTimer = 4; // override for changelog based providers
-        }
-        var timerCallback = {
-            mCalendar: this,
-            notify: function(timer) {
-                LOG("[calCachedCalendar] replay timer");
-                if (!this.mCalendar.getProperty("disabled")) {
-                    this.mCalendar.refresh();
-                }
-            }
-        };
-        this.mReplayTimer = Components.classes["@mozilla.org/timer;1"]
-                                      .createInstance(Components.interfaces.nsITimer);
-        this.mReplayTimer.initWithCallback(timerCallback,
-                                           updateTimer * 60 * 1000,
-                                           Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-    }
+//     if (this.supportsChangeLog) {
+//         var updateTimer = this.getProperty("cache.updateTimer");
+//         if (updateTimer === null) {
+//             updateTimer = 4; // override for changelog based providers
+//         }
+//         var timerCallback = {
+//             mCalendar: this,
+//             notify: function(timer) {
+//                 LOG("[calCachedCalendar] replay timer");
+//                 if (!this.mCalendar.getProperty("disabled")) {
+//                     this.mCalendar.refresh();
+//                 }
+//             }
+//         };
+//         this.mReplayTimer = Components.classes["@mozilla.org/timer;1"]
+//                                       .createInstance(Components.interfaces.nsITimer);
+//         this.mReplayTimer.initWithCallback(timerCallback,
+//                                            updateTimer * 60 * 1000,
+//                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+//     }
 
     if (!this.getProperty("disabled")) {
         // Take care of the inital synchronization
@@ -155,13 +155,13 @@ calCachedCalendar.prototype = {
     mUncachedCalendar: null,
     mObservers: null,
     mSuperCalendar: null,
-    mReplayTimer: null,
+//     mReplayTimer: null,
 
     onCalendarUnregistering: function() {
-        if (this.mReplayTimer) {
-            this.mReplayTimer.cancel();
-            this.mReplayTimer = null;
-        }
+//         if (this.mReplayTimer) {
+//             this.mReplayTimer.cancel();
+//             this.mReplayTimer = null;
+//         }
         if (this.mCachedCalendar) {
             this.mCachedCalendar.removeObserver(this.mCachedObserver);
             // Although this doesn't really follow the spec, we know the

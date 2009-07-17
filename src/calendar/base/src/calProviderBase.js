@@ -358,7 +358,7 @@ calProviderBase.prototype = {
                             ret = (ret == "true");
                             break;
                         case "backup-time":
-                        case "cache.updateTimer":
+//                         case "cache.updateTimer":
                             ret = Number(ret);
                             break;
                     }

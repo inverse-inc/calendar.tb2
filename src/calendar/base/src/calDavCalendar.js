@@ -679,8 +679,8 @@ calDavCalendar.prototype = {
         }
 
         switch(aName) {
-        case "cache.updateTimer":
-            return getPrefSafe("calendar.autorefresh.timeout");
+//         case "cache.updateTimer":
+//             return getPrefSafe("calendar.autorefresh.timeout");
         case "itip.transport":
             if (this.hasAutoScheduling) {
                 return null;
@@ -1649,7 +1649,7 @@ calDavCalendar.prototype = {
             // TODO As soon as we have activity manager integration,
             // this should be replace with logic to notify that a
             // certain event failed.
-            LOG("Failed to parse item: " + response.toXMLString());
+            LOG("Failed to parse item: /" + calData + "/\n" + e);
             return;
         }
 
