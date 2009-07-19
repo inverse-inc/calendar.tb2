@@ -449,6 +449,9 @@ function refreshAllCalendarsCallback(calendars, imipMethod) {
         var imipCalendars = [];
         for each (var cal in calendars) {
             var calEntry = aclMgr.calendarEntry(cal.uri);
+//             idump("acl entry: " + cal.uri.spec);
+//             idump("  hasAccessControl: " + calEntry.hasAccessControl);
+//             idump("  canAddComponents: " + calEntry.userCanAddComponents());
             if (!calEntry.hasAccessControl
                 || calEntry.userCanAddComponents()) {
                 imipCalendars.push(cal);
@@ -780,7 +783,7 @@ function getTargetCalendar() {
         // Ask what calendar to import into
         var args = new Object();
         var aCal;
-        args.gIMIPCalendars = gIMIPCalendars;
+        args.calendars = gIMIPCalendars;
         args.onOk = function selectCalendar(aCal) { calendarToReturn = aCal; };
         args.promptText = calGetString("calendar", "importPrompt");
         openDialog("chrome://calendar/content/chooseCalendarDialog.xul",
