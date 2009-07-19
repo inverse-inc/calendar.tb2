@@ -147,6 +147,13 @@ function checkForItipItem(subject) {
 
     // XXX Bug 351742: no S/MIME or spoofing protection yet
     // handleImipSecurity(imipMethod);
+    var imipBar = document.getElementById("imip-bar");
+    imipBar.setAttribute("collapsed", "false");
+    imipBar.setAttribute("label", "");
+
+    var imipSpinner = document.getElementById("imip-spinner");
+    showElement(imipSpinner);
+
     setupIMIPCalendars(imipMethod);
 }
 
@@ -210,14 +217,14 @@ function recipientMatchIdentities(identities) {
     setupMsgIdentities();
     var matchIdentities = false;
 
-    idump("recipientMatchIdentities");
+//     idump("recipientMatchIdentities");
 
     for (var i = 0; !matchIdentities && i < gIdentities.Count(); i++) {
         var testIdentity = gIdentities.GetElementAt(i)
                            .QueryInterface(Components.interfaces.nsIMsgIdentity);
-        idump("test identity: " + testIdentity.email);
+//         idump("test identity: " + testIdentity.email);
         for (var j = 0; !matchIdentities && j < identities.length; j++) {
-            idump("  identity: " + identities[j].email);
+//             idump("  identity: " + identities[j].email);
             matchIdentities = (identities[j].email == testIdentity.email);
         }
     }
@@ -235,7 +242,7 @@ function allUserCalendars() {
     var cals = mgr.getCalendars({}).forEach(function(cal) {
         if (isCalendarWritable(cal)) {
             if (cal.type == "caldav") {
-                idump("  uri: " + cal.uri.spec);
+//                 idump("  uri: " + cal.uri.spec);
                 var entry = aclMgr.calendarEntry(cal.uri);
                 var calIdentities;
                 if (entry.isCalendarReady()) {
@@ -251,7 +258,7 @@ function allUserCalendars() {
                     allCalendars.push(cal);
                 }
             } else {
-                idump("non-caldav calendar: " + cal.name);
+//                 idump("non-caldav calendar: " + cal.name);
                 allCalendars.push(cal);
             }
         }
@@ -291,27 +298,32 @@ function findItipItemCalendar(calendars) {
 }
 
 function imipBarRefreshObserver(calendars, callback, data) {
+//     idump("imipBarRefreshObserver");
     this.callback = callback;
     this.data = data;
     this.pendingRefresh = calendars.length;
 
+//     idump("  count: " + calendars.length);
+
     this.allCalendars = calendars;
     this.calendars = {};
     for each (var cal in calendars) {
-        idump("  added " + cal.uri.spec);
+//         idump("  added " + cal.uri.spec);
         this.calendars[cal.uri.spec] = true;
     }
 }
 
 imipBarRefreshObserver.prototype = {
     onLoad: function(aCalendar) {
+//         idump("imipBarRefreshObserver: onLoad for " + aCalendar.name);
         var uri = aCalendar.uri.spec;
         if (this.calendars[uri]) {
             delete this.calendars[uri];
             aCalendar.removeObserver(this);
             this.pendingRefresh--;
-            idump("refresh done on " + aCalendar.name);
+//             idump("  refresh done on " + aCalendar.name);
             if (this.pendingRefresh == 0) {
+//                 idump("  all refresh done");
                 this.callback(this.allCalendars, this.data);
             }
         }
@@ -333,11 +345,11 @@ function refreshCalendars(calendars, callback, data) {
                                                      data);
     for each (var cal in calendars) {
         cal.addObserver(refreshObserver);
-        if (cal.getProperty("requiresNetwork")) {
-            idump("refresh requested on " + cal.name);
+        if (cal.type == "caldav") {
+//             idump("refresh requested on " + cal.name);
             cal.refresh();
         } else {
-            idump("refresh not needed for " + cal.name);
+//             idump("refresh not needed for " + cal.name);
             refreshObserver.onLoad(cal);
         }
     }
@@ -370,6 +382,7 @@ imipCalDAVComponentACLEntryObserver.prototype = {
 };
 
 function checkCalendarOwningItem(calendar, item, imipMethod) {
+//     idump("checkCalendarOwningItem");
     var proceed = true;
     if (calendar.type == "caldav") {
         var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
@@ -418,10 +431,12 @@ function checkCalendarOwningItem(calendar, item, imipMethod) {
 }
 
 function refreshItemCalendarCallback(calendars, data) {
+//     idump("refreshItemCalendarCallback");
     checkCalendarOwningItem(calendars[0], data.item, data.method);
 }
 
 function refreshAllCalendarsCallback(calendars, imipMethod) {
+//     idump("refreshAllCalendarsCallback");
     var foundTuple = findItipItemCalendar(calendars);
     if (foundTuple) {
         var calendar = foundTuple[0];
@@ -450,10 +465,12 @@ function setupIMIPCalendars(imipMethod) {
     var allCalendars = allUserCalendars();
     var foundTuple = findItipItemCalendar(allCalendars);
     if (foundTuple) {
+//         idump("tuple found");
         refreshCalendars([foundTuple[0]],
                          refreshItemCalendarCallback,
                          {item: foundTuple[1], method: imipMethod});
     } else {
+//         idump("tuple not found");
         refreshCalendars(allCalendars,
                          refreshAllCalendarsCallback, imipMethod);
     }
@@ -467,8 +484,9 @@ function setupBar(imipMethod) {
     // and attributes for the buttons as based on the iMIP Method
     var imipBar = document.getElementById("imip-bar");
     imipBar.setAttribute("collapsed", "false");
+    hideElement("imip-spinner");
 
-    idump("setupBar. method = " + imipMethod.toUpperCase());
+//     idump("setupBar. method = " + imipMethod.toUpperCase());
     if (imipMethod.toUpperCase() == "REQUEST") {
         // Check if this is an update or initial request and display things accordingly
         processRequestMsg();
@@ -504,9 +522,6 @@ function processCancelMsg() {
     var itemList = gItipItem.getItemList({});
     var onFindItemListener = {
         onOperationComplete: function ooc(aCalendar, aStatus, aOperationType, aId, aDetail) {
-            if (gCalItemsArrayFound.length > 0) {
-                displayCancel();
-            }
         },
 
         onGetResult: function ogr(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
@@ -515,9 +530,18 @@ function processCancelMsg() {
             }
         }
     }
+
     gCalItemsArrayFound = [];
-    // Search for item:
-    compCal.getItem(itemList[0].id, onFindItemListener);
+
+    if (gIMIPCalendars.length > 0) {
+        // Search for item:
+        for each (var cal in gIMIPCalendars) {
+            cal.getItem(itemList[0].id, onFindItemListener);
+        }
+        if (gCalItemsArrayFound.length > 0) {
+            displayCancel();
+        }
+    }
 }
 
 function processReplyMsg() {
@@ -538,9 +562,6 @@ function processReplyMsg() {
 
     var onFindItemListener = {
         onOperationComplete: function ooc(aCalendar, aStatus, aOperationType, aId, aDetail) {
-            if (gCalItemsArrayFound.length > 0) {
-                displayReply();
-            }
         },
 
         onGetResult: function ogr(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
@@ -554,9 +575,15 @@ function processReplyMsg() {
     };
     gCalItemsArrayFound = [];
 
-    idump("itemList.length: " + itemList.length);
-    // Search for item:
-    compCal.getItem(itemList[0].id, onFindItemListener);
+    if (gIMIPCalendars.length > 0) {
+        // Search for item:
+        for each (var cal in gIMIPCalendars) {
+            cal.getItem(itemList[0].id, onFindItemListener);
+        }
+        if (gCalItemsArrayFound.length > 0) {
+            displayReply();
+        }
+    }
 }
 
 function displayCancel() {
@@ -921,7 +948,7 @@ function processRequestMsg() {
     // them all. :-(
     var existingItemSequence = -1;
 
-    idump("processRequestMsg");
+//     idump("processRequestMsg");
 //     var compCal = createItipCompositeCalendar();
 
     // Per iTIP spec (new Draft 4), multiple items in an iTIP message MUST have
@@ -939,14 +966,13 @@ function processRequestMsg() {
     var onFindItemListener = {
         onOperationComplete:
         function ooc(aCalendar, aStatus, aOperationType, aId, aDetail) {
-            idump("onOperationComplete");
+//             idump("onOperationComplete");
         },
 
         onGetResult:
         function ogr(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
-            idump("onGetResult");
+//             idump("onGetResult");
             if (aCount && aItems[0] && !this.processedId) {
-                idump("  blabla");
                 this.processedId = true;
                 var existingSequence = aItems[0].getProperty("SEQUENCE");
 
@@ -979,9 +1005,9 @@ function processRequestMsg() {
 }
 
 function displayRequestMethod(newItemSequence, existingItemSequence) {
-    idump("displayRequestMethod (" + newItemSequence
-          + ", " + existingItemSequence + ")");
-    idump(STACK(50));
+//     idump("displayRequestMethod (" + newItemSequence
+//           + ", " + existingItemSequence + ")");
+//     idump(STACK(50));
     // Three states here:
     // 0 = the new event does not exist on the calendar (therefore, this is an add)
     //     (Item does not exist yet: existingItemSequence == -1)
@@ -999,7 +1025,7 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
         updateValue = 2;
     }
 
-    idump("updateValue: " + updateValue );
+//     idump("updateValue: " + updateValue );
     // now display the proper message for this update type:
 
     var imipBar = document.getElementById("imip-bar");

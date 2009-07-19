@@ -1,5 +1,11 @@
 2009-07-19  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/lightning/content/imip-bar.js: show a spinning
+	wheel until the proper message and buttons can be displayed. The
+	"requiresNetwork" property is not available on caldav calendars.
+	Therefore we only test for the calendar type for updating them.
+	Fixed exceptions occuring with CANCEL and REPLY messages.
+
 	* src/calendar/lightning/content/imip-bar-overlay.xul: extracted
 	file for further modifications.
 
