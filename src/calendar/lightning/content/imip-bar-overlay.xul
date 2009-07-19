@@ -68,7 +68,8 @@
                                     insertbefore="msgHeaderView"
                                     label="&lightning.imipbar.description;">
           <image id="imip-spinner"
-                 src="chrome://global/skin/throbber/Throbber-small.gif"/>
+                 src="chrome://global/skin/throbber/Throbber-small.gif"
+                 hidden="true"/>
           <button id="imip-button1" hidden="true"/>
           <button id="imip-button2" hidden="true"/>
           <button id="imip-button3" hidden="true"/>
