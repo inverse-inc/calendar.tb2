@@ -1,7 +1,8 @@
 2009-07-20  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/providers/composite/calCompositeCalendar.js:
-	inhibit the prevention of getItems on non-cached-and-caldav calendars.
+	inhibit the prevention of getItems on non-cached-and-caldav
+	calendars.
 
 2009-07-19  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
