@@ -111,11 +111,11 @@ function calCompositeCalendar () {
     
     var mgr = getCalendarManager();
     var cals = mgr.getCalendars({});
-    // we prevent getItems operations on cached calendars as long as they are
-    // not "loaded"
+    // we prevent getItems operations on cached CalDAV calendars as long as
+    // they are not "loaded"
     for each (let cal in cals) {
-        this.mCanGetItems[cal.id]
-            = (cal.getProperty("cache.uncachedCalendar") == null);
+        this.mCanGetItems[cal.id] = !(cal.type == "caldav"
+                                      && cal.getProperty("cache.uncachedCalendar"));
     }
 }
 
