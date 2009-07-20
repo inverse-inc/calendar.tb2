@@ -5,6 +5,10 @@
 	"requiresNetwork" property is not available on caldav calendars.
 	Therefore we only test for the calendar type for updating them.
 	Fixed exceptions occuring with CANCEL and REPLY messages.
+	Spinning wheel bugs:
+	  - a CANCEL request may sometime refer at first to an event that
+	    has already been deleted from the calendar, we ignore it in
+	    that case.
 
 	* src/calendar/lightning/content/imip-bar-overlay.xul: extracted
 	file for further modifications.

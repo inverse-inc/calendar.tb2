@@ -396,31 +396,33 @@ function checkCalendarOwningItem(calendar, item, imipMethod) {
             }
             realCalendar = realCalendar.wrappedJSObject;
             var cache = realCalendar.mItemInfoCache;
-            var compURL = cache[item.id].location;
-            var componentObserver
-                = new imipCalDAVComponentACLEntryObserver(calendar,
-                                                          compURL,
-                                                          imipMethod);
-            var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                             .getService(Components.interfaces.nsIObserverService);
-            obsService.addObserver(componentObserver,
-                                   "caldav-component-acl-loaded", false);
-            obsService.addObserver(componentObserver,
-                                   "caldav-component-acl-reset", false);
-            var compEntry = aclMgr.componentEntry(calendar.uri, compURL);
-            if (compEntry.isComponentReady()) {
-                obsService.removeObserver(componentObserver,
-                                          "caldav-component-acl-loaded",
-                                          false);
-                obsService.removeObserver(componentObserver,
-                                          "caldav-component-acl-reset",
-                                          false);
-                if (!(compEntry.userCanModify() || compEntry.userCanRespond())) {
+            if (cache[item.id]) {
+                var compURL = cache[item.id].location;
+                var componentObserver
+                    = new imipCalDAVComponentACLEntryObserver(calendar,
+                                                              compURL,
+                                                              imipMethod);
+                var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                                 .getService(Components.interfaces.nsIObserverService);
+                obsService.addObserver(componentObserver,
+                                       "caldav-component-acl-loaded", false);
+                obsService.addObserver(componentObserver,
+                                       "caldav-component-acl-reset", false);
+                var compEntry = aclMgr.componentEntry(calendar.uri, compURL);
+                if (compEntry.isComponentReady()) {
+                    obsService.removeObserver(componentObserver,
+                                              "caldav-component-acl-loaded",
+                                              false);
+                    obsService.removeObserver(componentObserver,
+                                              "caldav-component-acl-reset",
+                                              false);
+                    if (!(compEntry.userCanModify() || compEntry.userCanRespond())) {
+                        proceed = false;
+                        gIMIPCalendars = [calendar];
+                    }
+                } else {
                     proceed = false;
-                    gIMIPCalendars = [calendar];
                 }
-            } else {
-                proceed = false;
             }
         }
     }
