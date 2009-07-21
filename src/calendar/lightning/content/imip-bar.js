@@ -143,7 +143,22 @@ function checkForItipItem(subject) {
         imipMethod = itipItem.receivedMethod;
     }
 
-    gItipItem = itipItem;
+    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+    try {
+        gItipItem = itipItem;
+
+        /* bug 396182 reveals itself here */
+        gItipItem.getItemList({});
+    } catch(e) {
+        gItipItem = null;
+        gCalItemsArrayFound = [];
+        gIMIPCalendars = null;
+        gIdentities = null;
+
+//         idump("an exception occured parsing itip item: " + e);
+        LOG("an exception occured parsing itip item: " + e);
+        return;
+    }
 
     // XXX Bug 351742: no S/MIME or spoofing protection yet
     // handleImipSecurity(imipMethod);
@@ -465,22 +480,23 @@ function refreshAllCalendarsCallback(calendars, imipMethod) {
 }
 
 function setupIMIPCalendars(imipMethod) {
-    var ready = false;
-
     var allCalendars = allUserCalendars();
-    var foundTuple = findItipItemCalendar(allCalendars);
-    if (foundTuple) {
-//         idump("tuple found");
-        refreshCalendars([foundTuple[0]],
-                         refreshItemCalendarCallback,
-                         {item: foundTuple[1], method: imipMethod});
+    if (allCalendars.length) {
+        var foundTuple = findItipItemCalendar(allCalendars);
+        if (foundTuple) {
+//             idump("tuple found");
+            refreshCalendars([foundTuple[0]],
+                             refreshItemCalendarCallback,
+                             {item: foundTuple[1], method: imipMethod});
+        } else {
+//             idump("tuple not found");
+            refreshCalendars(allCalendars,
+                             refreshAllCalendarsCallback, imipMethod);
+        }
     } else {
-//         idump("tuple not found");
-        refreshCalendars(allCalendars,
-                         refreshAllCalendarsCallback, imipMethod);
+        gIMIPCalendars = allCalendars;
+        setupBar(imipMethod);
     }
-
-    return ready;
 }
 
 function setupBar(imipMethod) {
