@@ -1,5 +1,12 @@
 2009-07-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* We avoid having view triggering getItems when an "onLoad" or an
+	"onEndBatch" notification is received. Instead, we reenable the
+	onAddItem, onModifyItem and onDeleteItem callbacks during batch
+	mode. This optimization greatly reduces the amount of accesses to
+	the cache database and the amount of elements needed to be
+	redrawn. (no bugzilla bug report yet)
+
 	* src/calendar/base/src/calCachedCalendar.js: we prevent the
 	cached calendar from refreshing at initialization, because the
 	registration mechanism must take care of some things beforehand.

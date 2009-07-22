@@ -2401,19 +2401,11 @@
                 this.calView.mBatchCount++;
             },
             onEndBatch: function onEndBatch() {
-                this.mBatchCount--;
-                if (this.mBatchCount == 0) {
-                    this.calView.refresh();
-                }
+                this.calView.mBatchCount--;
             },
             onLoad: function onLoad() {
-                this.calView.refresh();
             },
             onAddItem: function onAddItem(aItem) {
-                if (this.mBatchCount) {
-                    return;
-                }
-
                 if (isToDo(aItem)) {
                     if (!aItem.entryDate || !aItem.dueDate) {
                         return;
@@ -2437,10 +2429,6 @@
                 return;
             },
             onModifyItem: function onModifyItem(aNewItem, aOldItem) {
-                if (this.mBatchCount) {
-                    return;
-                }
-
                 if (isToDo(aNewItem) && isToDo(aOldItem) &&
                     !this.calView.mTasksInView)
                     return;
@@ -2473,10 +2461,6 @@
                 }
             },
             onDeleteItem: function onDeleteItem(aItem) {
-                if (this.mBatchCount) {
-                    return;
-                }
-
                 if (isToDo(aItem)) {
                     if (!this.calView.mTasksInView) {
                         return;
