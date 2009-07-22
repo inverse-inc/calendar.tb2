@@ -346,6 +346,17 @@ function calDavCalendar() {
         this.mACLMgr = aclMgr;
     } catch(e) {
     }
+
+    var refreshDelay = getPrefSafe("calendar.caldav.refresh.initialdelay", 0);
+    if (refreshDelay > 0) {
+        var now = (new Date()).getTime();
+        this.mFirstRefreshDelay = now + refreshDelay * 1000;
+        LOG("[caldav] first refresh should not occur before: "
+            + this.mFirstRefreshDelay);
+    }
+    else {
+        this.mFirstRefreshDelay = 0;
+    }
 }
 
 // some shorthand
@@ -441,11 +452,35 @@ calDavCalendar.prototype = {
         }
     },
 
+    postponeMethod: function caldav_postponeMethod(delay,
+                                                   methodName, methodArgs) {
+        LOG("[caldav] invocation postponed for " + delay);
+        var thisCalendar = this;
+        var timerCallback = {
+            notify: function(timer) {
+                LOG("[caldav] invoking postponed method: " + methodName);
+                thisCalendar[methodName].apply(thisCalendar, methodArgs);
+            }
+        };
+        var timer = Components.classes["@mozilla.org/timer;1"]
+                    .createInstance(Components.interfaces.nsITimer);
+        timer.initWithCallback(timerCallback,
+                               delay,
+                               Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+    },
+
     // in calISyncCalendar aDestination,
     // in calIGenericOperationListener aListener
     replayChangesOn: function caldav_replayChangesOn(aDestination, aChangeLogListener) {
 //         dump("replayChanges\n");
         if (!this.mTargetCalendar) {
+            if (this.mFirstRefreshDelay > 0) {
+                var delta = (new Date()).getTime() - this.mFirstRefreshDelay;
+                if (delta < 0) {
+                    this.postponeMethod(-delta, "replayChangesOn", arguments);
+                    return;
+                }
+            }
             this.mTargetCalendar = aDestination.wrappedJSObject;
             this.fetchItemVersions();
             // dump("replayChangeOn: initial ctag: " + this.mCtag + "\n");
@@ -1271,6 +1306,13 @@ calDavCalendar.prototype = {
     refresh: function caldav_refresh() {
 //         dump("caldav_refresh: " + this.mCheckedServerInfo + "\n");
         if (!this.mCheckedServerInfo) {
+            if (this.mFirstRefreshDelay > 0) {
+                var delta = (new Date()).getTime() - this.mFirstRefreshDelay;
+                if (delta < 0) {
+                    this.postponeMethod(-delta, "refresh", arguments);
+                    return;
+                }
+            }
             // If we haven't refreshed yet, then we should check the resource
             // type first. This will call refresh() again afterwards.
             this.checkDavResourceType(null);
