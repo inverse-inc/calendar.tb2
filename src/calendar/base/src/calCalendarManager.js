@@ -540,6 +540,8 @@ calCalendarManager.prototype = {
             //   wrappedJSObject otherwise we face the the XPCOM
             //   interface which hides the "cached" parameter.
             if (cached) {
+                calendar.name = "";
+
                 // We register te calendar here because the cached instance
                 // will need a calendar id. We must however skip the initial
                 // refresh, otherwise the cached calendar will put its
@@ -550,7 +552,9 @@ calCalendarManager.prototype = {
                 // for such a simple feature!
                 this.registerCalendar(calendar, true);
                 calendar = new calCachedCalendar(calendar);
+                this.mCache[calendar.id] = calendar;
                 this.notifyObservers("onCalendarRegistered", [calendar]);
+                calendar.refresh();
             }
 
             return calendar;

@@ -1,3 +1,15 @@
+2009-07-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/src/calCachedCalendar.js: we prevent the
+	cached calendar from refreshing at initialization, because the
+	registration mechanism must take care of some things beforehand.
+
+	* src/calendar/base/src/calCalendarManager.js: initial cached
+	calendars won't have a name, we initialize thus to "" to avoid
+	errors during onCalendarAdded callbacks. The registerCalendar
+	method set the uncached version in its cache, we fix this to avoid
+	further reference errors. We then refresh it.
+
 2009-07-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/lightning/content/imip-bar.js: an exception occurs

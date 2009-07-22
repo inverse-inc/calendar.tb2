@@ -131,10 +131,10 @@ function calCachedCalendar(uncachedCalendar) {
 //                                            Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
 //     }
 
-    if (!this.getProperty("disabled")) {
-        // Take care of the inital synchronization
-        this.refresh();
-    }
+//     if (!this.getProperty("disabled")) {
+//         // Take care of the inital synchronization
+//         this.refresh();
+//     }
 }
 calCachedCalendar.prototype = {
     QueryInterface: function cCC_QueryInterface(aIID) {
