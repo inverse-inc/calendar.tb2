@@ -1,5 +1,8 @@
 2009-07-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js: webdav sync: fixed a
+	bug that would continuously refresh the inbox.
+
 	* We avoid having view triggering getItems when an "onLoad" or an
 	"onEndBatch" notification is received. Instead, we reenable the
 	onAddItem, onModifyItem and onDeleteItem callbacks during batch

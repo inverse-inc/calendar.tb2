@@ -205,7 +205,8 @@ cdWebDAVSyncResponseHandler.prototype = {
             this.calendar.mTargetCalendar.setMetaData("sync-token",
                                                       this.newSyncToken);
 
-            this.calendar.finalizeUpdatedItems(this.aChangeLogListener);
+            this.calendar.finalizeUpdatedItems(this.aChangeLogListener,
+                                               this.aRefreshEvent.uri);
         }
     },
 
@@ -1092,7 +1093,7 @@ calDavCalendar.prototype = {
             dump("CalDAV: send: " + multigetQueryXml.toXMLString() + "\n");
         }
 
-        this.getCalendarData(this.calendarUri,
+        this.getCalendarData(this.calendarUri.spec,
                              xmlHeader + multigetQueryXml.toXMLString(),
                              aItem,
                              aListener,
@@ -1316,7 +1317,8 @@ calDavCalendar.prototype = {
         return refreshEvent;
     },
 
-    getUpdatedItems: function caldav_getUpdatedItems(aRefreshEvent, aChangeLogListener) {
+    getUpdatedItems: function caldav_getUpdatedItems(aRefreshEvent,
+                                                     aChangeLogListener) {
         if (this.disabled) {
             // See https://bugzilla.mozilla.org/show_bug.cgi?id=470934
             this.reenable(aChangeLogListener);
@@ -1613,7 +1615,7 @@ calDavCalendar.prototype = {
 
                 var multigetQueryString = xmlHeader +
                                           multigetQueryXml.toXMLString();
-                thisCalendar.getCalendarData(aRefreshEvent.uri,
+                thisCalendar.getCalendarData(aRefreshEvent.uri.spec,
                                              multigetQueryString,
                                              null,
                                              null,
@@ -1832,7 +1834,7 @@ calDavCalendar.prototype = {
                 }
             }
 
-            thisCalendar.finalizeUpdatedItems(aChangeLogListener);
+            thisCalendar.finalizeUpdatedItems(aChangeLogListener, aUri);
         };
 
         if (this.verboseLogging()) {
@@ -1849,7 +1851,7 @@ calDavCalendar.prototype = {
         calSendHttpRequest(streamLoader, httpchannel, caldataListener);
     },
 
-    finalizeUpdatedItems: function calDav_finalizeUpdatedItems(aChangeLogListener) {
+    finalizeUpdatedItems: function calDav_finalizeUpdatedItems(aChangeLogListener, calendarURI) {
         if (this.isCached) {
             if (aChangeLogListener)
                 aChangeLogListener.onResult({ status: Components.results.NS_OK },
@@ -1865,7 +1867,7 @@ calDavCalendar.prototype = {
                 .apply(this.mTargetCalendar, query);
         }
         if (this.hasScheduling &&
-            !this.isInBox(this.calendarUri.spec)) {
+            !this.isInBox(calendarURI.spec)) {
             this.pollInBox();
         }
     },
