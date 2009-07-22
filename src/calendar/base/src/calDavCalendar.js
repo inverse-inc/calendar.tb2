@@ -1128,7 +1128,7 @@ calDavCalendar.prototype = {
             dump("CalDAV: send: " + multigetQueryXml.toXMLString() + "\n");
         }
 
-        this.getCalendarData(this.calendarUri.spec,
+        this.getCalendarData(this.calendarUri,
                              xmlHeader + multigetQueryXml.toXMLString(),
                              aItem,
                              aListener,
@@ -1657,7 +1657,7 @@ calDavCalendar.prototype = {
 
                 var multigetQueryString = xmlHeader +
                                           multigetQueryXml.toXMLString();
-                thisCalendar.getCalendarData(aRefreshEvent.uri.spec,
+                thisCalendar.getCalendarData(aRefreshEvent.uri,
                                              multigetQueryString,
                                              null,
                                              null,
