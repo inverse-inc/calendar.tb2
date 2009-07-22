@@ -5,6 +5,7 @@
 	Added a patch from Simon Vaillancourt @ Oracle that postpones any
 	refresh method prior to an initial delay specified in the
 	"calendar.caldav.refresh.initialdelay" setting.
+	Fixed the handling of character data, thanks to Simon Vaillancourt.
 
 	* We avoid having view triggering getItems when an "onLoad" or an
 	"onEndBatch" notification is received. Instead, we reenable the

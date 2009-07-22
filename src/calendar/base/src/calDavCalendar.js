@@ -49,6 +49,12 @@
 
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
+
+// work-around lack of intelligence in SAX
+function sanitizeSAXResponse(response) {
+    return response.replace(/(^\s+|\s+$)/g, '');
+}
+
 //
 // Fast etag handling. See https://bugzilla.mozilla.org/show_bug.cgi?id=469767
 //
@@ -100,7 +106,7 @@ cdETagHandler.prototype = {
       if (this.status.indexOf(" 200") > 0
       && this.etag.length
       && this.href.length) {
-    
+          this.href = sanitizeSAXRresponse(this.href);
     var href = this.href;
     
     if (this.count == 0) {
@@ -115,6 +121,7 @@ cdETagHandler.prototype = {
 
     this.aRefreshEvent.itemsReported[href] = true;
     var itemuid = this.calendar.mHrefIndex[href];
+          this.etag = sanitizeSAXRresponse(this.etag);
     if (!itemuid
         || (this.etag
         != this.calendar.mItemInfoCache[itemuid].etag)) {
@@ -226,9 +233,9 @@ cdWebDAVSyncResponseHandler.prototype = {
     endElement: function endElement(uri, localName, qName) {
         this.activeElements[localName] = false;
         if (localName == "sync-response") {
-            var status = parseInt(this.response["status"].substr(9, 3));
-
-            var href = this.response["href"];
+            var status = parseInt(sanitizeSAXResponse(this.response["status"])
+                                  .substr(9, 3));
+            var href = sanitizeSAXResponse(this.response["href"]);
             if (this.count == 0) {
                 var newHref = this.calendar.ensurePath(href).toString();
                 if (newHref != href) {
@@ -243,8 +250,8 @@ cdWebDAVSyncResponseHandler.prototype = {
             LOG("[CalDAV] websync - " + href
                 + "; status: " + this.response["status"]);
             if (status == 200 || status == 201) {
-                var calendarData = this.response["prop-calendar-data"];
-                var etag = this.response["prop-getetag"];
+                var calendarData = sanitizeSAXResponse(this.response["prop-calendar-data"]);
+                var etag = sanitizeSAXResponse(this.response["prop-getetag"]);
                 if (etag.length && calendarData.length) {
                     var oldEtag;
                     this.reportedItems[href] = true;
@@ -280,7 +287,7 @@ cdWebDAVSyncResponseHandler.prototype = {
             }
         }
         else if (localName == "sync-token") {
-            this.newSyncToken = this.response["sync-token"];
+            this.newSyncToken = sanitizeSAXResponse(this.response["sync-token"]);
         }
     },
     startPrefixMapping: function startPrefixMapping(prefix, uri) {
