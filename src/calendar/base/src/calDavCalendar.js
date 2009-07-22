@@ -62,95 +62,94 @@ function cdETagHandler() {
 }
 
 cdETagHandler.prototype = {
- aRefreshEvent: null,
- calendar: null,
- count: 0,
- index: 0,
+    aRefreshEvent: null,
+    calendar: null,
+    count: 0,
+    index: 0,
  
- characters: function characters(value) {
-    if (this.inGetEtag) {
-      this.etag += value;
-    } else if (this.inHref) {
-      this.href += value;
-    } else if (this.inStatus) {
-      this.status += value;
-    }
-  },
- startDocument: function startDocument() {
-    this.inResponse = false;
-    this.inHref = false;
-    this.inGetEtag = false;
-    this.inStatus = false;
-    this.count = 0;
-    this.index = 0;
-  },
- endDocument: function endDocument() {
-  },
- startElement: function startElement(uri, localName, qName, attributes) {
-    if (localName == "response") {
-      this.inResponse = true;
-      this.href = "";
-      this.etag = "";
-      this.status = "";
-    } else if (localName == "href") {
-      this.inHref = true;
-    } else if (localName == "getetag") {
-      this.inGetEtag = true;
-    } else if (localName == "status") {
-      this.inStatus = true;
-    }
-  },
- 
- endElement: function endElement(uri, localName, qName) {
-    if (localName == "response") {
-      if (this.status.indexOf(" 200") > 0
-      && this.etag.length
-      && this.href.length) {
-          this.href = sanitizeSAXRresponse(this.href);
-    var href = this.href;
-    
-    if (this.count == 0) {
-      href = this.calendar.ensurePath(this.href).toString();
-      if (href != this.href) {
-        this.index = this.href.indexOf(href);
-      }
-    }
-    else if (this.index > 0) {
-      href = href.substr(this.index);
-    }
+    characters: function characters(value) {
+        if (this.inGetEtag) {
+            this.etag += value;
+        } else if (this.inHref) {
+            this.href += value;
+        } else if (this.inStatus) {
+            this.status += value;
+        }
+    },
+    startDocument: function startDocument() {
+        this.inResponse = false;
+        this.inHref = false;
+        this.inGetEtag = false;
+        this.inStatus = false;
+        this.count = 0;
+        this.index = 0;
+    },
+    endDocument: function endDocument() {
+    },
+    startElement: function startElement(uri, localName, qName, attributes) {
+        if (localName == "response") {
+            this.inResponse = true;
+            this.href = "";
+            this.etag = "";
+            this.status = "";
+        } else if (localName == "href") {
+            this.inHref = true;
+        } else if (localName == "getetag") {
+            this.inGetEtag = true;
+        } else if (localName == "status") {
+            this.inStatus = true;
+        }
+    },
+    endElement: function endElement(uri, localName, qName) {
+        if (localName == "response") {
+            if (this.status.indexOf(" 200") > 0
+                && this.etag.length
+                && this.href.length) {
+                this.href = sanitizeSAXRresponse(this.href);
+                var href = this.href;
+                
+                if (this.count == 0) {
+                    href = this.calendar.ensurePath(this.href).toString();
+                    if (href != this.href) {
+                        this.index = this.href.indexOf(href);
+                    }
+                }
+                else if (this.index > 0) {
+                    href = href.substr(this.index);
+                }
 
-    this.aRefreshEvent.itemsReported[href] = true;
-    var itemuid = this.calendar.mHrefIndex[href];
-          this.etag = sanitizeSAXRresponse(this.etag);
-    if (!itemuid
-        || (this.etag
-        != this.calendar.mItemInfoCache[itemuid].etag)) {
-      this.aRefreshEvent.itemsNeedFetching.push(href);
+                this.aRefreshEvent.itemsReported[href] = true;
+                var itemuid = this.calendar.mHrefIndex[href];
+                this.etag = sanitizeSAXRresponse(this.etag);
+                if (!itemuid
+                    || (this.etag
+                        != this.calendar.mItemInfoCache[itemuid].etag)) {
+                    this.aRefreshEvent.itemsNeedFetching.push(href);
+                }
+            }
+            this.count++;
+            this.inResponse = false;
+        } else if (localName == "href") {
+            this.inHref = false;
+        } else if (localName == "getetag") {
+            this.inGetEtag = false;
+        } else if (localName == "status") {
+            this.inStatus = false;
+        }
+    },
+    startPrefixMapping: function startPrefixMapping(prefix, uri) {
+    },
+    endPrefixMapping: function endPrefixMapping(prefix) {
+    },
+    ignorableWhitespace: function ignorableWhitespace(whitespace) {
+    },
+    processingInstruction: function processingInstruction(target, data) {
+    },
+    
+    QueryInterface: function QueryInterface(aIID) {
+        return doQueryInterface(this, cdETagHandler.prototype, aIID,
+                                [Components.interfaces.nsISAXContentHandler]);
     }
-      }
-      this.count++;
-      this.inResponse = false;
-    } else if (localName == "href") {
-      this.inHref = false;
-    } else if (localName == "getetag") {
-      this.inGetEtag = false;
-    } else if (localName == "status") {
-      this.inStatus = false;
-    }
-  },
- startPrefixMapping: function startPrefixMapping(prefix, uri) {
-  },
- endPrefixMapping: function endPrefixMapping(prefix) {
-  },
- ignorableWhitespace: function ignorableWhitespace(whitespace) {
-  },
- processingInstruction: function processingInstruction(target, data) {
-  },
- 
- QueryInterface: function QueryInterface(aIID) {
-    return doQueryInterface(this, cdETagHandler.prototype, aIID,
-                [Components.interfaces.nsISAXContentHandler]);
-  }
 };
 
 /* webdav sync support -- https://bugzilla.mozilla.org/show_bug.cgi?id=498690 */
