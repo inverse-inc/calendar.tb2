@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Variables
-BASE=`pwd`
-DATE=`date +%Y%m%d%H`
+BASE="`pwd`"
+DATE="`date +%Y%m%d%H`"
 VERSION=0.9.6-pre1
 
 # Cleanin up the leftovers
@@ -92,8 +92,8 @@ function build_win32 {
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
-    # patch -p5 < ./src/patches/inv-invitations-view-2.diff
-    patch -p5 < ./src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
+    patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
@@ -161,8 +161,8 @@ function build_linux {
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
-    # patch -p5 < ./src/patches/inv-invitations-view-2.diff
-    patch -p5 < ./src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
+    patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
@@ -226,8 +226,8 @@ function build_linux_x64 {
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
-    # patch -p5 < ./src/patches/inv-invitations-view-2.diff
-    patch -p5 < ./src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
+    patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
