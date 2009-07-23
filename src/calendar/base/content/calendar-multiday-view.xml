@@ -3199,14 +3199,27 @@
         <body><![CDATA[
           var deleteHash = {};
           for each (var col in this.mDateColumns) {
-            var eventInfos = col.column.mEventInfos.concat([]);
-            for each (var info in eventInfos) {
-              var event = info.event;
-              if (!deleteHash[event.hashId] && event.calendar.id == aCalendar.id) {
-                deleteHash[event.hashId] = true;
-                this.doDeleteEvent(event);
+              var eventInfos = col.column.mEventInfos.concat([]);
+              for each (var info in eventInfos) {
+                  var event = info.event;
+                  if (!deleteHash[event.hashId]
+                      && event.calendar.id == aCalendar.id) {
+                      deleteHash[event.hashId] = event;
+                  }
               }
-            }
+
+              var itemBoxes = col.header.mItemBoxes.concat([]);
+              for each (var box in itemBoxes) {
+                  var event = box.mOccurrence;
+                  if (!deleteHash[event.hashId]
+                      && event.calendar.id == aCalendar.id) {
+                      deleteHash[event.hashId] = event;
+                  }
+              }
+          }
+
+          for (var hash in deleteHash) {
+              this.doDeleteEvent(deleteHash[hash]);
           }
         ]]></body>
       </method>
