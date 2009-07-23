@@ -441,12 +441,12 @@ calStorageCalendar.prototype = {
 
         this.flushItem (aItem, null);
 
-        // notify the listener
-        this.notifyOperationComplete(aListener,
-                                     Components.results.NS_OK,
-                                     Components.interfaces.calIOperationListener.ADD,
-                                     aItem.id,
-                                     aItem);
+//         // notify the listener
+//         this.notifyOperationComplete(aListener,
+//                                      Components.results.NS_OK,
+//                                      Components.interfaces.calIOperationListener.ADD,
+//                                      aItem.id,
+//                                      aItem);
 
         // notify observers
         this.observers.notify("onAddItem", [aItem]);

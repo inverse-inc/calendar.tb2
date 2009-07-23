@@ -1,5 +1,9 @@
 2009-07-23  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/providers/storage/calStorageCalendar.js
+	(adoptItem): avoid a useless notification that triggers a double
+	"onAddItem".
+
 	* src/calendar/base/src/calDavCalendar.js: fixed
 	getInvitedAttendee to return the first matching result.
 
