@@ -70,39 +70,6 @@ function idump(X) {
     dump("[imip-bar] " + X + "\n");
 }
 
-// /**
-//  * Function to get a composite calendar of all registered read-write calendars.
-//  *
-//  * @return composite calendar
-//  */
-// function createItipCompositeCalendar() {
-//     var compCal = Components.classes["@mozilla.org/calendar/calendar;1?type=composite"]
-//                             .createInstance(Components.interfaces.calICompositeCalendar);
-//     var aclMgr = null;
-
-//     // Inverse inc. ACL addition
-//     try {
-//       aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-//                .getService(Components.interfaces.nsISupports)
-//                .wrappedJSObject;
-//     } catch (ex) {
-//       // No ACL support
-//     }
-//     getCalendarManager().getCalendars({}).forEach(function(cal) {
-//             // We only add calendars for which we are the owner
-//             if (aclMgr && cal.type == "caldav") {
-//                 var entry = aclMgr.calendarEntry(cal.uri);
-//                 if (entry.isCalendarReady() && entry.userIsOwner()) {
-//                     compCal.addCalendar(cal);
-//                 }
-//             }
-//             else
-//                 compCal.addCalendar(cal);
-//         });
-
-//     return compCal;
-// }
-
 function checkForItipItem(subject) {
     var itipItem;
     try {
@@ -247,36 +214,49 @@ function recipientMatchIdentities(identities) {
     return matchIdentities;
 }
 
+function checkAndIncludeIMIPCalendar(allCalendars, cal, aclMgr) {
+    if (isCalendarWritable(cal)) {
+        var aclMgrDone = false;
+        if (cal.type == "caldav") {
+            //                 idump("  uri: " + cal.uri.spec);
+            var entry = (aclMgr
+                         ? aclMgr.calendarEntry(cal.uri)
+                         : null);
+            var calIdentities;
+            if (entry && entry.isCalendarReady()) {
+                calIdentities = entry.ownerIdentities;
+                aclMgrDone = true;
+            }
+        }
+        
+        if (!aclMgrDone) {
+            calIdentities = [];
+            var imipIdentity = cal.getProperty["imip.identity"];
+            if (imipIdentity) {
+                calIdentities.push(imipIdentity);
+            }
+        }
+        if (calIdentities.length > 0
+            && recipientMatchIdentities(calIdentities)) {
+            allCalendars.push(cal);
+        }
+    }
+}
+
 function allUserCalendars() {
     var allCalendars = [];
 
+    var aclMgr;
+    try {
+        aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                           .getService(Components.interfaces.nsISupports)
+                           .wrappedJSObject;
+    } catch(e) {
+        aclMgr = null;
+    }
     var mgr = getCalendarManager();
-    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                 .getService(Components.interfaces.nsISupports)
-                 .wrappedJSObject;
-    var cals = mgr.getCalendars({}).forEach(function(cal) {
-        if (isCalendarWritable(cal)) {
-            if (cal.type == "caldav") {
-//                 idump("  uri: " + cal.uri.spec);
-                var entry = aclMgr.calendarEntry(cal.uri);
-                var calIdentities;
-                if (entry.isCalendarReady()) {
-                    calIdentities = entry.ownerIdentities;
-                } else {
-                    calIdentities = [];
-                    var imipIdentity = cal.getProperty["imip.identity"];
-                    if (imipIdentity) {
-                        calIdentities.push(imipIdentity);
-                    }
-                }
-                if (recipientMatchIdentities(calIdentities)) {
-                    allCalendars.push(cal);
-                }
-            } else {
-//                 idump("non-caldav calendar: " + cal.name);
-                allCalendars.push(cal);
-            }
-        }
+    mgr.getCalendars({}).forEach(function(cal) {
+        checkAndIncludeIMIPCalendar(allCalendars, cal, aclMgr);
     });
 
     return allCalendars;
@@ -399,10 +379,16 @@ imipCalDAVComponentACLEntryObserver.prototype = {
 function checkCalendarOwningItem(calendar, item, imipMethod) {
 //     idump("checkCalendarOwningItem");
     var proceed = true;
-    if (calendar.type == "caldav") {
-        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                     .getService(Components.interfaces.nsISupports)
-                     .wrappedJSObject;
+
+    var aclMgr;
+    try {
+        aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                           .getService(Components.interfaces.nsISupports)
+                           .wrappedJSObject;
+    } catch(e) {
+        aclMgr = null;
+    }
+    if (aclMgr && calendar.type == "caldav") {
         var calEntry = aclMgr.calendarEntry(calendar.uri);
         if (calEntry.hasAccessControl) {
             var realCalendar = calendar.getProperty("cache.uncachedCalendar");
@@ -460,21 +446,30 @@ function refreshAllCalendarsCallback(calendars, imipMethod) {
         var item = foundTuple[1];
         checkCalendarOwningItem(calendar, item, imipMethod);
     } else {
-        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                     .getService(Components.interfaces.nsISupports)
-                     .wrappedJSObject;
-        var imipCalendars = [];
-        for each (var cal in calendars) {
-            var calEntry = aclMgr.calendarEntry(cal.uri);
+        var aclMgr;
+        try {
+            aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                               .getService(Components.interfaces.nsISupports)
+                               .wrappedJSObject;
+        } catch(e) {
+            aclMgr = null;
+        }
+        if (aclMgr) {
+            var imipCalendars = [];
+            for each (var cal in calendars) {
+                var calEntry = aclMgr.calendarEntry(cal.uri);
 //             idump("acl entry: " + cal.uri.spec);
 //             idump("  hasAccessControl: " + calEntry.hasAccessControl);
 //             idump("  canAddComponents: " + calEntry.userCanAddComponents());
-            if (!calEntry.hasAccessControl
-                || calEntry.userCanAddComponents()) {
-                imipCalendars.push(cal);
+                if (!calEntry.hasAccessControl
+                    || calEntry.userCanAddComponents()) {
+                    imipCalendars.push(cal);
+                }
             }
+            gIMIPCalendars = imipCalendars;
+        } else {
+            gIMIPCalendars = calendars;
         }
-        gIMIPCalendars = imipCalendars;
         setupBar(imipMethod);
     }
 }

@@ -1,3 +1,9 @@
+2009-07-23  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/lightning/content/imip-bar.js: adapted code to run
+	without acl manager, thereby removing dependency on SOGo
+	Connector.
+
 2009-07-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js: webdav sync: fixed a
