@@ -3045,7 +3045,7 @@ calDavCalendar.prototype = {
           
           if (entry.isCalendarReady()) {
               var identity;
-              for (var i = 0; i < entry.ownerIdentities.length; i++) {
+              for (var i = 0; !attendee && i < entry.ownerIdentities.length; i++) {
                   identity = "mailto:" + entry.ownerIdentities[i].email.toLowerCase();
                   attendee = aItem.getAttendeeById(identity);
               }

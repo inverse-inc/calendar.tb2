@@ -1,5 +1,8 @@
 2009-07-23  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js: fixed
+	getInvitedAttendee to return the first matching result.
+
 	* src/calendar/base/content/calendar-multiday-view.xml:
 	deleteItemsFromCalendar fixed to remove occurrences found in the
 	column headers.
