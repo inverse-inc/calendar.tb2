@@ -35,6 +35,9 @@ function build_osx {
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
     patch -p5 < $BASE/src/patches/462109.diff
 
+    cd $BASE/tmp/js
+    patch -p4 < $BASE/src/patches/468846.diff
+
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
     rm -f lightning.jar; zip -9r lightning.jar content/lightning skin/classic/lightning
@@ -95,6 +98,9 @@ function build_win32 {
     cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
     patch -p5 < $BASE/src/patches/462109.diff
+
+    cd $BASE/tmp/js
+    patch -p4 < $BASE/src/patches/468846.diff
 
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
@@ -166,6 +172,9 @@ function build_linux {
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
     patch -p5 < $BASE/src/patches/462109.diff
 
+    cd $BASE/tmp/js
+    patch -p4 < $BASE/src/patches/468846.diff
+
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
     rm -f lightning.jar; zip -9r lightning.jar content/lightning skin/classic/lightning
@@ -231,6 +240,9 @@ function build_linux_x64 {
     cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
     patch -p5 < $BASE/src/patches/462109.diff
+
+    cd $BASE/tmp/js
+    patch -p4 < $BASE/src/patches/468846.diff
 
     cd $BASE/tmp/chrome/
     rm -f calendar.jar; zip -9r calendar.jar content/calendar skin/classic/calendar
