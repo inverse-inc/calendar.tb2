@@ -105,7 +105,7 @@ cdETagHandler.prototype = {
             if (this.status.indexOf(" 200") > 0
                 && this.etag.length
                 && this.href.length) {
-                this.href = sanitizeSAXRresponse(this.href);
+                this.href = sanitizeSAXResponse(this.href);
                 var href = this.href;
                 
                 if (this.count == 0) {
@@ -120,7 +120,7 @@ cdETagHandler.prototype = {
 
                 this.aRefreshEvent.itemsReported[href] = true;
                 var itemuid = this.calendar.mHrefIndex[href];
-                this.etag = sanitizeSAXRresponse(this.etag);
+                this.etag = sanitizeSAXResponse(this.etag);
                 if (!itemuid
                     || (this.etag
                         != this.calendar.mItemInfoCache[itemuid].etag)) {
