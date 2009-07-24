@@ -1,3 +1,17 @@
+2009-07-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/src/calDavCalendar.js: addDAVItem fixed to not
+	add new/updated items directly to the cached calendar but to
+	notify the super calendar's listener instead, as done in multiple
+	other places when solving bug
+	https://bugzilla.mozilla.org/show_bug.cgi?id=463679. In this case,
+	the bug is not totally the same but the underlying mechanism is
+	similar.
+
+	* src/calendar/providers/storage/calStorageCalendar.js: reverted
+	latest patch below as it prevented some operations from being
+	completed. Replaced with a better and cleaner fix.
+
 2009-07-23  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/providers/storage/calStorageCalendar.js

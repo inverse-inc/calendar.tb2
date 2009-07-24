@@ -393,13 +393,13 @@ calStorageCalendar.prototype = {
     },
 
     // void addItem( in calIItemBase aItem, in calIOperationListener aListener );
-    addItem: function (aItem, aListener) {
+    addItem: function cSC_addItem(aItem, aListener) {
         var newItem = aItem.clone();
         return this.adoptItem(newItem, aListener);
     },
 
     // void adoptItem( in calIItemBase aItem, in calIOperationListener aListener );
-    adoptItem: function (aItem, aListener) {
+    adoptItem: function cSC_adoptItem(aItem, aListener) {
         if (this.readOnly) {
             this.notifyOperationComplete(aListener,
                                          Components.interfaces.calIErrors.CAL_IS_READONLY,
@@ -441,12 +441,12 @@ calStorageCalendar.prototype = {
 
         this.flushItem (aItem, null);
 
-//         // notify the listener
-//         this.notifyOperationComplete(aListener,
-//                                      Components.results.NS_OK,
-//                                      Components.interfaces.calIOperationListener.ADD,
-//                                      aItem.id,
-//                                      aItem);
+        // notify the listener
+        this.notifyOperationComplete(aListener,
+                                     Components.results.NS_OK,
+                                     Components.interfaces.calIOperationListener.ADD,
+                                     aItem.id,
+                                     aItem);
 
         // notify observers
         this.observers.notify("onAddItem", [aItem]);
