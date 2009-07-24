@@ -1745,7 +1745,7 @@ calDavCalendar.prototype = {
         this.mHrefIndex[hrefPath] = item.id;
         this.mItemInfoCache[item.id].etag = etag;
 
-        if (this.isCached) {
+        if (this.isCached && aListener) {
             // the item is added in the storage calendar from calCachedCalendar
             // see https://bugzilla.mozilla.org/show_bug.cgi?id=463679
             this.notifyOperationComplete(aListener,

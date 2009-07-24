@@ -6,7 +6,9 @@
 	other places when solving bug
 	https://bugzilla.mozilla.org/show_bug.cgi?id=463679. In this case,
 	the bug is not totally the same but the underlying mechanism is
-	similar.
+	similar. Note that addDAVItem can be used during a refresh
+	operation, during which no listener will be provided. We then
+	revert to the previous mechanism.
 
 	* src/calendar/providers/storage/calStorageCalendar.js: reverted
 	latest patch below as it prevented some operations from being
