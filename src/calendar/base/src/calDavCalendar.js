@@ -1745,14 +1745,21 @@ calDavCalendar.prototype = {
         this.mHrefIndex[hrefPath] = item.id;
         this.mItemInfoCache[item.id].etag = etag;
 
-        if (this.mItemInfoCache[item.id].isNew) {
-            this.mTargetCalendar.adoptItem(item, aListener);
-        } else {
-            this.mTargetCalendar.modifyItem(item, null, aListener);
-        }
-
         if (this.isCached) {
+            // the item is added in the storage calendar from calCachedCalendar
+            // see https://bugzilla.mozilla.org/show_bug.cgi?id=463679
+            this.notifyOperationComplete(aListener,
+                                         Components.results.NS_OK,
+                                         Components.interfaces.calIOperationListener.GET,
+                                         item.id,
+                                         item);
             this.setMetaData(item.id, href, etag, isInboxItem);
+        } else {
+            if (this.mItemInfoCache[item.id].isNew) {
+                this.mTargetCalendar.adoptItem(item, aListener);
+            } else {
+                this.mTargetCalendar.modifyItem(item, null, aListener);
+            }
         }
     },
 
