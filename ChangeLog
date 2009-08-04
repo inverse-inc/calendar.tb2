@@ -1,3 +1,11 @@
+2009-08-04  Ludovic Marcotte <lmarcotte@inverse.ca>
+
+	* Added src/patches/468846.diff - even if it's a temporary fix
+	* src/calendar/providers/storage/calStorageCalendar.js and
+	src/calendar/base/src/calTransactionManager.js - we no longer
+	reset the partipation status when the attendee's id (ie., the
+	email address) is identical to the one from the organizer.
+
 2009-08-04  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js (addDAVItem): A bug was

@@ -19,7 +19,7 @@ diff --git a/calendar/providers/storage/calStorageCalendar.js b/calendar/provide
  
          ip.todo_complete = item.getProperty("PERCENT-COMPLETED");
  
-+        let someDate = (item.entryDate || item.dueDate);
++        var someDate = (item.entryDate || item.dueDate);
 +        if (someDate && someDate.isDate) {
 +            flags |= CAL_ITEM_FLAG_EVENT_ALLDAY;
 +        }

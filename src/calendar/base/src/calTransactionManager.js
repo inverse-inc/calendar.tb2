@@ -191,14 +191,20 @@ calTransaction.prototype = {
     // correctly reset the participation status of attendees when there's
     // a major change (ie., SEQUENCE update to the event) or when we create
     // an exception to a recurring event.
+    //
+    // Also see the code in calendar-item-editing.js - especially for the
+    // ratinale on the organizer.
+    //
     resetAttendeesStatus: function cal_itip_resetAttendeesStatus(aItem) {
       var att = aItem.getAttendees({});
       aItem.removeAllAttendees();
       for each (var attendee in att) {
 	  attendee = attendee.clone();
-	  attendee.role = "REQ-PARTICIPANT";
-	  attendee.participationStatus = "NEEDS-ACTION";
-	  attendee.rsvp = true;
+	  if (attendee.id.toLowerCase() != aItem.organizer.id.toLowerCase()) {
+	    attendee.role = "REQ-PARTICIPANT";
+	    attendee.participationStatus = "NEEDS-ACTION";
+	    attendee.rsvp = true;
+	  }
 	  aItem.addAttendee(attendee);
       }
     },

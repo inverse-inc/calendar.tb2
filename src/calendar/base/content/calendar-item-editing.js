@@ -706,12 +706,27 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	}
 	
 	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+	// See also -resetAttendeesStatus in calTransactionManager.js
+	//
+	// We also make sure to not reset the participation status for an attendee
+	// that has the same email address as the organizer. We are careful about this
+	// since Oracle Calendar will convert an ORGANIZER field to an ATTENDEE with
+	// a PART-STATE but also keep the ORGANIZER around. So,
+	//
+	// ORGANIZER: foo@bar.com
+	//
+	// becomes
+	//
+	// ORGANIZER: foo@bar.com
+	// ATTENDEE: foo@bar.com;PART-STATE...
+	//
 	for each (var attendee in itemAtt) {
 	    if (attendee.id.toLowerCase() in attMap)
 	      continue; // already handled the attendee, we skip it.
 
             attendee = attendee.clone();
-	    if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
+	    if ((!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE"))
+		&& attendee.id.toLowerCase() != requestItem.organizer.id.toLowerCase()) {
                 attendee.role = "REQ-PARTICIPANT";
 		attendee.participationStatus = "NEEDS-ACTION";
 		attendee.rsvp = true;
