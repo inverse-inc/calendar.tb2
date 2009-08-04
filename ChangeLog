@@ -1,3 +1,12 @@
+2009-08-04  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/src/calDavCalendar.js (addDAVItem): A bug was
+	introduced in with the fix below, where the metadata would not be
+	saved for new items when a listener was not provided. In the case
+	of a non-cached calendar, the issue is minor because we lose the
+	metadata between sessions. For cached calendars, the presence of a
+	listener argument should have no impact.
+
 2009-07-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js: addDAVItem fixed to not

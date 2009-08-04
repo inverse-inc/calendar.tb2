@@ -507,7 +507,6 @@ calDavCalendar.prototype = {
             var itemData = cacheValues[count];
             if (itemId == "ctag") {
                 this.mCtag = itemData;
-                LOG("INIT ctag: " + this.mCtag);
             } else if (itemId == "sync-token") {
                 this.mWebdavSyncToken = itemData;
             } else {
@@ -1753,7 +1752,6 @@ calDavCalendar.prototype = {
                                          Components.interfaces.calIOperationListener.GET,
                                          item.id,
                                          item);
-            this.setMetaData(item.id, href, etag, isInboxItem);
         } else {
             if (this.mItemInfoCache[item.id].isNew) {
                 this.mTargetCalendar.adoptItem(item, aListener);
@@ -1761,6 +1759,7 @@ calDavCalendar.prototype = {
                 this.mTargetCalendar.modifyItem(item, null, aListener);
             }
         }
+        this.setMetaData(item.id, href, etag, isInboxItem);
     },
 
     deleteDAVItem: function caldav_deleteDAVItem(href, aRefreshEvent) {
