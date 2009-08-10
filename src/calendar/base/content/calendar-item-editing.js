@@ -212,9 +212,75 @@ function modifyEventWithDialog(aItem, job, aPromptOccurrence) {
     }
 }
 
+function itemObserver(componentURL, openArgs) {
+    this.componentURL = componentURL;
+    this.openArgs = openArgs;
+}
+
+itemObserver.prototype = {
+    observe: function(aSubject, aTopic, aData) {
+        if (aData) {
+            var parts = aData.split("/");
+            if (this.componentURL == parts[parts.length-1]) {
+                var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                                           .getService(Components.interfaces.nsIObserverService);
+                obsService.removeObserver(this,
+                                          "caldav-component-acl-loaded", false);
+                obsService.removeObserver(this,
+                                          "caldav-component-acl-reset", false);
+                openEventDialog.apply(window, this.openArgs);
+            }
+        }
+    }
+};
+
+function loadItemCalDAVAclEntry(aclMgr, item, calendar, openArgs) {
+    var realCalendar = calendar.getProperty("cache.uncachedCalendar");
+    if (!realCalendar) {
+        realCalendar = calendar;
+    }
+    realCalendar = realCalendar.wrappedJSObject;
+    var cache = realCalendar.mItemInfoCache;
+    var compEntry = null;
+    if (cache[item.id]) {
+        var compURL = cache[item.id].locationPath;
+        var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                                   .getService(Components.interfaces.nsIObserverService);
+        var obs = new itemObserver(compURL, openArgs);
+        obsService.addObserver(obs, "caldav-component-acl-loaded", false);
+        obsService.addObserver(obs, "caldav-component-acl-reset", false);
+        compEntry = aclMgr.componentEntry(calendar.uri, compURL);
+        if (compEntry.isComponentReady()) {
+            obsService.removeObserver(obs, "caldav-component-acl-loaded", false);
+            obsService.removeObserver(obs, "caldav-component-acl-reset", false);
+        } else {
+            compEntry = null;
+        }
+    }
+
+    return compEntry;
+}
+
 function openEventDialog(calendarItem, calendar, mode, callback, job) {
     // Set up some defaults
     mode = mode || "new";
+    var compAclEntry = null;
+
+    try {
+        var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                               .getService(Components.interfaces.nsISupports)
+                               .wrappedJSObject;
+        if (mode == "modify" && calendar.type == "caldav"
+            && !isCalendarWritable(calendar)) {
+            compAclEntry = loadItemCalDAVAclEntry(aclMgr, calendarItem,
+                                                  calendar, arguments);
+            if (!compAclEntry) {
+                return;
+            }
+        }
+    }
+    catch(e) {}
+
     calendar = calendar || getSelectedCalendar();
     var calendars = getCalendarManager().getCalendars({});
     calendars = calendars.filter(isCalendarWritable);
@@ -275,8 +341,14 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
     }
 
     // open the dialog modeless
-    var url = "chrome://calendar/content/sun-calendar-event-dialog.xul";
-    if ((mode != "new" && isInvitation) || !isCalendarWritable(calendar)) {
+    var url;
+    if (mode == "new"
+        || (mode == "modify"
+            && !isInvitation
+            && (isCalendarWritable(calendar)
+                || (compAclEntry && compAclEntry.userCanModify())))) {
+        url = "chrome://calendar/content/sun-calendar-event-dialog.xul";
+    } else {
         url = "chrome://calendar/content/calendar-summary-dialog.xul";
     }
     openDialog(url, "_blank", "chrome,titlebar,resizable", args);
@@ -706,27 +778,12 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 	}
 	
 	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	// See also -resetAttendeesStatus in calTransactionManager.js
-	//
-	// We also make sure to not reset the participation status for an attendee
-	// that has the same email address as the organizer. We are careful about this
-	// since Oracle Calendar will convert an ORGANIZER field to an ATTENDEE with
-	// a PART-STATE but also keep the ORGANIZER around. So,
-	//
-	// ORGANIZER: foo@bar.com
-	//
-	// becomes
-	//
-	// ORGANIZER: foo@bar.com
-	// ATTENDEE: foo@bar.com;PART-STATE...
-	//
 	for each (var attendee in itemAtt) {
 	    if (attendee.id.toLowerCase() in attMap)
 	      continue; // already handled the attendee, we skip it.
 
             attendee = attendee.clone();
-	    if ((!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE"))
-		&& attendee.id.toLowerCase() != requestItem.organizer.id.toLowerCase()) {
+	    if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
                 attendee.role = "REQ-PARTICIPANT";
 		attendee.participationStatus = "NEEDS-ACTION";
 		attendee.rsvp = true;

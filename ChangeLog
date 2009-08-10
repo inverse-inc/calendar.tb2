@@ -1,3 +1,13 @@
+2009-08-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js: added code
+	to enable modification of certain events based on their acl, even
+	if the user cannot add events to the calendar.
+
+	* src/calendar/base/content/calendar-summary-dialog.js: imported
+	module and modified it to set it's readOnly mode based on the
+	userCanRespond and userCanModify permissions from CalDAVAclManager.
+
 2009-08-04  Ludovic Marcotte <lmarcotte@inverse.ca>
 
 	* Added src/patches/468846.diff - even if it's a temporary fix
