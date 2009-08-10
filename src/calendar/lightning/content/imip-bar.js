@@ -359,18 +359,22 @@ function imipCalDAVComponentACLEntryObserver(calendar, componentURL,
 
 imipCalDAVComponentACLEntryObserver.prototype = {
  observe: function(aSubject, aTopic, aData) {
-        if (aData.component && this.componentURL == aData.component) {
-            var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                             .getService(Components.interfaces.nsIObserverService);
-            obsService.removeObserver(this,
-                                      "caldav-component-acl-loaded", false);
-            obsService.removeObserver(this,
-                                      "caldav-component-acl-reset", false);
-            if (aTopic == "caldav-component-acl-loaded") {
-                var entry = aData.entry;
-                if (entry.userCanModify() || entry.userCanRespond()) {
-                    gIMIPCalendars = [this.calendar];
+        if (aData) {
+            var parts = aData.split("/");
+            if (this.componentURL == parts[parts.length-1]) {
+                var obsService = Components.classes["@mozilla.org/observer-service;1"]
+                                           .getService(Components.interfaces.nsIObserverService);
+                obsService.removeObserver(this,
+                                          "caldav-component-acl-loaded", false);
+                obsService.removeObserver(this,
+                                          "caldav-component-acl-reset", false);
+                if (aTopic == "caldav-component-acl-loaded") {
+                    var entry = aData.entry;
+                    if (entry.userCanModify() || entry.userCanRespond()) {
+                        gIMIPCalendars = [this.calendar];
+                    }
                 }
+                setupBar(this.imipMethod);
             }
         }
     }
@@ -398,7 +402,7 @@ function checkCalendarOwningItem(calendar, item, imipMethod) {
             realCalendar = realCalendar.wrappedJSObject;
             var cache = realCalendar.mItemInfoCache;
             if (cache[item.id]) {
-                var compURL = cache[item.id].location;
+                var compURL = cache[item.id].locationPath;
                 var componentObserver
                     = new imipCalDAVComponentACLEntryObserver(calendar,
                                                               compURL,

@@ -1,5 +1,11 @@
 2009-08-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/lightning/content/imip-bar.js: fixed a typo that
+	prevented the correct loading of the acl for the calendar entry
+	matching the invitation. In the same spirit, the
+	imipCalDAVComponentACLEntryObserver would not properly handle the
+	returned entry URL.
+
 	* src/calendar/base/content/calendar-item-editing.js: added code
 	to enable modification of certain events based on their acl, even
 	if the user cannot add events to the calendar.
