@@ -1,7 +1,11 @@
 2009-08-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-task-tree.xml: added module
-	for further modification.
+	for further modification. Modified to apply the same speedup
+	modifications that were done to the other calendar views. Fixed
+	the handling of recurring items when adding or removing tasks.
+	Fixed batch mode handling to use a counter and avoid any refresh
+	when that counter drops to 0.
 
 2009-08-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 

@@ -274,69 +274,122 @@
           // updated just before sort
           sortStartedTime: now(),
 
+          // flattened array of occurrences
+          flattenedItem: function tTV_flattenedItem(aItem) {
+              var items;
+              if (this.binding.startDate && this.binding.endDate
+                  && aItem.recurrenceInfo) {
+                  items = aItem.getOccurrencesBetween(this.binding.startDate,
+                                                      this.binding.endDate,
+                                                      {});
+              } else {
+                  items = [aItem];
+              }
+              return items;
+          },
+
           /**
            * High-level task tree manipulation
            */
 
           addItem: function tTV_addItem(aItem) {
-              if (aItem.isCompleted && !this.binding.showCompleted) {
-                  return;
+              var items = this.flattenedItem(aItem);
+              for each (var item in items) {
+                  if (!this.binding.showCompleted && item.isCompleted) {
+                      continue;
+                  }
+                  var index = this.binding.mHash2Index[item.hashId];
+                  if (index === undefined) {
+                      var index = this.binding.mTaskArray.length;
+                      this.binding.mTaskArray.push(item);
+                      this.binding.mHash2Index[item.hashId] = index;
+                      // The rowCountChanged function takes two arguments, the
+                      // index where the first row was inserted and the number
+                      // of rows to insert.
+                      this.treebox.rowCountChanged(index, 1);
+                      this.tree.view.selection.select(index);
+                  }
+                  this.treebox.ensureRowIsVisible(this.rowCount - 1);
               }
-              var index = this.binding.mHash2Index[aItem.hashId];
-              if (index === undefined) {
-                  var index = this.binding.mTaskArray.length;
-                  this.binding.mTaskArray.push(aItem);
-                  this.binding.mHash2Index[aItem.hashId] = index;
-                  // The rowCountChanged function takes two arguments, the index where the
-                  // first row was inserted and the number of rows to insert.
-                  this.treebox.rowCountChanged(index, 1);
-                  this.tree.view.selection.select(index);
-              }
-              this.treebox.ensureRowIsVisible(this.rowCount - 1);
           },
 
           removeItem: function tTV_removeItem(aItem) {
-              var index = this.binding.mHash2Index[aItem.hashId];
-              if (index != undefined) {
-                  delete this.binding.mHash2Index[aItem.hashId];
-                  this.binding.mTaskArray.splice(index, 1);
-                  this.treebox.rowCountChanged(index, -1);
+              var items = this.flattenedItem(aItem);
 
-                  if (index == this.rowCount) {
-                      index--;
+              /* We must wander the tree from the highest to the lowest row.
+                 Depending on the sort order, the order in which the items are
+                 returned above may not match the order in the tree. We sort
+                 this here. */
+              var itemRows = {};
+              var minRow = this.binding.mTaskArray.length - 1;
+              var maxRow = 0;
+              for each (var item in items) {
+                  var index = this.binding.mHash2Index[item.hashId];
+                  if (index != undefined) {
+                      itemRows["row_" + index] = item;
+                      if (index < minRow)
+                          minRow = index;
+                      if (index > maxRow)
+                          maxRow = index;
                   }
-
-                  this.tree.view.selection.select(index);
-                  
-                  this.binding.recreateHashTable();
               }
+
+              for (var i = maxRow; i >= minRow; i--) {
+                  var item = itemRows["row_" + i];
+                  if (item) {
+                      delete this.binding.mHash2Index[item.hashId];
+                      this.binding.mTaskArray.splice(i, 1);
+                      this.treebox.rowCountChanged(i, -1);
+                      // this.tree.view.selection.select(i);
+                  }
+              }
+              this.binding.recreateHashTable();
           },
 
           modifyItem: function tTV_modifyItem(aNewItem, aOldItem) {
-              var index = this.binding.mHash2Index[aOldItem.hashId];
-              if (index != undefined) {
-                  // if a filter is installed we need to make sure that
-                  // the item still belongs to the set of valid items before
-                  // moving forward. if the filter cuts this item off, we
-                  // need to act accordingly.
-                  if (this.binding.mFilterFunction &&
-                      !this.binding.mFilterFunction(aNewItem)) {
-                      this.removeItem(aNewItem);
-                      return;
+              var newItems = this.flattenedItem(aNewItem);
+              var newItemsHash = {};
+              for each (var newItem in newItems) {
+                  if (/* if a filter is installed we need to make sure that
+                         the item still belongs to the set of valid items
+                         before moving forward. if the filter cuts this item
+                         off, we need to act accordingly. */
+                      (!this.binding.mFilterFunction
+                       || this.binding.mFilterFunction(newItem))
+                      &&
+                      /* same holds true for the completed filter, which is
+                         currently modeled as an explicit boolean. */
+                      (!newItem.isCompleted
+                       || this.binding.showCompleted)) {
+                      newItemsHash[newItem.hashId] = newItem;
                   }
-                  // same holds true for the completed filter, which is
-                  // currently modeled as an explicit boolean.
-                  if (aNewItem.isCompleted != aOldItem.isCompleted) {
-                      if (aNewItem.isCompleted && !this.binding.showCompleted) {
-                          this.removeItem(aNewItem);
-                          return;
-                      }
+              }
+
+              var oldItems = this.flattenedItem(aOldItem);
+              var oldItemsHash = {};
+              for each (var oldItem in oldItems) {
+                  var newItem = newItemsHash[oldItem.hashId];
+                  if (newItem) {
+                      oldItemsHash[oldItem.hashId] = oldItem;
+                  } else {
+                      this.removeItem(oldItem);
                   }
-                  delete this.binding.mHash2Index[aOldItem.hashId];
-                  this.binding.mHash2Index[aNewItem.hashId] = index;
-                  this.binding.mTaskArray[index] = aNewItem;
-                  this.tree.view.selection.select(index);
-                  this.treebox.invalidateRow(index);
+              }
+
+              for each (var newItem in newItems) {
+                  var oldItem = oldItemsHash[newItem.hashId];
+                  var index;
+                  if (oldItem)
+                      index = this.binding.mHash2Index[oldItem.hashId];
+                  if (index == undefined) {
+                      this.addItem(newItem);
+                  } else {
+                      delete this.binding.mHash2Index[oldItem.hashId];
+                      this.binding.mHash2Index[newItem.hashId] = index;
+                      this.binding.mTaskArray[index] = newItem;
+                      // this.tree.view.selection.select(index);
+                      this.treebox.invalidateRow(index);
+                  }
               }
           },
 
@@ -701,7 +754,7 @@
       <field name="mTaskTreeObserver"><![CDATA[
       ({
           binding: this,
-          mInBatch: false,
+          mBatchCount: 0,
 
           QueryInterface: function tTO_QueryInterface(aIID) {
               return doQueryInterface(this, null, aIID,
@@ -713,31 +766,34 @@
            * calIObserver methods and properties
            */
           onStartBatch: function tTO_onStartBatch() {
-              this.mInBatch = true;
+              if (this.mBatchCount == 0) {
+                  this.binding.mTreeView.treebox.beginUpdateBatch();
+              }
+              this.mBatchCount++;
           },
           
           onEndBatch: function tTO_onEndBatch() {
-              if (this.mInBatch) {
-                  this.mInBatch = false;
-                  this.binding.refresh();
+              this.mBatchCount--;
+              if (this.mBatchCount == 0) {
+                  this.binding.mTreeView.treebox.endUpdateBatch();
+                  // this.binding.mTreeView.treebox.invalidate();
               }
           },
           
           onLoad: function tTO_onLoad() {
-              if (!this.mInBatch) {
-                  this.binding.refresh();
-              }
           },
           
           onAddItem: function tTO_onAddItem(aItem) {
-              if (isToDo(aItem) && !this.mInBatch) {
+              if (isToDo(aItem)) {
+              // if (isToDo(aItem) && !this.mBatchCount) {
                   this.binding.mTreeView.addItem(aItem);
               }
           },
           
           onModifyItem: function tTO_onModifyItem(aNewItem, aOldItem) {
-              if ((isToDo(aNewItem) || isToDo(aOldItem)) &&
-                  !this.mInBatch) {
+              if ((isToDo(aNewItem) || isToDo(aOldItem))) {
+              // if ((isToDo(aNewItem) || isToDo(aOldItem)) &&
+              //     !this.mBatchCount) {
                   
                   // forward the call to the view which will in turn
                   // update the internal reference and the view.
@@ -751,9 +807,10 @@
           },
           
           onDeleteItem: function tTO_onDeleteItem(aDeletedItem) {
-              if (isToDo(aDeletedItem) &&
-                  !this.mInBatch) {
-                  this.binding.mTreeView.removeItem(aDeletedItem);  
+              if (isToDo(aDeletedItem)) {
+ // &&
+ //                  !this.mBatchCount) {
+                  this.binding.mTreeView.removeItem(aDeletedItem);
               }
           },
           
@@ -778,13 +835,13 @@
            * calICompositeObserver methods and properties
            */
           onCalendarAdded: function tTO_onCalendarAdded(aCalendar) {
-              if (!this.mInBatch && !aCalendar.getProperty("disabled")) {
+              if (!aCalendar.getProperty("disabled")) {
                   this.binding.onCalendarAdded(aCalendar);
               }
           },
           
           onCalendarRemoved: function tTO_onCalendarRemoved(aCalendar) {
-              if (!this.mInBatch && !aCalendar.getProperty("disabled")) {
+              if (!aCalendar.getProperty("disabled")) {
                   this.binding.onCalendarRemoved(aCalendar);
               }
           },
@@ -908,43 +965,62 @@
       </method>
 
       <!-- Called by event observers to update the display -->
-      <method name="refresh">
+      <method name="refreshFromCalendar">
+        <parameter name="aCalendar"/>
         <parameter name="aFilter"/>
+        <parameter name="aCompleteRefresh"/>
         <body><![CDATA[
           var savedThis = this;
+
+          var newArray = [];
+          if (!aCompleteRefresh) {
+            for each (var task in this.mTaskArray) {
+                if (task.calendar.id != aCalendar.id) {
+                    newArray.push(task);
+                }
+            }
+          }
+
           var refreshListener = {
-              mTaskArray: [],
-
               onOperationComplete: function(aCalendar, aStatus, aOperationType, aId, aDateTime) {
-                  savedThis.mTaskArray = this.mTaskArray;
+                  savedThis.mTaskArray = newArray;
                   savedThis.onOperationComplete();
-             },
+              },
 
-             onGetResult: function(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
-                 for (var i=0; i<aCount; i++) {
-                     if (!savedThis.mFilterFunction ||
-                         savedThis.mFilterFunction(aItems[i])) {
-                         refreshListener.mTaskArray.push(aItems[i]);
-                     }
-                 }
-             }
+              onGetResult: function(aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
+                  for (var i=0; i<aCount; i++) {
+                      if (!savedThis.mFilterFunction ||
+                          savedThis.mFilterFunction(aItems[i])) {
+                          newArray.push(aItems[i]);
+                      }
+                  }
+              }
           };
 
           var refreshJob = {
               execute: function() {
-                  var composite = getCompositeCalendar();
                   var filter = aFilter || !savedThis.mShowCompletedTasks ?
-                      composite.ITEM_FILTER_COMPLETED_NO :
-                      composite.ITEM_FILTER_COMPLETED_ALL;
-                  filter |= composite.ITEM_FILTER_TYPE_TODO;
+                      aCalendar.ITEM_FILTER_COMPLETED_NO :
+                      aCalendar.ITEM_FILTER_COMPLETED_ALL;
+                  filter |= aCalendar.ITEM_FILTER_TYPE_TODO;
                   if (savedThis.startDate && savedThis.endDate) {
-                      filter |= composite.ITEM_FILTER_CLASS_OCCURRENCES;
+                      filter |= aCalendar.ITEM_FILTER_CLASS_OCCURRENCES;
                   }
-                  composite.getItems(filter, 0, savedThis.startDate, savedThis.endDate, refreshListener);
+                  aCalendar.getItems(filter, 0, savedThis.startDate,
+                                     savedThis.endDate, refreshListener);
               }
           };
           this.mRefreshQueue.push(refreshJob);
           this.popRefreshQueue();
+        ]]></body>
+      </method>
+
+      <method name="refresh">
+        <parameter name="aFilter"/>
+        <body><![CDATA[
+            this.mTreeView.treebox.beginUpdateBatch();
+            this.refreshFromCalendar(getCompositeCalendar(), aFilter, true);
+            this.mTreeView.treebox.endUpdateBatch();
         ]]></body>
       </method>
 
@@ -952,44 +1028,17 @@
         <parameter name="aCalendar"/>
         <parameter name="aFilter"/>
         <body><![CDATA[
-          var savedThis = this;
-          var refreshListener = {
-              onOperationComplete: function (aCalendar, aStatus, aOperationType, aId, aDateTime) {
-                  savedThis.onOperationComplete();
-             },
-
-             onGetResult: function (aCalendar, aStatus, aItemType, aDetail, aCount, aItems) {
-                 for (var i=0; i<aCount; i++) {
-                     if (!savedThis.mFilterFunction ||
-                         savedThis.mFilterFunction(aItems[i])) {
-                         savedThis.mTaskArray.push(aItems[i]);
-                     }
-                 }
-             }
-          };
-          
-          var refreshJob = {
-              execute: function() {
-                  var composite = getCompositeCalendar();
-                  var filter = aFilter || !savedThis.mShowCompletedTasks ?
-                      composite.ITEM_FILTER_COMPLETED_NO :
-                      composite.ITEM_FILTER_COMPLETED_ALL;
-                  filter |= composite.ITEM_FILTER_TYPE_TODO;
-                  if (savedThis.startDate && savedThis.endDate) {
-                      filter |= composite.ITEM_FILTER_CLASS_OCCURRENCES;
-                  }
-                  aCalendar.getItems(filter, 0, savedThis.startDate, savedThis.endDate, refreshListener);
-              }
-          };
-          this.mRefreshQueue.push(refreshJob);
-          this.popRefreshQueue();
+            this.mTreeView.treebox.beginUpdateBatch();
+            this.refreshFromCalendar(aCalendar, aFilter, false);
+            this.mTreeView.treebox.endUpdateBatch();
         ]]></body>
       </method>
-      
+
       <method name="onCalendarRemoved">
         <parameter name="aCalendar"/>
         <body><![CDATA[
           if (this.mTaskArray.length > 0) {
+              this.mTreeView.treebox.beginUpdateBatch();
               var index = this.mTaskArray.length - 1;
               while(index >= 0) {
                   var item = this.mTaskArray[index];
@@ -998,6 +1047,7 @@
                   }
                   --index;
               }
+              this.mTreeView.treebox.endUpdateBatch();
           }
 
           // we also need to notify potential listeners.
