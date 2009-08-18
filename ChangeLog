@@ -1,3 +1,8 @@
+2009-08-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-task-tree.xml: added module
+	for further modification.
+
 2009-08-10  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/lightning/content/imip-bar.js: fixed a typo that
