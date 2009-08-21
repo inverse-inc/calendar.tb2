@@ -120,4 +120,4 @@ pref("mousewheel.withnokey.action", 0);
 pref("mousewheel.withshiftkey.action", 0);
 
 // Set up user agent
-pref("general.useragent.extra.lightning","Lightning/0.9.6-Inverse");
+pref("general.useragent.extra.lightning","Lightning/0.9.7-Inverse");
