@@ -212,6 +212,26 @@
         ]]></setter>
       </property>
       
+      <method name="getSelectedItems">
+          <parameter name="value"/>
+          <body><![CDATA[
+            var flatItems = this.selectedTasks;
+
+            var itemHash = {};
+            for each (var item in flatItems) {
+                var parentItem = item.parentItem;
+                itemHash[parentItem.hashId] = parentItem;
+            }
+
+            var parentItems = [];
+            for (var hashId in itemHash) {
+                parentItems.push(itemHash[hashId]);
+            }
+
+            return parentItems;
+            ]]></body>
+      </method>
+
       <method name="duration">
         <parameter name="aTask"/>
         <body><![CDATA[

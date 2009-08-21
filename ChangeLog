@@ -1,5 +1,21 @@
 2009-08-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/lightning/content/messenger-overlay-sidebar.xul: we
+	enable the "export" menu items from the File menu to appear in
+	"task" mode.
+
+	* src/calendar/base/content/calendar-common-sets.js: since
+	"currentView()" only pertains to calendar views, the
+	"calendar_export_selection_command" now checks whether the current
+	mode is not actually the "task" mode, in which case the view taken
+	into account is the "calendar-task-tree" element.
+
+	* src/calendar/base/content/calendar-task-tree.xml: added new
+	"getSelectedItems" method that returns a list of the parent items
+	whose children are currently selected in the view. This method
+	matches the ones from the "calendar" views in order to facilitate
+	the export functions.
+
 	* src/calendar/lightning/content/messenger-overlay-sidebar.xul,
 	src/calendar/base/content/calendar-common-sets.js: added files for
 	further modifications.

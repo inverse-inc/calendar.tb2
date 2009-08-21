@@ -132,21 +132,21 @@
                 accesskey="&lightning.menupopup.open.message.accesskey;"
                 oncommand="MsgOpenFromFile();"/>
       <menuitem id="ltnOpenCalendarFileMenuitem"
-                mode="calendar"
+                mode="calendar,task"
                 label="&lightning.menupopup.open.calendar.label;"
                 accesskey="&lightning.menupopup.open.calendar.accesskey;"
                 oncommand="openLocalCalendar();"/>
     </menupopup>
   </menu>
   <menuitem id="calendar-export-selection-menu"
-             mode="calendar"
+             mode="calendar,task"
              label="&calendar.export.selection.label;"
              accesskey="&calendar.export.selection.accesskey;"
              command="calendar_export_selection_command"
              observes="calendar_export_selection_command"
              insertafter="menu_close"/>
   <menuitem id="calendar-export-menu"
-             mode="calendar"
+             mode="calendar,task"
              label="&calendar.export.calendar;"
              accesskey="&calendar.export.calendar.accesskey;"
              command="calendar_export_command"
@@ -157,10 +157,10 @@
              accesskey="&calendar.import.accesskey;"
              command="calendar_import_command"
              observes="calendar_import_command"
-             mode="calendar"
+             mode="calendar,task"
              insertafter="menu_close"/>
   <menuseparator id="afterMenu_close"
-             mode="calendar"
+             mode="calendar,task"
              insertafter="menu_close"/>
 </menupopup>
 
