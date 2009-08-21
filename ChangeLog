@@ -1,3 +1,9 @@
+2009-08-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/lightning/content/messenger-overlay-sidebar.xul,
+	src/calendar/base/content/calendar-common-sets.js: added files for
+	further modifications.
+
 2009-08-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-task-tree.xml: added module
