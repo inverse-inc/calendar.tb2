@@ -971,7 +971,6 @@ function doResponse(aLocalStatus) {
 
     var itipProc = Components.classes["@mozilla.org/calendar/itip-processor;1"]
                              .getService(Components.interfaces.calIItipProcessor);
-
     itipProc.processItipItem(gItipItem, operationListener);
 
     if (gDelegateInfo) {
