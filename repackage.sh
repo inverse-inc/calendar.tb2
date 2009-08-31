@@ -29,7 +29,8 @@ function build_osx {
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
 
-    cp -fr ../../src/calendar/lightning/content/imip-bar* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
@@ -94,7 +95,8 @@ function build_win32 {
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
-    cp -fr ../../src/calendar/lightning/content/imip-bar* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
@@ -168,7 +170,8 @@ function build_linux {
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
-    cp -fr ../../src/calendar/lightning/content/imip-bar* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
@@ -238,7 +241,8 @@ function build_linux_x64 {
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
-    cp -fr ../../src/calendar/lightning/content/imip-bar* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
+    cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
     cd $BASE/tmp/chrome/content/calendar/
