@@ -78,8 +78,8 @@ function onLoad() {
         var aclMgr;
         try {
             aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                               .getService(Components.interfaces.nsISupports)
-                               .wrappedJSObject;
+                .getService(Components.interfaces.nsISupports)
+                .wrappedJSObject;
         } catch(e) {
             aclMgr = null;
         }
@@ -236,10 +236,10 @@ function updateInvitationStatus() {
 }
 
 function updateInvitation() {
-  var statusElement = document.getElementById("item-participation");
-  if (window.attendee) {
-      window.attendee.participationStatus = statusElement.value;
-  }
+    var statusElement = document.getElementById("item-participation");
+    if (window.attendee) {
+        window.attendee.participationStatus = statusElement.value;
+    }
 }
 
 function updateRepeatDetails() {
@@ -273,8 +273,8 @@ function updateRepeatDetails() {
     var endDate = item.endDate || item.dueDate;
     startDate = startDate ? startDate.getInTimezone(kDefaultTimezone) : null;
     endDate = endDate ? endDate.getInTimezone(kDefaultTimezone) : null;
-    var detailsString = recurrenceRule2String(
-        recurrenceInfo, startDate, endDate, startDate.isDate);
+    var detailsString = recurrenceRule2String(recurrenceInfo, startDate,
+                                              endDate, startDate.isDate);
         
     // Now display the string...
     if (detailsString) {
@@ -287,7 +287,7 @@ function updateRepeatDetails() {
         for (var i = 0; i < lines.length; i++) {
             if (i >= numChilds) {
                 var newNode = repeatDetails.childNodes[0]
-                                           .cloneNode(true);
+                    .cloneNode(true);
                 repeatDetails.appendChild(newNode);
             }
             repeatDetails.childNodes[i].value = lines[i];
@@ -331,8 +331,8 @@ function updateAttendees() {
 
             page++;
             if (page > 1) {
-              page = 0;
-              line++;
+                page = 0;
+                line++;
             }
         }
     }
@@ -345,7 +345,7 @@ function updateReminder() {
 function browseDocument() {
     var args = window.arguments[0];
     var item = args.calendarEvent;
-    var url = item.getProperty("URL")
+    var url = item.getProperty("URL");
     launchBrowser(url);
 }
 

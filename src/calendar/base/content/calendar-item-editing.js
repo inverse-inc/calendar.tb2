@@ -52,7 +52,7 @@ opCompleteListener.prototype = {
             // calProviderBase.notifyOperationComplete (with adding an oldItem parameter).
             // I am not yet sure what to do for mixed mode invitations, e.g.
             // some users on the attendee list are caldav users and get REQUESTs into their inbox,
-            // other get emailed... For now let's do both.	  
+            // other get emailed... For now let's do both.
             checkAndSendItipMessage(aItem, aOpType, this.mOriginalItem);
         }
         if (this.mOuterListener) {
@@ -223,7 +223,7 @@ itemObserver.prototype = {
             var parts = aData.split("/");
             if (this.componentURL == parts[parts.length-1]) {
                 var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                                           .getService(Components.interfaces.nsIObserverService);
+                    .getService(Components.interfaces.nsIObserverService);
                 obsService.removeObserver(this,
                                           "caldav-component-acl-loaded", false);
                 obsService.removeObserver(this,
@@ -245,7 +245,7 @@ function loadItemCalDAVAclEntry(aclMgr, item, calendar, openArgs) {
     if (cache[item.id]) {
         var compURL = cache[item.id].locationPath;
         var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                                   .getService(Components.interfaces.nsIObserverService);
+            .getService(Components.interfaces.nsIObserverService);
         var obs = new itemObserver(compURL, openArgs);
         obsService.addObserver(obs, "caldav-component-acl-loaded", false);
         obsService.addObserver(obs, "caldav-component-acl-reset", false);
@@ -268,8 +268,8 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
 
     try {
         var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                               .getService(Components.interfaces.nsISupports)
-                               .wrappedJSObject;
+            .getService(Components.interfaces.nsISupports)
+            .wrappedJSObject;
         if (mode == "modify" && calendar.type == "caldav"
             && !isCalendarWritable(calendar)) {
             compAclEntry = loadItemCalDAVAclEntry(aclMgr, calendarItem,
@@ -404,7 +404,7 @@ function promptOccurrenceModification(aItem, aNeedsFuture, aAction) {
     if (aItem == aItem.parentItem) {
         type = MODIFY_PARENT;
     } else if (aItem.parentItem.recurrenceInfo
-                    .getExceptionFor(aItem.recurrenceId, false) != null) {
+               .getExceptionFor(aItem.recurrenceId, false) != null) {
         // If the user wants to edit an occurrence which is already an exception
         // always edit this single item.
         // XXX  Why? I think its ok to ask also for exceptions.
@@ -421,20 +421,20 @@ function promptOccurrenceModification(aItem, aNeedsFuture, aAction) {
     }
 
     switch (type) {
-        case MODIFY_PARENT:
-            pastItem = aItem.parentItem;
-            break;
-        case MODIFY_FOLLOWING:
-            // TODO tbd in a different bug
-            throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-            break;
-        case MODIFY_OCCURRENCE:
-            pastItem = aItem;
-            break;
-        case CANCEL:
-            // Since we have not set past or futureItem, the return below will
-            // take care.
-            break;
+    case MODIFY_PARENT:
+        pastItem = aItem.parentItem;
+        break;
+    case MODIFY_FOLLOWING:
+        // TODO tbd in a different bug
+        throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+        break;
+    case MODIFY_OCCURRENCE:
+        pastItem = aItem;
+        break;
+    case CANCEL:
+        // Since we have not set past or futureItem, the return below will
+        // take care.
+        break;
     }
 
     return [pastItem, futureItem, type];
@@ -449,14 +449,14 @@ function promptOccurrenceModification(aItem, aNeedsFuture, aAction) {
 function setDefaultAlarmValues(aItem)
 {
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefService);
+        .getService(Components.interfaces.nsIPrefService);
     var alarmsBranch = prefService.getBranch("calendar.alarms.");
 
     if (isEvent(aItem)) {
         try {
             if (alarmsBranch.getIntPref("onforevents") == 1) {
                 var alarmOffset = Components.classes["@mozilla.org/calendar/duration;1"]
-                                            .createInstance(Components.interfaces.calIDuration);
+                    .createInstance(Components.interfaces.calIDuration);
                 var units = alarmsBranch.getCharPref("eventalarmunit");
                 alarmOffset[units] = alarmsBranch.getIntPref("eventalarmlen");
                 alarmOffset.isNegative = true;
@@ -465,7 +465,7 @@ function setDefaultAlarmValues(aItem)
             }
         } catch (ex) {
             Components.utils.reportError(
-                "Failed to apply default alarm settings to event: " + ex);
+                                         "Failed to apply default alarm settings to event: " + ex);
         }
     } else if (isToDo(aItem)) {
         try {
@@ -473,10 +473,10 @@ function setDefaultAlarmValues(aItem)
                 // You can't have an alarm if the entryDate doesn't exist.
                 if (!aItem.entryDate) {
                     aItem.entryDate = getSelectedDay() &&
-                                      getSelectedDay().clone() || now();
+                        getSelectedDay().clone() || now();
                 }
                 var alarmOffset = Components.classes["@mozilla.org/calendar/duration;1"]
-                                            .createInstance(Components.interfaces.calIDuration);
+                    .createInstance(Components.interfaces.calIDuration);
                 var units = alarmsBranch.getCharPref("todoalarmunit");
                 alarmOffset[units] = alarmsBranch.getIntPref("todoalarmlen");
                 alarmOffset.isNegative = true;
@@ -485,7 +485,7 @@ function setDefaultAlarmValues(aItem)
             }
         } catch (ex) {
             Components.utils.reportError(
-                "Failed to apply default alarm settings to task: " + ex);
+                                         "Failed to apply default alarm settings to task: " + ex);
         }
     }
 }
@@ -493,7 +493,7 @@ function setDefaultAlarmValues(aItem)
 // Undo/Redo code
 function getTransactionMgr() {
     return Components.classes["@mozilla.org/calendar/transactionmanager;1"]
-                     .getService(Components.interfaces.calITransactionManager);
+        .getService(Components.interfaces.calITransactionManager);
 }
 
 function doTransaction(aAction, aItem, aCalendar, aOldItem, aListener) {
@@ -564,43 +564,43 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     // information and we send it over with the RECURRENCE-ID.
     var itemEx = [];
     if (aItem.recurrenceInfo)
-      itemEx = aItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} ); 
-  
+        itemEx = aItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} );
+
     if (aOriginalItem && aOriginalItem.recurrenceInfo) {
-      var origEx = aOriginalItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} );
-      if (itemEx.length != origEx.length) {
-	var exMap = {};
-	for each (var ex in origEx) {
-	    exMap[ex.date] = ex;
-	}
+        var origEx = aOriginalItem.recurrenceInfo.getRecurrenceItems({}).filter(function (x) { return (x.isNegative && calInstanceOf(x, Components.interfaces.calIRecurrenceDate));} );
+        if (itemEx.length != origEx.length) {
+            var exMap = {};
+            for each (var ex in origEx) {
+                exMap[ex.date] = ex;
+            }
 
-	// We check for newly created EXDATE
-	for each (var ex in itemEx) {
-	    if (!(ex.date in exMap)) {
-	      var duration;
+            // We check for newly created EXDATE
+            for each (var ex in itemEx) {
+                if (!(ex.date in exMap)) {
+                    var duration;
 
-	      duration = aItem.duration;
+                    duration = aItem.duration;
 
-	      aItem = aItem.clone();
-	      aItem.recurrenceInfo = null;
-	      rID = ex.date;
-	      
-	      aItem.endDate = ex.date.clone();
-	      aItem.endDate.addDuration(duration);
-	      aItem.startDate = ex.date;
-	      
-	      aOpType = Components.interfaces.calIOperationListener.DELETE;
-	      break;
-	    }
-	}
-      }
-    } 
+                    aItem = aItem.clone();
+                    aItem.recurrenceInfo = null;
+                    rID = ex.date;
+
+                    aItem.endDate = ex.date.clone();
+                    aItem.endDate.addDuration(duration);
+                    aItem.startDate = ex.date;
+
+                    aOpType = Components.interfaces.calIOperationListener.DELETE;
+                    break;
+                }
+            }
+        }
+    }
     // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
     // We must get the proper modified occurence since Lightning pass us
     // the parent item.
     else if (aOriginalItem && aOriginalItem.recurrenceId) {
-	aItem = aItem.clone();
-	aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
+        aItem = aItem.clone();
+        aItem = aItem.recurrenceInfo.getExceptionFor(aOriginalItem.recurrenceId, false);
     }
 
     transport = transport.QueryInterface(Components.interfaces.calIItipTransport);
@@ -611,75 +611,75 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         if (aItem.calendar.canNotify("REPLY", aItem)) {
             return; // provider does that
         }
-        var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));	    
-	origInvitedAttendee = invitedAttendee;
-	invitedAttendee = invitedAttendee.clone();
-        
-	if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
+        var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));
+        origInvitedAttendee = invitedAttendee;
+        invitedAttendee = invitedAttendee.clone();
+
+        if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
             // in case the attendee has just deleted the item, we want to send out a DECLINED REPLY:
             invitedAttendee.participationStatus = "DECLINED";
         }
-	
-	// Much like in sun-calendar-event-dialog-attendees.xml (onInitialize)
-	// we have to check if the attendee is equal to the calendar-user-address-set.
-	// If they aren't equal, it means that someone is accepting invitations
-	// on behalf of an other user.
-	if (aItem.calendar.type == "caldav") {
-	  try {
-	    // Inverse inc. ACL addition
-	    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-	      .getService(Components.interfaces.nsISupports)
-	      .wrappedJSObject;
-	    
-	    var entry = aclMgr.calendarEntry(aItem.calendar.uri);		
-	    var found = false;
-	    var identity;
-	    
-	    for (var i = 0; i < entry.userAddresses.length; i++) {
-	      identity = entry.userAddresses[i].toLowerCase();
-	      if (invitedAttendee.id.toLowerCase() == identity) {
-		found = true;
-	      }
-	    }
-	    
-	    if (!found && entry.userAddresses.length > 0) {
-	      invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
-	    }
-	  } catch (ex) {
-	    // NO ACL support
-	  }
-	}
 
-	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	if (aOriginalItem && aOriginalItem.recurrenceId) {
-	  aItem.organizer = aItem.parentItem.organizer;
-	}
+        // Much like in sun-calendar-event-dialog-attendees.xml (onInitialize)
+        // we have to check if the attendee is equal to the calendar-user-address-set.
+        // If they aren't equal, it means that someone is accepting invitations
+        // on behalf of an other user.
+        if (aItem.calendar.type == "caldav") {
+            try {
+                // Inverse inc. ACL addition
+                var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                    .getService(Components.interfaces.nsISupports)
+                    .wrappedJSObject;
+
+                var entry = aclMgr.calendarEntry(aItem.calendar.uri);
+                var found = false;
+                var identity;
+
+                for (var i = 0; i < entry.userAddresses.length; i++) {
+                    identity = entry.userAddresses[i].toLowerCase();
+                    if (invitedAttendee.id.toLowerCase() == identity) {
+                        found = true;
+                    }
+                }
+
+                if (!found && entry.userAddresses.length > 0) {
+                    invitedAttendee.setProperty("SENT-BY", entry.userAddresses[0]);
+                }
+            } catch (ex) {
+                // NO ACL support
+            }
+        }
+
+        // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        if (aOriginalItem && aOriginalItem.recurrenceId) {
+            aItem.organizer = aItem.parentItem.organizer;
+        }
 
         // has this been a PARTSTAT change?
         if (aItem.organizer) { // &&
 
-	    //(!origInvitedAttendee ||
-	    // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
-	   //var rID = null;
+            //(!origInvitedAttendee ||
+            // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
+            //var rID = null;
 
-	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	    if (aOriginalItem && aOriginalItem.recurrenceId) {
-	      rID = aItem.getProperty("RECURRENCE-ID");
-	      aItem.recurrenceId = null;
-	    } else {
-	      aItem = aItem.clone();
-	    } 
-	  
+            // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+            if (aOriginalItem && aOriginalItem.recurrenceId) {
+                rID = aItem.getProperty("RECURRENCE-ID");
+                aItem.recurrenceId = null;
+            } else {
+                aItem = aItem.clone();
+            }
+
             aItem.removeAllAttendees();
             aItem.addAttendee(invitedAttendee);
 
             var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-                                     .createInstance(Components.interfaces.calIItipItem);
+                .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
 
-	    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	    if (rID)
-	      itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+            // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+            if (rID)
+                itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
 
             itipItem.targetCalendar = aItem.calendar;
             itipItem.autoResponse = Components.interfaces.calIItipItem.USER;
@@ -688,7 +688,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         }
         return;
     }
- 
+
     // HACK - We send invitation unconditionally. Why we wouldn't
     // anyway if we invoked this method?
     //if (aItem.getProperty("X-MOZ-SEND-INVITATIONS") != "TRUE") { // Only send invitations/cancellations
@@ -712,14 +712,14 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
             attMap[att.id.toLowerCase()] = att;
         }
 
-	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	// We need to fix the attendee list so that we send invitation
-	// requests to newly added attendees
-	for each (var addedAtt in itemAtt) {
-	    if (!(addedAtt.id.toLowerCase() in attMap)) {
-	      addedAttendees.push(addedAtt);
-	    }
-	}
+        // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        // We need to fix the attendee list so that we send invitation
+        // requests to newly added attendees
+        for each (var addedAtt in itemAtt) {
+            if (!(addedAtt.id.toLowerCase() in attMap)) {
+                addedAttendees.push(addedAtt);
+            }
+        }
 
         for each (var att in itemAtt) {
             if (att.id.toLowerCase() in attMap) {
@@ -736,20 +736,20 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
     // Check to see if some part of the item was updated, if so, re-send invites
     if (!aOriginalItem || aItem.generation != aOriginalItem.generation ||
-	aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE") || addedAttendees.length > 0) {
+        aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE") || addedAttendees.length > 0) {
         var requestItem = aItem;
-	
-	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	if (aOriginalItem && aOriginalItem.recurrenceId) {
-	  rID = requestItem.getProperty("RECURRENCE-ID");
-	  requestItem.recurrenceId = null;
-	} else {
-	  requestItem = aItem.clone();
-	} 
-		
+
+        // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        if (aOriginalItem && aOriginalItem.recurrenceId) {
+            rID = requestItem.getProperty("RECURRENCE-ID");
+            requestItem.recurrenceId = null;
+        } else {
+            requestItem = aItem.clone();
+        }
+
         if (!requestItem.organizer) {
             var organizer = Components.classes["@mozilla.org/calendar/attendee;1"]
-                                      .createInstance(Components.interfaces.calIAttendee);
+                .createInstance(Components.interfaces.calIAttendee);
             organizer.id = requestItem.calendar.getProperty("organizerId");
             organizer.commonName = requestItem.calendar.getProperty("organizerCN");
             organizer.role = "REQ-PARTICIPANT";
@@ -760,40 +760,40 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
         // Fix up our attendees for invitations using some good defaults
         var recipients = [];
-	var itemAtt = [];
-	var attMap = {};
+        var itemAtt = [];
+        var attMap = {};
 
-	itemAtt = requestItem.getAttendees({});
+        itemAtt = requestItem.getAttendees({});
         requestItem.removeAllAttendees();
 
-	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	for each (var attendee in addedAttendees) {
-	    attMap[attendee.id.toLowerCase()] = attendee;
-	    attendee = attendee.clone();
+        // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        for each (var attendee in addedAttendees) {
+            attMap[attendee.id.toLowerCase()] = attendee;
+            attendee = attendee.clone();
             attendee.role = "REQ-PARTICIPANT";
             attendee.participationStatus = "NEEDS-ACTION";
             attendee.rsvp = true;
             requestItem.addAttendee(attendee);
             recipients.push(attendee);
-	}
-	
-	// HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-	for each (var attendee in itemAtt) {
-	    if (attendee.id.toLowerCase() in attMap)
-	      continue; // already handled the attendee, we skip it.
+        }
+
+        // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+        for each (var attendee in itemAtt) {
+            if (attendee.id.toLowerCase() in attMap)
+                continue; // already handled the attendee, we skip it.
 
             attendee = attendee.clone();
-	    if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
+            if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
                 attendee.role = "REQ-PARTICIPANT";
-		attendee.participationStatus = "NEEDS-ACTION";
-		attendee.rsvp = true;
-	    }
+                attendee.participationStatus = "NEEDS-ACTION";
+                attendee.rsvp = true;
+            }
             requestItem.addAttendee(attendee);
             recipients.push(attendee);
         }
 
         if (recipients.length > 0) {
-	  calSendItipMessage(transport, requestItem, "REQUEST", recipients, autoResponse, rID);
+            calSendItipMessage(transport, requestItem, "REQUEST", recipients, autoResponse, rID);
             autoResponse = true; // don't ask again
         }
     }
@@ -801,10 +801,10 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
     if (canceledAttendees.length > 0) {
         var cancelItem = aOriginalItem.clone();
         cancelItem.removeAllAttendees();
-	if (cancelItem && cancelItem.recurrenceId) {
-	  rID = cancelItem.getProperty("RECURRENCE-ID");
-	  cancelItem.recurrenceId = null;
-	}
+        if (cancelItem && cancelItem.recurrenceId) {
+            rID = cancelItem.getProperty("RECURRENCE-ID");
+            cancelItem.recurrenceId = null;
+        }
         for each (var att in canceledAttendees) {
             cancelItem.addAttendee(att);
         }
@@ -822,7 +822,7 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
     }
 
     var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-                             .createInstance(Components.interfaces.calIItipItem);
+        .createInstance(Components.interfaces.calIItipItem);
 
     // We have to modify our item a little, so we clone it.
     var item = aItem.clone();
@@ -834,7 +834,7 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
     // We need to add the RECURRENCE-ID _AFTER_ we serialized the item.
     // Otherwise, we'll get an exception.
     if (rID) {
-      itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+        itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
     }
 
     itipItem.responseMethod = aMethod;
@@ -851,7 +851,7 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
 
 function calGetSerializedItem(aItem) {
     var serializer = Components.classes["@mozilla.org/calendar/ics-serializer;1"]
-                               .createInstance(Components.interfaces.calIIcsSerializer);
+        .createInstance(Components.interfaces.calIIcsSerializer);
     serializer.addItems([aItem], 1);
     return serializer.serializeToString();
 }

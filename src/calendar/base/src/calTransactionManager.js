@@ -196,17 +196,17 @@ calTransaction.prototype = {
     // ratinale on the organizer.
     //
     resetAttendeesStatus: function cal_itip_resetAttendeesStatus(aItem) {
-      var att = aItem.getAttendees({});
-      aItem.removeAllAttendees();
-      for each (var attendee in att) {
-	  attendee = attendee.clone();
-	  if (attendee.id.toLowerCase() != aItem.organizer.id.toLowerCase()) {
-	    attendee.role = "REQ-PARTICIPANT";
-	    attendee.participationStatus = "NEEDS-ACTION";
-	    attendee.rsvp = true;
-	  }
-	  aItem.addAttendee(attendee);
-      }
+        var att = aItem.getAttendees({});
+        aItem.removeAllAttendees();
+        for each (var attendee in att) {
+            attendee = attendee.clone();
+            if (attendee.id.toLowerCase() != aItem.organizer.id.toLowerCase()) {
+                attendee.role = "REQ-PARTICIPANT";
+                attendee.participationStatus = "NEEDS-ACTION";
+                attendee.rsvp = true;
+            }
+            aItem.addAttendee(attendee);
+        }
     },
 
     // Stolen from bug #457203 -  iTIP overhaul
