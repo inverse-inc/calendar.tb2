@@ -1,3 +1,8 @@
+2009-08-31  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog.css: added
+	file for further modification.
+
 2009-08-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/lightning/content/messenger-overlay-sidebar.xul: we
