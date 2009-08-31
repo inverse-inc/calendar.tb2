@@ -888,6 +888,9 @@ function setAttendeeResponse(type, eventStatus) {
                 var delegation = null;
                 if (type == "DELEGATED") {
                     delegation = getDelegation();
+                    if (!delegation) {
+                        return;
+                    }
                 }
                 for each (var item in gItipItem.getItemList({})) {
                     var att = item.getAttendeeById(attId);
