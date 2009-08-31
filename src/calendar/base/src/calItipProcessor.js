@@ -214,10 +214,18 @@ calItipProcessor.prototype = {
         // status of the ATTENDEE that represents ourselves. Therefore we must
         // remove all other ATTENDEEs from the itipItem we send back.
         if (respMethod == "REPLY") {
+            var delegate = null;
+            var delegateId = invitedAttendee.getProperty("DELEGATED-TO");
+            if (delegateId && delegateId.length > 0) {
+                delegate = newItem.getAttendeeById(delegateId);
+            }
             // Get the id that represents me.
             newItem.removeAllAttendees();
             ASSERT(invitedAttendee, "attendee unknown!");
             newItem.addAttendee(invitedAttendee);
+            if (delegate) {
+                newItem.addAttendee(delegate);
+            }
         }
     },
 

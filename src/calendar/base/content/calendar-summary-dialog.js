@@ -78,8 +78,8 @@ function onLoad() {
         var aclMgr;
         try {
             aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                .getService(Components.interfaces.nsISupports)
-                .wrappedJSObject;
+                               .getService(Components.interfaces.nsISupports)
+                               .wrappedJSObject;
         } catch(e) {
             aclMgr = null;
         }
@@ -200,11 +200,90 @@ function onLoad() {
     opener.setCursor("auto");
 }
 
+function saveDelegationInfo() {
+    var validated = true;
+
+    var oldDelegate = null;
+    var keepOldDelegate = false;
+    var oldDelegateEmail = window.attendee.getProperty("DELEGATED-TO");
+    if (oldDelegateEmail && oldDelegateEmail.length > 0) {
+        oldDelegate = window.item.getAttendeeById(oldDelegateEmail);
+    }
+
+    if (window.attendee.participationStatus == "DELEGATED") {
+        var delegateField = document.getElementById("item-delegate");
+        var delegateCB = document.getElementById("item-delegate-staytuned");
+
+        var emails = {};
+        var names = {};
+        var parser = Components
+                         .classes["@mozilla.org/messenger/headerparser;1"]
+                         .getService(Components.interfaces.nsIMsgHeaderParser);
+        parser.parseHeadersWithArray(delegateField.value, emails, names, {});
+        if (emails.value.length > 0 && emails.value[0].indexOf("@") > 0) {
+            var newDelegateEmail = "mailto:" + emails.value[0];
+            if (newDelegateEmail == oldDelegateEmail) {
+                keepOldDelegate = true;
+            } else {
+                if (window.item.getAttendeeById(newDelegateEmail)) {
+                    window.alert("attendee already present n.t.");
+                    validated = false;
+                } else {
+                    var newDelegate
+                        = Components.classes["@mozilla.org/calendar/attendee;1"]
+                        .createInstance(Components.interfaces.calIAttendee);
+                    newDelegate.isOrganizer = false;
+                    newDelegate.id = newDelegateEmail;
+                    newDelegate.participationStatus = "NEEDS-ACTION";
+                    newDelegate.role = "REQ-PARTICIPANT";
+                    newDelegate.rsvp = "TRUE";
+                    if (names.value[0].length > 0) {
+                        newDelegate.commonName = names.value[0];
+                    }
+                    newDelegate.setProperty("DELEGATED-FROM", window.attendee.id);
+                    window.attendee.setProperty("DELEGATED-TO", newDelegateEmail);
+                    window.item.addAttendee(newDelegate);
+
+                    if (delegateCB.checked) {
+                        window.attendee.role = "NON-PARTICIPANT";
+                    } else {
+                        window.attendee.role = "";
+                    }
+                }
+            }
+        } else {
+            window.alert("invalid name n.t.");
+            delegateField.select();
+            validated = false;
+        }
+    } else {
+        window.attendee.deleteProperty("DELEGATED-TO");
+        window.attendee.role = "REQ-PARTICIPANT";
+        window.attendee.rsvp = "TRUE";
+    }
+
+    if (!keepOldDelegate && oldDelegate) {        
+        window.item.removeAttendee(oldDelegate);
+        var oldDelegates = findDelegationAttendees(window.item,
+                                                   "DELEGATED-TO",
+                                                   oldDelegate);
+        for (var oldDelegate in oldDelegates) {
+            window.item.removeAttendee(oldDelegate);
+        }
+    }
+
+    return validated;
+}
+
 function onAccept() {
     dispose();
     if (window.readOnly) {
         return true;
     }
+
+    if (!saveDelegationInfo())
+        return false;
+
     var args = window.arguments[0];
     var oldItem = args.calendarEvent;
     var newItem = window.item;
@@ -231,6 +310,28 @@ function updateInvitationStatus() {
             var statusElement =
                 document.getElementById("item-participation");
             statusElement.value = attendee.participationStatus;
+            var delegate = document.getElementById("item-delegate");
+            var delegateCB = document.getElementById("item-delegate-staytuned");
+            if (statusElement.value == "DELEGATED") {
+                delegate.removeAttribute("disabled");
+                delegateCB.removeAttribute("disabled");
+                var delegateEmail = window.attendee.getProperty("DELEGATED-TO");
+                if (delegateEmail && delegateEmail.length > 0) {
+                    var delegateAtt
+                        = window.item.getAttendeeById(delegateEmail);
+                    var email = delegateEmail.replace(/^mailto:/i, "");
+                    var name = delegateAtt.commonName;
+                    if (name && name.length) {
+                        name += " <" + email + ">";
+                    } else {
+                        name = email;
+                    }
+                    delegate.value = name;
+                }
+            } else {
+                delegate.setAttribute("disabled", "true");
+                delegateCB.setAttribute("disabled", "true");
+            }
         }
     }
 }
@@ -239,6 +340,15 @@ function updateInvitation() {
     var statusElement = document.getElementById("item-participation");
     if (window.attendee) {
         window.attendee.participationStatus = statusElement.value;
+        var delegate = document.getElementById("item-delegate");
+        var delegateCB = document.getElementById("item-delegate-staytuned");
+        if (statusElement.value == "DELEGATED") {
+            delegate.removeAttribute("disabled");
+            delegateCB.removeAttribute("disabled");
+        } else {
+            delegate.setAttribute("disabled", "true");
+            delegateCB.setAttribute("disabled", "true");
+        }
     }
 }
 
@@ -287,7 +397,7 @@ function updateRepeatDetails() {
         for (var i = 0; i < lines.length; i++) {
             if (i >= numChilds) {
                 var newNode = repeatDetails.childNodes[0]
-                    .cloneNode(true);
+                                           .cloneNode(true);
                 repeatDetails.appendChild(newNode);
             }
             repeatDetails.childNodes[i].value = lines[i];
@@ -312,27 +422,45 @@ function updateAttendees() {
         var page = 0;
         var line = 0;
         for each (var attendee in attendees) {
-            var itemNode = list[line];
-            var listcell = itemNode.getElementsByTagName("listcell")[page];
-            var image = itemNode.getElementsByTagName("image")[page];
-            var label = itemNode.getElementsByTagName("label")[page];
-            if (attendee.commonName && attendee.commonName.length) {
-                label.value = attendee.commonName;
-                // XXX While this is correct from a XUL standpoint, it doesn't
-                // seem to work on the listcell. Working around this would be an
-                // evil hack, so I'm waiting for it to be fixed in the core
-                // code instead.
-                listcell.setAttribute("tooltiptext", attendee.toString());
-            } else {
-                label.value = attendee.toString();
-            }
-            image.setAttribute("status", attendee.participationStatus);
-            image.removeAttribute("hidden");
+            if (attendee.participationStatus != "DELEGATED") {
+                var itemNode = list[line];
+                var listcell = itemNode.getElementsByTagName("listcell")[page];
+                var image = itemNode.getElementsByTagName("image")[page];
+                var label = itemNode.getElementsByTagName("label")[page];
+                if (attendee.commonName && attendee.commonName.length) {
+                    label.value = attendee.commonName;
+                    // XXX While this is correct from a XUL standpoint, it doesn't
+                    // seem to work on the listcell. Working around this would be an
+                    // evil hack, so I'm waiting for it to be fixed in the core
+                    // code instead.
+                    listcell.setAttribute("tooltiptext", attendee.toString());
+                } else {
+                    label.value = attendee.toString();
+                }
+                var delegatedFrom = attendee.getProperty("DELEGATED-FROM");
+                if (delegatedFrom && delegatedFrom.length > 0) {
+                    var delegatorLabel = "delegated by ";
+                    var delegator = item.getAttendeeById(delegatedFrom);
+                    if (delegator) {
+                        var delegatorName = delegator.commonName;
+                        if (delegatorName && delegatorName.length > 0) {
+                            delegatorLabel += delegatorName;
+                        } else {
+                            delegatorLabel += delegator.toString();
+                        }
+                    } else {
+                        delegatorLabel += " unspecified attendee (bug)";
+                    }
+                    label.value += ", " + delegatorLabel;
+                }
+                image.setAttribute("status", attendee.participationStatus);
+                image.removeAttribute("hidden");
 
-            page++;
-            if (page > 1) {
-                page = 0;
-                line++;
+                page++;
+                if (page > 1) {
+                    page = 0;
+                    line++;
+                }
             }
         }
     }
@@ -345,7 +473,7 @@ function updateReminder() {
 function browseDocument() {
     var args = window.arguments[0];
     var item = args.calendarEvent;
-    var url = item.getProperty("URL");
+    var url = item.getProperty("URL")
     launchBrowser(url);
 }
 

@@ -200,7 +200,9 @@ calTransaction.prototype = {
         aItem.removeAllAttendees();
         for each (var attendee in att) {
             attendee = attendee.clone();
-            if (attendee.id.toLowerCase() != aItem.organizer.id.toLowerCase()) {
+            if (attendee.id.toLowerCase()
+                != aItem.organizer.id.toLowerCase()
+                && attendee.participationStatus != "DELEGATED") {
                 attendee.role = "REQ-PARTICIPANT";
                 attendee.participationStatus = "NEEDS-ACTION";
                 attendee.rsvp = true;

@@ -293,8 +293,8 @@ calItipItem.prototype = {
                 // create a new attendee from scratch WITHOUT the RSVP
                 // property and copy in the other relevant data.
                 // XXX use deleteProperty after bug 358498 is fixed.
-                newAttendee = Components.classes["@mozilla.org/calendar/attendee;1"].
-                              createInstance(Components.interfaces.calIAttendee);
+                newAttendee = Components.classes["@mozilla.org/calendar/attendee;1"]
+                                        .createInstance(Components.interfaces.calIAttendee);
                 if (attendee.commonName) {
                     newAttendee.commonName = attendee.commonName;
                 }
@@ -306,6 +306,16 @@ calItipItem.prototype = {
                 }
                 newAttendee.id = attendee.id;
                 newAttendee.participationStatus = aStatus;
+
+                var delegatedTo = attendee.getProperty("DELEGATED-TO");
+                if (delegatedTo && delegatedTo.length > 0) {
+                    newAttendee.setProperty("DELEGATED-TO", delegatedTo);
+                }
+                var delegatedFrom = attendee.getProperty("DELEGATED-FROM");
+                if (delegatedFrom && delegatedFrom.length > 0) {
+                    newAttendee.setProperty("DELEGATED-FROM", delegatedFrom);
+                }
+
                 item.addAttendee(newAttendee);
             }
         }

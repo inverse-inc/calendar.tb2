@@ -1,7 +1,6 @@
 2009-08-31  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
-	* src/calendar/base/content/sun-calendar-event-dialog.css: added
-	file for further modification.
+	* Added support for iTIP delegation.
 
 2009-08-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 

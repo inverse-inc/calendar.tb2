@@ -73,6 +73,7 @@
           <button id="imip-button1" hidden="true"/>
           <button id="imip-button2" hidden="true"/>
           <button id="imip-button3" hidden="true"/>
+          <button id="imip-button4" hidden="true"/>
         </lightning-notification-bar>
     </vbox>
 </overlay>

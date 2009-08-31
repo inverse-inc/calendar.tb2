@@ -223,7 +223,7 @@ itemObserver.prototype = {
             var parts = aData.split("/");
             if (this.componentURL == parts[parts.length-1]) {
                 var obsService = Components.classes["@mozilla.org/observer-service;1"]
-                    .getService(Components.interfaces.nsIObserverService);
+                                           .getService(Components.interfaces.nsIObserverService);
                 obsService.removeObserver(this,
                                           "caldav-component-acl-loaded", false);
                 obsService.removeObserver(this,
@@ -245,7 +245,7 @@ function loadItemCalDAVAclEntry(aclMgr, item, calendar, openArgs) {
     if (cache[item.id]) {
         var compURL = cache[item.id].locationPath;
         var obsService = Components.classes["@mozilla.org/observer-service;1"]
-            .getService(Components.interfaces.nsIObserverService);
+                                   .getService(Components.interfaces.nsIObserverService);
         var obs = new itemObserver(compURL, openArgs);
         obsService.addObserver(obs, "caldav-component-acl-loaded", false);
         obsService.addObserver(obs, "caldav-component-acl-reset", false);
@@ -268,8 +268,8 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
 
     try {
         var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-            .getService(Components.interfaces.nsISupports)
-            .wrappedJSObject;
+                               .getService(Components.interfaces.nsISupports)
+                               .wrappedJSObject;
         if (mode == "modify" && calendar.type == "caldav"
             && !isCalendarWritable(calendar)) {
             compAclEntry = loadItemCalDAVAclEntry(aclMgr, calendarItem,
@@ -449,14 +449,14 @@ function promptOccurrenceModification(aItem, aNeedsFuture, aAction) {
 function setDefaultAlarmValues(aItem)
 {
     var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefService);
+                                .getService(Components.interfaces.nsIPrefService);
     var alarmsBranch = prefService.getBranch("calendar.alarms.");
 
     if (isEvent(aItem)) {
         try {
             if (alarmsBranch.getIntPref("onforevents") == 1) {
                 var alarmOffset = Components.classes["@mozilla.org/calendar/duration;1"]
-                    .createInstance(Components.interfaces.calIDuration);
+                                            .createInstance(Components.interfaces.calIDuration);
                 var units = alarmsBranch.getCharPref("eventalarmunit");
                 alarmOffset[units] = alarmsBranch.getIntPref("eventalarmlen");
                 alarmOffset.isNegative = true;
@@ -476,7 +476,7 @@ function setDefaultAlarmValues(aItem)
                         getSelectedDay().clone() || now();
                 }
                 var alarmOffset = Components.classes["@mozilla.org/calendar/duration;1"]
-                    .createInstance(Components.interfaces.calIDuration);
+                                            .createInstance(Components.interfaces.calIDuration);
                 var units = alarmsBranch.getCharPref("todoalarmunit");
                 alarmOffset[units] = alarmsBranch.getIntPref("todoalarmlen");
                 alarmOffset.isNegative = true;
@@ -493,7 +493,7 @@ function setDefaultAlarmValues(aItem)
 // Undo/Redo code
 function getTransactionMgr() {
     return Components.classes["@mozilla.org/calendar/transactionmanager;1"]
-        .getService(Components.interfaces.calITransactionManager);
+                     .getService(Components.interfaces.calITransactionManager);
 }
 
 function doTransaction(aAction, aItem, aCalendar, aOldItem, aListener) {
@@ -541,6 +541,71 @@ function canRedo() {
 function updateUndoRedoMenu() {
     goUpdateCommand("cmd_undo");
     goUpdateCommand("cmd_redo");
+}
+
+/**
+ * helper for delegation in checkAndSendItipItems
+ */
+function makeDelegateItem(aItem, method, rID, attendee, otherAttendees) {
+    var delegateItem = aItem.clone();
+    if (method != "REPLY"
+        && (delegateItem.organizer.id.toLowerCase()
+            != attendee.id.toLowerCase())) {
+        delegateItem.organizer.setProperty("SENT-BY", attendee.id);
+    }
+    delegateItem.removeAllAttendees();
+    for each (var otherAttendee in otherAttendees) {
+        delegateItem.addAttendee(otherAttendee);
+    }
+    delegateItem.addAttendee(attendee);
+
+    var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
+                             .createInstance(Components.interfaces.calIItipItem);
+    itipItem.init(calGetSerializedItem(delegateItem));
+    itipItem.targetCalendar = aItem.calendar;
+    itipItem.autoResponse = Components.interfaces.calIItipItem.USER;
+    itipItem.responseMethod = method;
+    // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
+    if (rID) {
+        itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+    }
+
+    return itipItem;
+}
+
+/**
+ * (helper for delegation in checkAndSendItipItems)
+ * retrieve the chain of delegates/delegators
+ */
+function findDelegationAttendees(aItem, delegationQualifier, delegate) {
+    var attendees = {};
+
+    // dump("qualifier: " + delegationQualifier + "\n");
+    var currentAttendee = aItem.getAttendeeById(delegate.id);
+    while (currentAttendee) {
+        // dump("  current delegate/delegator: " + currentAttendee.id + "\n");
+        var attendeeId = currentAttendee.getProperty(delegationQualifier);
+        if (attendeeId && attendeeId.length > 0) {
+            currentAttendee = aItem.getAttendeeById(attendeeId);
+            if (currentAttendee) {
+                attendees[currentAttendee.id.toLowerCase()] = currentAttendee;
+            } else {
+                // dump("  ** not found\n");
+            }
+        } else {
+            currentAttendee = null;
+        }
+    }
+
+    return attendees;
+}
+
+function serializedItem(aItem) {
+    var serializer = Components.classes["@mozilla.org/calendar/ics-serializer;1"]
+                               .createInstance(Components.interfaces.calIIcsSerializer);
+    serializer.addItems([aItem], 1);
+    var serializedItem = serializer.serializeToString();
+    return serializedItem;
 }
 
 /**
@@ -628,8 +693,8 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
             try {
                 // Inverse inc. ACL addition
                 var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
-                    .getService(Components.interfaces.nsISupports)
-                    .wrappedJSObject;
+                                       .getService(Components.interfaces.nsISupports)
+                                       .wrappedJSObject;
 
                 var entry = aclMgr.calendarEntry(aItem.calendar.uri);
                 var found = false;
@@ -670,21 +735,106 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                 aItem = aItem.clone();
             }
 
+            var delegatorsHash = findDelegationAttendees(aItem,
+                                                         "DELEGATED-FROM",
+                                                         invitedAttendee);
+            var delegators = [];
+            for (var delegator in delegatorsHash) {
+                delegators.push(delegator);
+            }
+
+            // dump("\noriginal ICS:\n" + serializedItem(aOriginalItem) + "\n\n");
+            // dump("\nnew      ICS:\n" + serializedItem(aItem) + "\n\n");
+
+            var newDelegates = findDelegationAttendees(aItem, "DELEGATED-TO",
+                                                       invitedAttendee);
+
+            var oldDelegates = null;
+            if (aOriginalItem) {
+                var oldAttendee
+                    = aOriginalItem.getAttendeeById(invitedAttendee.id);
+                if (oldAttendee
+                    && oldAttendee.participationStatus == "DELEGATED") {
+                    oldDelegates = findDelegationAttendees(aOriginalItem,
+                                                           "DELEGATED-TO",
+                                                           invitedAttendee);
+                    // dump("oldDelegates queried\n");
+                } else {
+                    // dump("oldAttendee not delegated\n");
+                }
+            } else {
+                // dump("no original item\n");
+            }
+
             aItem.removeAllAttendees();
+            for each (var delegator in delegators) {
+                aItem.addAttendee(delegator);
+            }
             aItem.addAttendee(invitedAttendee);
+            for (var delegate in newDelegates) {
+                aItem.addAttendee(newDelegates[delegate]);
+            }
 
             var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-                .createInstance(Components.interfaces.calIItipItem);
+                                     .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
 
             // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
-            if (rID)
+            if (rID) {
                 itipItem.getItemList({})[0].setProperty("RECURRENCE-ID", rID);
+            }
 
             itipItem.targetCalendar = aItem.calendar;
             itipItem.autoResponse = Components.interfaces.calIItipItem.USER;
             itipItem.responseMethod = "REPLY";
-            transport.sendItems(1, [aItem.organizer], itipItem);
+            transport.sendItems(1 + delegators.length,
+                                [aItem.organizer].concat(delegators),
+                                itipItem);
+
+            var requestDelegates = [];
+            var cancelDelegates = [];
+            if (oldDelegates) {
+                for (var oldDelegate in oldDelegates) {
+                    if (newDelegates[oldDelegate]) {
+                        if (newDelegates[oldDelegate].participationStatus
+                            != oldDelegates[oldDelegate].participationStatus
+                            && (newDelegates[oldDelegate].participationStatus
+                                == "NEEDS-ACTION")) {
+                            requestDelegates.push(newDelegates[oldDelegate]);
+                        }
+                    } else {
+                        // dump("append old delegate: " + oldDelegate + "\n");
+                        cancelDelegates.push(oldDelegates[oldDelegate]);
+                    }
+                }
+
+                for (var newDelegate in newDelegates) {
+                    if (!oldDelegates[newDelegate]) {
+                        requestDelegates.push(newDelegates[newDelegate]);
+                    }
+                }
+            } else {
+                for (var newDelegate in newDelegates) {
+                    requestDelegates.push(newDelegates[newDelegate]);
+                }
+            }
+
+            if (requestDelegates.length > 0) {
+                var requestItipItem
+                    = makeDelegateItem(aItem, "REQUEST", rID,
+                                       invitedAttendee,
+                                       delegators.concat(requestDelegates));
+                transport.sendItems(requestDelegate.length, requestDelegates,
+                                    requestItipItem);
+            }
+            if (cancelDelegates.length > 0) {
+                var cancelItipItem
+                    = makeDelegateItem(aOriginalItem, "CANCEL", rID,
+                                       invitedAttendee,
+                                       delegators.concat(cancelDelegates));
+                transport.sendItems(cancelDelegates.length, cancelDelegates,
+                                    cancelItipItem);
+            }
         }
         return;
     }
@@ -749,7 +899,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
         if (!requestItem.organizer) {
             var organizer = Components.classes["@mozilla.org/calendar/attendee;1"]
-                .createInstance(Components.interfaces.calIAttendee);
+                                      .createInstance(Components.interfaces.calIAttendee);
             organizer.id = requestItem.calendar.getProperty("organizerId");
             organizer.commonName = requestItem.calendar.getProperty("organizerCN");
             organizer.role = "REQ-PARTICIPANT";
@@ -783,13 +933,19 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                 continue; // already handled the attendee, we skip it.
 
             attendee = attendee.clone();
-            if (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE")) {
+            if (attendee.participationStatus != "DELEGATED"
+                && (!aOriginalItem || aItem.getProperty("SEQUENCE") != aOriginalItem.getProperty("SEQUENCE"))) {
                 attendee.role = "REQ-PARTICIPANT";
                 attendee.participationStatus = "NEEDS-ACTION";
                 attendee.rsvp = true;
             }
             requestItem.addAttendee(attendee);
+
+            /* We must statute on the "NON-PARTICIPANT" or "RSVP" flags. */
+            // if (attendee.participationStatus != "DELEGATED"
+            //     || attendee.role == "NON-PARTICIPANT") {
             recipients.push(attendee);
+            // }
         }
 
         if (recipients.length > 0) {
@@ -822,7 +978,7 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
     }
 
     var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-        .createInstance(Components.interfaces.calIItipItem);
+                             .createInstance(Components.interfaces.calIItipItem);
 
     // We have to modify our item a little, so we clone it.
     var item = aItem.clone();
@@ -851,8 +1007,7 @@ function calSendItipMessage(aTransport, aItem, aMethod, aRecipientsList, autoRes
 
 function calGetSerializedItem(aItem) {
     var serializer = Components.classes["@mozilla.org/calendar/ics-serializer;1"]
-        .createInstance(Components.interfaces.calIIcsSerializer);
+                               .createInstance(Components.interfaces.calIIcsSerializer);
     serializer.addItems([aItem], 1);
     return serializer.serializeToString();
 }
-

@@ -52,6 +52,7 @@
  */
 
 var gItipItem;
+var gDelegateInfo;
 var gCalItemsArrayFound = [];
 
 var gIMIPCalendars;
@@ -165,6 +166,7 @@ function imipOnUnload() {
       hideElement("imip-button1");
       hideElement("imip-button2");
       hideElement("imip-button3");
+      hideElement("imip-button4");
     }
 
     var observerSvc = Components.classes["@mozilla.org/observer-service;1"]
@@ -181,6 +183,7 @@ function onImipStartHeaders() {
     hideElement("imip-button1");
     hideElement("imip-button2");
     hideElement("imip-button3");
+    hideElement("imip-button4");
 
     // A new message is starting.
     // Clear our iMIP/iTIP stuff so it doesn't contain stale information.
@@ -818,6 +821,23 @@ function getTargetCalendar() {
     return calendarToReturn;
 }
 
+function getDelegation() {
+    var delegation = null;
+
+    // Ask what calendar to import into
+    var args = new Object();
+    var aCal;
+    args.onOk = function selectCalendar(aDelegate, aKeepUpdated) {
+        delegation = { delegate: aDelegate,
+                       keepUpdated: aKeepUpdated };
+    };
+    args.promptText = "Please choose somebody (no trans.)";
+    openDialog("chrome://lightning/content/imip-delegate-dialog.xul",
+               "_blank", "chrome,titlebar,modal,resizable", args);
+
+    return delegation;
+}
+
 /**
  * Type is type of response
  * event_status is an optional directive to set the Event STATUS property
@@ -828,6 +848,7 @@ function setAttendeeResponse(type, eventStatus) {
         switch (type) {
             case "ACCEPTED":
             case "TENTATIVE":
+            case "DELEGATED":
             case "REPLY":
             case "PUBLISH":
                 gItipItem.targetCalendar = getTargetCalendar();
@@ -840,6 +861,7 @@ function setAttendeeResponse(type, eventStatus) {
         // Now set the attendee status and perform the iTIP action. If the
         // method is not mentioned here, no further action will be taken.
         switch (type) {
+            case "DELEGATED":
             case "ACCEPTED":
             case "TENTATIVE":
             case "DECLINED": {
@@ -862,15 +884,36 @@ function setAttendeeResponse(type, eventStatus) {
                                     "You are not on the list of invited attendees, delegation " +
                                     "is not supported yet.  See bug 420516 for details.");
                 }
+
+                var delegation = null;
+                if (type == "DELEGATED") {
+                    delegation = getDelegation();
+                }
                 for each (var item in gItipItem.getItemList({})) {
-                    if (!item.getAttendeeById(attId)) { // add if not existing, e.g. on mailing list REQUEST
-                        var att = Components.classes["@mozilla.org/calendar/attendee;1"]
-                                            .createInstance(Components.interfaces.calIAttendee);
+                    var att = item.getAttendeeById(attId);
+                    if (!att) { // add if not existing, e.g. on mailing list REQUEST
+                        att = Components.classes["@mozilla.org/calendar/attendee;1"]
+                                        .createInstance(Components.interfaces.calIAttendee);
                         att.id = attId;
                         att.commonName = attCN;
                         item.addAttendee(att);
                     }
+                    if (delegation) {
+                        var delegate = delegation["delegate"];
+                        delegate.setProperty("DELEGATED-FROM", attId);
+                        att.setProperty("DELEGATED-TO", delegate.id);
+                        if (delegation.keepUpdated) {
+                            att.role = "NON-PARTICIPANT";
+                        }
+                        delegate.role = "REQ-PARTICIPANT";
+                        delegate.participationStatus = "NEEDS-ACTION";
+                        item.addAttendee(delegate);
+                    }
                 }
+                if (delegation) {
+                    prepareDelegateItem(delegation["delegate"])
+                }
+
                 gItipItem.setAttendeeStatus(attId, type); // workaround for bug 351589 (fixing RSVP)
                 // Fall through
             }
@@ -880,6 +923,18 @@ function setAttendeeResponse(type, eventStatus) {
                 break;
         }
     }
+}
+
+function prepareDelegateItem(delegate) {
+    gDelegateInfo = {};
+    gDelegateInfo["delegate"] = delegate;
+    var itipItem = gItipItem.clone();
+    itipItem.responseMethod = "REQUEST";
+    for each (var item in itipItem.getItemList({})) {
+        var att = item.getAttendeeById(delegate.id);
+        att.rsvp = true;
+    }
+    gDelegateInfo["itipItem"] = itipItem;
 }
 
 /**
@@ -915,6 +970,13 @@ function doResponse(aLocalStatus) {
                              .getService(Components.interfaces.calIItipProcessor);
 
     itipProc.processItipItem(gItipItem, operationListener);
+
+    if (gDelegateInfo) {
+        var transport = gItipItem.targetCalendar.getProperty("itip.transport")
+                                 .QueryInterface(Components.interfaces.calIItipTransport);
+        transport.sendItems(1, [gDelegateInfo.delegate],
+                            gDelegateInfo.itipItem);
+    }
 }
 
 /**
@@ -945,6 +1007,7 @@ function finishItipAction(aOperationType, aStatus, aDetail) {
         hideElement("imip-button1");
         hideElement("imip-button2");
         hideElement("imip-button3");
+        hideElement("imip-button4");
     } else {
         // Bug 348666: When we handle more iTIP methods, we need to create
         // more sophisticated error handling.
@@ -1060,6 +1123,7 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
             hideElement("imip-button1");
             hideElement("imip-button2");
             hideElement("imip-button3");
+            hideElement("imip-button4");
         } else {
             // Legitimate update, let's offer the update path
             imipBar.setAttribute("label", ltnGetString("lightning", "imipBarUpdateText"));
@@ -1080,6 +1144,12 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
             showElement(button);
             button.setAttribute("label", ltnGetString("lightning", "imipAcceptTentativeInvitation.label"));
             button.setAttribute("oncommand", "setAttendeeResponse('TENTATIVE', 'CONFIRMED');");
+
+            // Create a DELEGATE button
+            button = document.getElementById("imip-button4");
+            showElement(button);
+            button.setAttribute("label", "Delegate nt");
+            button.setAttribute("oncommand", "setAttendeeResponse('DELEGATED', 'CONFIRMED');");
         }
     } else {
         imipBar.setAttribute("label", ltnGetString("lightning", "imipBarRequestText"));
@@ -1100,5 +1170,11 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
         showElement(button);
         button.setAttribute("label", ltnGetString("lightning", "imipAcceptTentativeInvitation.label"));
         button.setAttribute("oncommand", "setAttendeeResponse('TENTATIVE', 'CONFIRMED');");
+
+        // Create a DELEGATE button
+        button = document.getElementById("imip-button4");
+        showElement(button);
+        button.setAttribute("label", "Delegate nt");
+        button.setAttribute("oncommand", "setAttendeeResponse('DELEGATED', 'CONFIRMED');");
     }
 }

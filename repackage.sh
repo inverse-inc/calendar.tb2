@@ -25,6 +25,7 @@ function build_osx {
 
     # We update chrome-related files
     cp -fr ../../src/calendar/base/themes/pinstripe/* skin/classic/calendar/
+    cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
 
@@ -89,6 +90,7 @@ function build_win32 {
 
     # We update chrome-related files
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
+    cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
@@ -162,6 +164,7 @@ function build_linux {
 
     # We update chrome-related files
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
+    cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
@@ -231,6 +234,7 @@ function build_linux_x64 {
 
     # We update chrome-related files
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
+    cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
