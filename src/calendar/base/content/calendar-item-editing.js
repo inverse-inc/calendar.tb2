@@ -824,7 +824,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                     = makeDelegateItem(aItem, "REQUEST", rID,
                                        invitedAttendee,
                                        delegators.concat(requestDelegates));
-                transport.sendItems(requestDelegate.length, requestDelegates,
+                transport.sendItems(requestDelegates.length, requestDelegates,
                                     requestItipItem);
             }
             if (cancelDelegates.length > 0) {
