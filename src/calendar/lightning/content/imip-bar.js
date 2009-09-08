@@ -372,7 +372,11 @@ imipCalDAVComponentACLEntryObserver.prototype = {
                 obsService.removeObserver(this,
                                           "caldav-component-acl-reset", false);
                 if (aTopic == "caldav-component-acl-loaded") {
-                    var entry = aData.entry;
+                    var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
+                                           .getService(Components.interfaces.nsISupports)
+                                           .wrappedJSObject;
+                    var entry = aclMgr.componentEntry(this.calendar.uri,
+                                                      aData);
                     if (entry.userCanModify() || entry.userCanRespond()) {
                         gIMIPCalendars = [this.calendar];
                     }
