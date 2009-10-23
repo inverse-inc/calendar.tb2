@@ -358,6 +358,8 @@
 <!ENTITY read.only.documents.label       "Dokumentumok">
 <!ENTITY read.only.link.label            "Kapcsolódó hivatkozás">
 
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
 
 
 

@@ -358,3 +358,5 @@
 <!ENTITY read.only.documents.label "Dokumentuak">
 <!ENTITY read.only.link.label "Erlazionatutako lotura">
 
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

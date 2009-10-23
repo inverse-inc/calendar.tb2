@@ -137,7 +137,7 @@
                   <menuitem label="&read.only.accept.label;" value="ACCEPTED"/>
                   <menuitem label="&read.only.decline.label;" value="DECLINED"/>
                   <menuitem label="&read.only.needs.action.label;" value="NEEDS-ACTION"/>
-                  <menuitem label="delegated (no trad)" value="DELEGATED"/>
+                  <menuitem label="&read.only.delegate.label;" value="DELEGATED"/>
                 </menupopup>
               </menulist>
               <textbox id="item-delegate"
@@ -150,7 +150,7 @@
                 ignoreblurwhilesearching="true" ignoreBlurWhileSearching="true"
                 />
               <checkbox disabled="true" id="item-delegate-staytuned"
-                label="Keep me updated (no trad)"/>
+                label="&read.only.keep-delegator-updated.label;"/>
             </vbox>
           </row>
           <row id="reminder-row" hidden="true" align="center">

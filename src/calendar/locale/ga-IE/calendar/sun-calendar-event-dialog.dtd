@@ -358,3 +358,5 @@
 <!ENTITY read.only.documents.label "Cáipéisí">
 <!ENTITY read.only.link.label "Nasc Gaolta">
 
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

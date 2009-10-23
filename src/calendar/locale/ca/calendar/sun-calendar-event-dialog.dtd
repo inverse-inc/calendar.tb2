@@ -358,4 +358,6 @@
 <!ENTITY read.only.documents.label       "Documents">
 <!ENTITY read.only.link.label 		"Enllaç relacionat">
 
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
 

@@ -323,3 +323,5 @@
 <!ENTITY read.only.description.label "Descripción">
 <!ENTITY read.only.documents.label "Documentos">
 <!ENTITY read.only.link.label "Enlace relacionado">
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

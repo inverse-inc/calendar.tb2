@@ -37,11 +37,11 @@
 <!-- DTD File with all strings specific to the file -->
 <!DOCTYPE page
 [
-    <!ENTITY % dtd1 SYSTEM "chrome://calendar/locale/calendar.dtd" > %dtd1;
+    <!ENTITY % dtd1 SYSTEM "chrome://lightning/locale/lightning.dtd" > %dtd1;
 ]>
 
 <dialog id="chooseDelegate"
-        title="Select Somebody (no trad.)"
+        title="&delegate-dialog.choose-delegate.label;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         buttons="accept,cancel"
         onload="onLoad();"
@@ -60,7 +60,7 @@
           ignoreblurwhilesearching="true" ignoreBlurWhileSearching="true"
           />
         <checkbox id="item-delegate-staytuned"
-          label="Keep me updated (no trad)"/>
+          label="&delegate-dialog.keep-delegator-updated.label;"/>
       </vbox>
     </vbox>
 </dialog>

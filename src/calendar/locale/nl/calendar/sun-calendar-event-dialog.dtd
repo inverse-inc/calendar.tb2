@@ -357,3 +357,5 @@
 <!ENTITY read.only.description.label     "Beschrijving">
 <!ENTITY read.only.documents.label       "Documenten">
 <!ENTITY read.only.link.label            "Bijbehorende koppeling">
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

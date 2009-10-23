@@ -358,4 +358,6 @@
 <!ENTITY read.only.documents.label       "Dokument">
 <!ENTITY read.only.link.label            "Relatert lenkje">
 
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
 

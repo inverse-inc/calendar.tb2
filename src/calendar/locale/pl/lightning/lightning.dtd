@@ -119,3 +119,6 @@
 <!ENTITY todaypane.showNone.accesskey       "N">
 <!ENTITY todaypane.showTodayPane.label      "Pokaż panel bieżących spraw">
 <!ENTITY todaypane.showTodayPane.accesskey  "o">
+<!-- delegate dialog -->
+<!ENTITY delegate-dialog.choose-delegate.label "Choose a delegate">
+<!ENTITY delegate-dialog.keep-delegator-updated.label "Keep me updated">

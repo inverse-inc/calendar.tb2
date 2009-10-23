@@ -353,3 +353,5 @@
 <!ENTITY  event.toolbar.attachments.label                 "Вкласти">
 <!ENTITY event.url.label                                  "Пов'язане посилання:" >
 <!ENTITY read.only.link.label            "Пов'язане посилання">
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

@@ -376,7 +376,7 @@ imipCalDAVComponentACLEntryObserver.prototype = {
                                            .getService(Components.interfaces.nsISupports)
                                            .wrappedJSObject;
                     var entry = aclMgr.componentEntry(this.calendar.uri,
-                                                      aData);
+                                                      this.componentURL);
                     if (entry.userCanModify() || entry.userCanRespond()) {
                         gIMIPCalendars = [this.calendar];
                     }
@@ -835,7 +835,7 @@ function getDelegation() {
         delegation = { delegate: aDelegate,
                        keepUpdated: aKeepUpdated };
     };
-    args.promptText = "Please choose somebody (no trans.)";
+    args.promptText = ltnGetString("lightning", "delegateChooseADelegate");
     openDialog("chrome://lightning/content/imip-delegate-dialog.xul",
                "_blank", "chrome,titlebar,modal,resizable", args);
 
@@ -1154,7 +1154,7 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
             // Create a DELEGATE button
             button = document.getElementById("imip-button4");
             showElement(button);
-            button.setAttribute("label", "Delegate nt");
+            button.setAttribute("label", ltnGetString("lightning", "imipDelegateInvitation.label"));
             button.setAttribute("oncommand", "setAttendeeResponse('DELEGATED', 'CONFIRMED');");
         }
     } else {
@@ -1180,7 +1180,7 @@ function displayRequestMethod(newItemSequence, existingItemSequence) {
         // Create a DELEGATE button
         button = document.getElementById("imip-button4");
         showElement(button);
-        button.setAttribute("label", "Delegate nt");
+        button.setAttribute("label", ltnGetString("lightning", "imipDelegateInvitation.label"));
         button.setAttribute("oncommand", "setAttendeeResponse('DELEGATED', 'CONFIRMED');");
     }
 }

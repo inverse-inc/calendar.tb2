@@ -356,3 +356,5 @@
 <!ENTITY read.only.description.label     "설명">
 <!ENTITY read.only.documents.label       "문서">
 <!ENTITY read.only.link.label            "관련 링크">
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">

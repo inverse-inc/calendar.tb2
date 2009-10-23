@@ -336,3 +336,5 @@
 <!ENTITY read.only.description.label "Lýsing">
 <!ENTITY read.only.documents.label "Skjöl">
 <!ENTITY read.only.link.label "Tengdur hlekkur">
+<!ENTITY read.only.delegate.label        "I delegate">
+<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
