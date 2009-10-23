@@ -54,11 +54,21 @@ function build_osx {
     cp -f src/calendar/providers/composite/*.js tmp/components/
     cp -f src/calendar/providers/storage/*.js tmp/js/
 
-    # We update the french locale
-    cd $BASE/src/calendar
-    rm -f calendar-fr.jar
-    zip -9r calendar-fr.jar locale
-    mv -f calendar-fr.jar ../../tmp/chrome/
+    # We update the locales
+    cd $BASE/src/calendar/locale/
+    for lang in *
+    do
+        if [ -d $lang ]
+        then ( cd ..;
+                for package in calendar lightning;
+                do
+                    echo "Generating $package locale $lang...";
+                    rm -f $package-$lang.jar;
+                    zip -9r $package-$lang.jar locale/$lang/$package;
+                    mv -f $package-$lang.jar ../../tmp/chrome/;
+                done );
+        fi
+    done
 
     # We update the RDF file
     cd $BASE/tmp
@@ -124,11 +134,21 @@ function build_win32 {
     cd $BASE
     cp ./binaries/lightning/saxparser.xpt ./tmp/components
     
-    # We update the french locale
-    cd $BASE/src/calendar
-    rm -f calendar-fr.jar
-    zip -9r calendar-fr.jar locale
-    mv -f calendar-fr.jar ../../tmp/chrome/
+    # We update the locales
+    cd $BASE/src/calendar/locale/
+    for lang in *
+    do
+        if [ -d $lang ]
+        then ( cd ..;
+                for package in calendar lightning;
+                do
+                    echo "Generating $package locale $lang...";
+                    rm -f $package-$lang.jar;
+                    zip -9r $package-$lang.jar locale/$lang/$package;
+                    mv -f $package-$lang.jar ../../tmp/chrome/;
+                done );
+        fi
+    done
 
     # We update the RDF file
     cd $BASE/tmp
@@ -195,11 +215,21 @@ function build_linux {
     cp -f src/calendar/providers/composite/*.js tmp/components/
     cp -f src/calendar/providers/storage/*.js tmp/js/
     
-    # We update the french locale
-    cd $BASE/src/calendar
-    rm -f calendar-fr.jar
-    zip -9r calendar-fr.jar locale
-    mv -f calendar-fr.jar ../../tmp/chrome/
+    # We update the locales
+    cd $BASE/src/calendar/locale/
+    for lang in *
+    do
+        if [ -d $lang ]
+        then ( cd ..;
+                for package in calendar lightning;
+                do
+                    echo "Generating $package locale $lang...";
+                    rm -f $package-$lang.jar;
+                    zip -9r $package-$lang.jar locale/$lang/$package;
+                    mv -f $package-$lang.jar ../../tmp/chrome/;
+                done );
+        fi
+    done
 
     # We update the RDF file
     cd $BASE/tmp
@@ -266,11 +296,21 @@ function build_linux_x64 {
     cp -f src/calendar/providers/composite/*.js tmp/components/
     cp -f src/calendar/providers/storage/*.js tmp/js/
     
-    # We update the french locale
-    cd $BASE/src/calendar
-    rm -f calendar-fr.jar
-    zip -9r calendar-fr.jar locale
-    mv -f calendar-fr.jar ../../tmp/chrome/
+    # We update the locales
+    cd $BASE/src/calendar/locale/
+    for lang in *
+    do
+        if [ -d $lang ]
+        then ( cd ..;
+                for package in calendar lightning;
+                do
+                    echo "Generating $package locale $lang...";
+                    rm -f $package-$lang.jar;
+                    zip -9r $package-$lang.jar locale/$lang/$package;
+                    mv -f $package-$lang.jar ../../tmp/chrome/;
+                done );
+        fi
+    done
 
     # We update the RDF file
     cd $BASE/tmp
