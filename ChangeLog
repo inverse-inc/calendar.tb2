@@ -1,3 +1,8 @@
+2009-10-27  Ludovic Marcotte <lmarcotte@inverse.ca>
+
+        * Added checks in case start/end date isn't defined so
+	we do not throw worthless exceptions and stop.
+
 2009-10-23  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/lightning/content/imip-bar.js

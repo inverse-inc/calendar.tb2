@@ -1407,8 +1407,10 @@
 
           // All our boxes are in default tz, so we need these times in them too.
           if (isEvent(aItem)) {
-            targetDate = aItem.startDate.getInTimezone(this.mTimezone);
-            finishDate = aItem.endDate.getInTimezone(this.mTimezone);
+	    if (aItem.startDate)
+	      targetDate = aItem.startDate.getInTimezone(this.mTimezone);
+	    if (aItem.endDate)
+              finishDate = aItem.endDate.getInTimezone(this.mTimezone);
           } else if (isToDo(aItem)) {
             if (aItem.entryDate) {
               targetDate = aItem.entryDate.getInTimezone(this.mTimezone);

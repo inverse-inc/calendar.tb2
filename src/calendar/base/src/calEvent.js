@@ -214,7 +214,12 @@ calEvent.prototype = {
         if (endDate === undefined) {
             endDate = this.getProperty("DTEND");
             if (!endDate) {
-                endDate = this.startDate.clone();
+                var startDate = this.startDate;
+                
+                if (!startDate)
+                    return null;
+
+                endDate = startDate.clone();
                 var dur = this.getProperty("DURATION");
                 if (dur) {
                     // If there is a duration set on the event, calculate the right end time.
