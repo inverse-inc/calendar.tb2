@@ -1,3 +1,14 @@
+2009-11-26  Ludovic Marcotte <lmarcotte@inverse.ca>
+
+        * Added src/patches/468846_oracle.diff - which
+	was missing in previous commits
+	* src/calendar/providers/storage/calStorageCalendar.js
+	Modified initDB() to create indexes as mentioned in
+	https://bugzilla.mozilla.org/show_bug.cgi?id=529326
+	This speeds up initial loading of cached CalDAV
+	calendars and subsequent TB starts.
+	* Bumped version number to 0.9.8pre1
+
 2009-10-27  Ludovic Marcotte <lmarcotte@inverse.ca>
 
         * Added checks in case start/end date isn't defined so

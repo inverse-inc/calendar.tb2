@@ -1,0 +1,32 @@
+--- src/calendar/base/src/calStorageCalendar.js
++++ src/calendar/base/src/calStorageCalendar.js
+@@ -1737,18 +1743,28 @@ calStorageCalendar.prototype = {
+             item.alarmOffset = duration;
+             item.alarmRelated = row.alarm_related;
+         }
+         if (row.alarm_last_ack) {
+             // alarm acks are always in utc
+             item.alarmLastAck = newDateTime(row.alarm_last_ack, "UTC");
+         }
+ 
+-        if (row.recurrence_id)
++        if (row.recurrence_id) {
+             item.recurrenceId = newDateTime(row.recurrence_id, row.recurrence_id_tz);
++            // If the item is of type "allday" and
++            // no "time" values are specified, assume that the 
++            // recurrenceId is a date type value
++            if ((row.flags & CAL_ITEM_FLAG_EVENT_ALLDAY) != 0 &&
++                item.recurrenceId.hour == 0 &&
++                item.recurrenceId.minute == 0 &&
++                item.recurrenceId.second == 0) {
++              item.recurrenceId.isDate = true;
++            } 
++        }
+ 
+         if (flags)
+             flags.value = row.flags;
+ 
+         if (row.time_created) {
+             item.setProperty("CREATED", newDateTime(row.time_created, "UTC"));
+         }
+ 

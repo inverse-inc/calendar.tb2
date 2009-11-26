@@ -1689,6 +1689,48 @@ calStorageCalendar.prototype = {
             "DELETE FROM cal_metadata"
             + " WHERE cal_id = " + this.mCalId
             );
+	
+	// We create some indexes
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_properties_cal_id ON cal_properties(cal_id);"
+				  );        
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_event_cal_id ON cal_events(cal_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_event_item_id ON cal_events(cal_id, id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_attendees_item_id ON cal_attendees(cal_id,item_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_recurrence_item_id ON cal_recurrence(cal_id,item_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_metadata_item_id ON cal_metadata(cal_id,item_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_metadata_cal_id ON cal_metadata(cal_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_attendees_recurrence_id ON cal_attendees(cal_id,item_id,recurrence_id);"
+				  );            
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_properties_recurrence_id ON cal_properties(cal_id,item_id,recurrence_id);"
+				  );
+	this.mDB.executeSimpleSQL(
+				  "CREATE INDEX IF NOT EXISTS " + 
+				  "idx_cal_events_recurrence_id ON cal_events(cal_id,id,recurrence_id);"
+				  );   
     },
 
     //
