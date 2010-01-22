@@ -271,7 +271,7 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
                                .getService(Components.interfaces.nsISupports)
                                .wrappedJSObject;
         if (mode == "modify" && calendar.type == "caldav"
-            && !isCalendarWritable(calendar)) {
+            && isCalendarWritable(calendar)) {
             compAclEntry = loadItemCalDAVAclEntry(aclMgr, calendarItem,
                                                   calendar, arguments);
             if (!compAclEntry) {
@@ -342,11 +342,11 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
 
     // open the dialog modeless
     var url;
-    if (mode == "new"
-        || (mode == "modify"
-            && !isInvitation
-            && (isCalendarWritable(calendar)
-                || (compAclEntry && compAclEntry.userCanModify())))) {
+    if (isCalendarWritable(calendar)
+        && (mode == "new"
+            || (mode == "modify"
+                && !isInvitation
+                && (compAclEntry && compAclEntry.userCanModify())))) {
         url = "chrome://calendar/content/sun-calendar-event-dialog.xul";
     } else {
         url = "chrome://calendar/content/calendar-summary-dialog.xul";

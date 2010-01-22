@@ -1,3 +1,11 @@
+2010-01-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js
+	(openEventDialog): enable the fetching of ACL on events when the
+	parent calendar IS writable. Furthermore, the fact that a calendar
+	is writable should not preclude the code from checking the
+	modification write when choosing the window to display.
+
 2009-12-01  Ludovic Marcotte <lmarcotte@inverse.ca>
 
         * Reworked the "Meeting" category for the
