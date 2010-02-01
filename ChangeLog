@@ -1,3 +1,21 @@
+2010-02-01  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js
+	(openEventDialog): we must check the ACL of an event even when
+	isCalendarWritable returns false, since modification of an event
+	can still be granted even though the calendar is read-only to the
+	current user. Reimplemented the old versoin of isCalendarWritable,
+	without the ACL code, with the name "isCalendarAvailable" for that
+	purpose.
+
+	* src/calendar/base/content/calendar-summary-dialog.js (onLoad):
+	we must test whether the entry ACL has been filled before invoking
+	its accessors. This situation can happen when the acl manager has
+	never been invoked, for a read-only calendar.
+	(onAccept): we now check whether the instance being editted is an
+	event before saving delegation information. This solves a bug
+	where summary dialog fails to close when displaying a task.
+
 2010-01-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js

@@ -261,6 +261,15 @@ function loadItemCalDAVAclEntry(aclMgr, item, calendar, openArgs) {
     return compEntry;
 }
 
+/* hackich: this is the old implementation of isCalendarWritable, without the
+   ACL code */
+function isCalendarAvailable(aCalendar) {
+    return (!aCalendar.getProperty("disabled") &&
+            !aCalendar.readOnly &&
+            (!getIOService().offline ||
+             aCalendar.getProperty("requiresNetwork") === false));
+}
+
 function openEventDialog(calendarItem, calendar, mode, callback, job) {
     // Set up some defaults
     mode = mode || "new";
@@ -271,7 +280,7 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
                                .getService(Components.interfaces.nsISupports)
                                .wrappedJSObject;
         if (mode == "modify" && calendar.type == "caldav"
-            && isCalendarWritable(calendar)) {
+            && isCalendarAvailable(calendar)) {
             compAclEntry = loadItemCalDAVAclEntry(aclMgr, calendarItem,
                                                   calendar, arguments);
             if (!compAclEntry) {
@@ -342,7 +351,8 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
 
     // open the dialog modeless
     var url;
-    if (isCalendarWritable(calendar)
+    if (isCalendarAvailable(calendar)
+        && isCalendarWritable(calendar)
         && (mode == "new"
             || (mode == "modify"
                 && !isInvitation
@@ -351,6 +361,7 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
     } else {
         url = "chrome://calendar/content/calendar-summary-dialog.xul";
     }
+
     openDialog(url, "_blank", "chrome,titlebar,resizable", args);
 }
 

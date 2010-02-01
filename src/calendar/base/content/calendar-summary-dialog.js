@@ -95,8 +95,10 @@ function onLoad() {
                    entry was initialized from calendar-item-editing.js */
                 var compEntry = aclMgr.componentEntry(calendar.uri,
                                                       cache[item.id].locationPath);
-                window.readOnly = !(compEntry.userCanModify()
-                                    || compEntry.userCanRespond());
+                if (compEntry && compEntry.isComponentReady()) {
+                    window.readOnly = !(compEntry.userCanModify()
+                                        || compEntry.userCanRespond());
+                }
             }
         }
     }
@@ -281,7 +283,8 @@ function onAccept() {
         return true;
     }
 
-    if (!saveDelegationInfo())
+    if (calInstanceOf(window.item, Components.interfaces.calIEvent)
+        && !saveDelegationInfo())
         return false;
 
     var args = window.arguments[0];
