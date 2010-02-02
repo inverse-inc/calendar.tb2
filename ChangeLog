@@ -1,3 +1,8 @@
+2010-02-02  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js
+	(openEventDialog): allow event editing when the acl manager is not present.
+
 2010-02-01  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
