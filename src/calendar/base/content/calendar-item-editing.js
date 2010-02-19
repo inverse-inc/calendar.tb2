@@ -274,7 +274,6 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
     // Set up some defaults
     mode = mode || "new";
     var compAclEntry = null;
-    var hasAclManager = false;
 
     try {
         var aclMgr = Components.classes["@inverse.ca/calendar/caldav-acl-manager;1"]
@@ -288,7 +287,6 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
                 return;
             }
         }
-        hasAclManager = true;
     }
     catch(e) {}
 
@@ -356,19 +354,9 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
     if (isCalendarAvailable(calendar)
         && isCalendarWritable(calendar)
         && (mode == "new"
-<<<<<<< variant A
             || (mode == "modify"
                 && !isInvitation
                 && (!compAclEntry || compAclEntry.userCanModify())))) {
->>>>>>> variant B
-            || (mode == "modify" && !isInvitation
-                && (!hasAclManager
-                    || (compAclEntry && compAclEntry.userCanModify()))))) {
-####### Ancestor
-            || (mode == "modify"
-                && !isInvitation
-                && (compAclEntry && compAclEntry.userCanModify())))) {
-======= end
         url = "chrome://calendar/content/sun-calendar-event-dialog.xul";
     } else {
         url = "chrome://calendar/content/calendar-summary-dialog.xul";

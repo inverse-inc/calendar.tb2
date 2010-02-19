@@ -1,4 +1,3 @@
-<<<<<<< variant A
 2010-02-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
@@ -6,14 +5,11 @@
 	with local calendars.
 	* Bumped version number to v0.9.9
 
->>>>>>> variant B
 2010-02-02  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
 	(openEventDialog): allow event editing when the acl manager is not present.
 
-####### Ancestor
-======= end
 2010-02-01  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
