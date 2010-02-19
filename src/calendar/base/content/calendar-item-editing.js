@@ -356,7 +356,7 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
         && (mode == "new"
             || (mode == "modify"
                 && !isInvitation
-                && (compAclEntry && compAclEntry.userCanModify())))) {
+                && (!compAclEntry || compAclEntry.userCanModify())))) {
         url = "chrome://calendar/content/sun-calendar-event-dialog.xul";
     } else {
         url = "chrome://calendar/content/calendar-summary-dialog.xul";

@@ -1,3 +1,10 @@
+2010-02-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js
+	Small fix in openEventDialog() so event editing works
+	with local calendars.
+	* Bumped version number to v0.9.9
+
 2010-02-01  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
