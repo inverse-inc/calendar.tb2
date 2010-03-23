@@ -937,6 +937,18 @@ function updateAccept() {
     return enableAccept;
 }
 
+function onUpdateShowTimeAsFree() {
+  var isFree = getElementValue("event-show-time-as", "checked");
+
+  gShowTimeAs = (isFree ? "TRANSPARENT" : "OPAQUE");
+
+  var showAsBusy = document.getElementById("cmd_showtimeas_busy");
+  var showAsFree = document.getElementById("cmd_showtimeas_free");
+  
+  showAsBusy.setAttribute("checked", !isFree);
+  showAsFree.setAttribute("checked", isFree);
+}
+
 function onUpdateAllDay() {
     if (!isEvent(window.calendarItem)) {
         return;
@@ -1306,6 +1318,8 @@ function updateShowTimeAs() {
                             gShowTimeAs == "OPAQUE" ? "true" : "false");
     showAsFree.setAttribute("checked",
                             gShowTimeAs == "TRANSPARENT" ? "true" : "false");
+    document.getElementById("event-show-time-as").setAttribute("checked",
+							       gShowTimeAs == "TRANSPARENT" ? "true" : "false");
 }
 
 function attachURL() {
