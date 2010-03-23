@@ -215,7 +215,16 @@ function ip_parseFromStream(aStream, aTzProvider) {
                                      .createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
     // ICS files are always UTF8
     unicodeConverter.charset = "UTF-8";
-    var str = unicodeConverter.convertFromByteArray(octetArray, octetArray.length);
+    
+    var str = null;
+    
+    try {
+        str = unicodeConverter.convertFromByteArray(octetArray, octetArray.length);
+    } catch (e) {
+        // We fallback to ISO8859-1
+        unicodeConverter.charset = "ISO8859-1";
+        str = unicodeConverter.convertFromByteArray(octetArray, octetArray.length);
+    }
     return this.parseString(str, aTzProvider);
 }
 

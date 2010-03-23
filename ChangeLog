@@ -1,3 +1,9 @@
+2010-03-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/src/calIcsParser.js
+	We fallback to ISO8859-1 when UTF-8 fails
+	for ICS import.
+
 2010-02-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
