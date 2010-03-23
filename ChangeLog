@@ -4,6 +4,12 @@
 	We fallback to ISO8859-1 when UTF-8 fails
 	for ICS import.
 
+	* Added
+	src/calendar/base/content/sun-calendar-event-dialog-attendees.js
+	and src/calendar/base/content/sun-calendar-event-dialog-attendees.xul
+	and backported patch from bug #367359
+	Also set the default zoom to 200%.
+
 2010-02-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
