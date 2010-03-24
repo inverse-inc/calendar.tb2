@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "顯示鬧鈴">
 <!ENTITY calendarproperties.cache.label    "快取 (實驗性，需要重新啟動)">
 <!ENTITY calendarproperties.enabled.label "切換為此行事曆:">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "說明主題">

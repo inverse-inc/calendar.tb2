@@ -1,5 +1,18 @@
 2010-03-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/lightning/content/messenger-overlay-sidebar.js
+	(gInvitationsCalendarManagerObserver): enhanced with interface
+	calIObserver so that the new "showInvitations" parameter is taken
+	directly into account (via notification).
+
+	* src/calendar/base/content/agenda-listbox.js
+	(agendaListbox.refreshCalendarQuery): hacked to refresh items only
+	from calendars having the property "showInTodayPane" set to true.
+	(agendaListbox.calendarObserver.onPropertyChanged): take
+	"showInTodayPane" into account and ignore "disable" since the
+	latter is useless because onCalendarAdded and onCalendarRemoved
+	already take care of its purpose.
+
 	* src/calendar/base/content/calendar-unifinder.js
 	(unifinderObserve.onCalendarAdded)
 	(unifinderObserve.onCalendarRemoved): check whether the unifinder

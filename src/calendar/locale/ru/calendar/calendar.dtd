@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Показывать оповещения">
 <!ENTITY calendarproperties.cache.label    "Кэшировать (ЭКСПЕРИМЕНТАЛЬНО, требуется перезапуск)">
 <!ENTITY calendarproperties.enabled.label "Переключить на этот календарь">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Содержание">

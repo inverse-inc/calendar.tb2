@@ -366,6 +366,8 @@
 <!ENTITY calendarproperties.firealarms.label "Ikusi alarmak">
 <!ENTITY calendarproperties.cache.label "Katxe (EXPERIMENTALA, berrabiaraztea behar du))">
 <!ENTITY calendarproperties.enabled.label "Aldatu egutegi hau:">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 <!-- Sunbird Help -->
 
 <!ENTITY calendar.help.label "Laguntza edukiak">

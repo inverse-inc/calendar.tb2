@@ -361,6 +361,8 @@
 <!ENTITY calendarproperties.firealarms.label "알람 보기">
 <!ENTITY calendarproperties.cache.label    "캐쉬 (시범, 재시작 필요)">
 <!ENTITY calendarproperties.enabled.label   "이 캘린더 전환: ">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "도움말 목차">

@@ -377,6 +377,8 @@
 <!ENTITY calendar.unifinder.close.tooltip            "Закрити пошук і перелік подій">
 <!ENTITY calendar.unifinder.tree.duration.label      "Дійсно до">
 <!ENTITY calendarproperties.enabled.label "Перемкнути цей календар на">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 <!ENTITY priority.level.high                "Висока">
 <!ENTITY priority.level.high.accesskey      "В">
 <!ENTITY priority.level.high.accesskey      "В">

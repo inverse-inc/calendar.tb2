@@ -309,6 +309,8 @@
 <!ENTITY calendarproperties.firealarms.label "Mostra allarmi">
 <!ENTITY calendarproperties.cache.label "Cache (SPERIMENTALE, richiede il riavvio)">
 <!ENTITY calendarproperties.enabled.label "Attiva questo calendario">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 <!ENTITY calendar.help.label "Contenuti guida">
 <!ENTITY calendar.help.accesskey "G">
 <!ENTITY calendar.publish.dialog.title "Pubblica calendario">

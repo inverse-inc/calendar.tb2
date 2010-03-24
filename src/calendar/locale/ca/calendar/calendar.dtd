@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Mostra les alertes">
 <!ENTITY calendarproperties.cache.label    "Memòria cau (EXPERIMENTAL, cal tornar a engegar)">
 <!ENTITY calendarproperties.enabled.label  "Mostra aquest calendari">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Continguts de l'ajuda">

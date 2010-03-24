@@ -472,14 +472,32 @@ function refreshCalendarQuery(aStart, aEnd, aCalendar) {
         var filter = this.calendar.ITEM_FILTER_CLASS_OCCURRENCES |
                      this.calendar.ITEM_FILTER_TYPE_EVENT;
         this.pendingRefresh = true;
-        var refreshCalendar;
-        if (aCalendar)
-            refreshCalendar = aCalendar;
-        else
-            refreshCalendar = this.calendar;
+
+        if (aCalendar) {
+            pendingRefresh = aCalendar.getItems(filter, 0, aStart, aEnd,
+                                                this.calendarOpListener);
+        }
+        else {
+            // We work around the stupidity of the calCompositeCalendar
+            var cals = getCompositeCalendar().getCalendars({});
+            if (!cals) {
+                return;
+            }
+            var disabled = [];
+            for each (var cal in cals) {
+                if (!cal.getProperty("disabled")
+                    && !cal.getProperty("showInTodayPane")) {
+                    disabled.push(cal);
+                    cal.setProperty("disabled", true);
+                }
+            }
+            pendingRefresh = this.calendar.getItems(filter, 0, aStart, aEnd,
+                                                    this.calendarOpListener);
+            for each (var cal in disabled) {
+                cal.setProperty("disabled", false);
+            }
+        }
         
-        pendingRefresh = refreshCalendar.getItems(filter, 0, aStart, aEnd,
-                                                  this.calendarOpListener);
         if (pendingRefresh && pendingRefresh.isPending) { // support for calIOperation
             this.pendingRefresh = pendingRefresh;
         }
@@ -737,7 +755,10 @@ agendaListbox.calendarObserver.onError = function(cal, errno, msg) {};
 
 agendaListbox.calendarObserver.onPropertyChanged = function(aCalendar, aName, aValue, aOldValue) {
     switch (aName) {
-        case "disabled":
+        // case "disabled":
+        //     this.agendaListbox.refreshCalendarQuery();
+        //     break;
+        case "showInTodayPane":
             this.agendaListbox.refreshCalendarQuery();
             break;
         case "color":
@@ -762,14 +783,14 @@ agendaListbox.calendarObserver.onPropertyDeleting = function(aCalendar, aName) {
 
 agendaListbox.calendarObserver.onCalendarRemoved =
 function agenda_calRemove(aCalendar) {
-    if (!aCalendar.getProperty("disabled")) {
+    if (!aCalendar.getProperty("disabled") && aCalendar.getProperty("showInTodayPane")) {
         this.agendaListbox.deleteItemsFromCalendar(aCalendar);
     }
 };
 
 agendaListbox.calendarObserver.onCalendarAdded =
 function agenda_calAdd(aCalendar) {
-    if (!aCalendar.getProperty("disabled")) {
+    if (!aCalendar.getProperty("disabled") && aCalendar.getProperty("showInTodayPane")) {
         this.agendaListbox.refreshCalendarQuery(null, null, aCalendar);
     }
 };

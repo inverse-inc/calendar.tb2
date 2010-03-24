@@ -112,6 +112,20 @@
                   label="&calendarproperties.firealarms.label;"
                   disable-with-calendar="true"/>
       </row>
+      <row id="calendar-showInTodayPane-row"
+           align="center">
+        <spacer/>
+        <checkbox id="show-in-today-pane"
+                  label="&calendarproperties.showintodaypane.label;"
+                  disable-with-calendar="true"/>
+      </row>
+      <row id="calendar-showInvitations-row"
+           align="center">
+        <spacer/>
+        <checkbox id="show-invitations"
+                  label="&calendarproperties.showinvitations.label;"
+                  disable-with-calendar="true"/>
+      </row>
       <row id="calendar-cache-row"
            align="center">
         <spacer/>

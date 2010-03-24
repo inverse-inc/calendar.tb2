@@ -366,6 +366,8 @@
 <!ENTITY calendarproperties.firealarms.label "Taispeáin Aláraim">
 <!ENTITY calendarproperties.cache.label "Taisce (trialach; atosú riachtanach)">
 <!ENTITY calendarproperties.enabled.label "Cumasaigh an féilire seo">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 <!-- Sunbird Help -->
 
 <!ENTITY calendar.help.label "Ábhar Cabhrach">

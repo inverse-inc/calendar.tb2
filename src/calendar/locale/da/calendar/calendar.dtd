@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Vis alarmer">
 <!ENTITY calendarproperties.cache.label "Cache (EKSPERIMENTELT! kræver genstart)">
 <!ENTITY calendarproperties.enabled.label "Slå denne kalender til">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label "Indhold i hjælp">

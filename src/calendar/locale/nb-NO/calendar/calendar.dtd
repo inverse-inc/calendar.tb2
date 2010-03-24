@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Vis alarmer">
 <!ENTITY calendarproperties.cache.label    "Hurtiglager (EKSPERIMENTELT, krever omstart)">
 <!ENTITY calendarproperties.enabled.label "Bruk denne kalenderen">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Innhold">

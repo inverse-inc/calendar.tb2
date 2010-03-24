@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Pokaži alarme">
 <!ENTITY calendarproperties.cache.label    "Medpomnilnik (POSKUSNO, zahteva ponoven zagon)">
 <!ENTITY calendarproperties.enabled.label "Vključi ta koledar">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Pomoč za Sunbird -->
 <!ENTITY calendar.help.label               "Vsebina pomoči">

@@ -309,6 +309,8 @@
 <!ENTITY calendarproperties.firealarms.label "显示提醒">
 <!ENTITY calendarproperties.cache.label "缓存 （实验中的功能, 需要重启）">
 <!ENTITY calendarproperties.enabled.label "启用此日历">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 <!ENTITY calendar.help.label "帮助内容">
 <!ENTITY calendar.help.accesskey "H">
 <!ENTITY calendar.publish.dialog.title "发布日历">

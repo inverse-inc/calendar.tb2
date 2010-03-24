@@ -180,7 +180,7 @@ InvitationsManager.prototype = {
         };
 
         for each (var calendar in cals) {
-            if (!isCalendarWritable(calendar) || calendar.getProperty("disabled")) {
+            if (!isCalendarWritable(calendar) || !calendar.getProperty("showInvitations") || calendar.getProperty("disabled")) {
                 opListener.onOperationComplete();
                 continue;
             }

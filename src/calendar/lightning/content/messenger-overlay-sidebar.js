@@ -213,6 +213,7 @@ function ltnOnLoad(event) {
     // Set up invitations manager
     scheduleInvitationsUpdate(FIRST_DELAY_STARTUP);
     getCalendarManager().addObserver(gInvitationsCalendarManagerObserver);
+    getCompositeCalendar().addObserver(gInvitationsCalendarManagerObserver);
 
     var filter = document.getElementById("task-tree-filtergroup");
     filter.value = filter.value || "all";
@@ -707,6 +708,16 @@ var gInvitationsOperationListener = {
 var gInvitationsCalendarManagerObserver = {
     mSideBar: this,
 
+    QueryInterface: function uO_QueryInterface (aIID) {
+        if (!aIID.equals(Components.interfaces.nsISupports) &&
+            !aIID.equals(Components.interfaces.calICalendarManagerObserver) &&
+            !aIID.equals(Components.interfaces.calIObserver)) {
+            throw Components.results.NS_ERROR_NO_INTERFACE;
+        }
+
+        return this;
+    },
+
     onCalendarRegistered: function cMO_onCalendarRegistered(aCalendar) {
         this.mSideBar.rescheduleInvitationsUpdate(FIRST_DELAY_REGISTER);
     },
@@ -716,7 +727,23 @@ var gInvitationsCalendarManagerObserver = {
     },
 
     onCalendarDeleting: function cMO_onCalendarDeleting(aCalendar) {
-    }
+    },
+
+    /* calIObserver */
+    onPropertyChanged: function(aCalendar, aName, aValue, aOldValue) {
+        if (aName == "showInvitations") {
+            rescheduleInvitationsUpdate(FIRST_DELAY_RESCHEDULE);
+        }
+    },
+
+    onStartBatch: function() {},
+    onEndBatch: function() {},
+    onLoad: function(calendar) {},
+    onAddItem: function(aItem) {},
+    onModifyItem: function(aNewItem, aOldItem) {},
+    onDeleteItem: function(aDeletedItem) {},
+    onError: function(aCalendar, aErrNo, aMessage) {},
+    onPropertyDeleting: function(aCalendar, aName) {}
 };
 
 function scheduleInvitationsUpdate(firstDelay) {

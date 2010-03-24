@@ -214,6 +214,22 @@ calProviderBase.prototype = {
         return this.setProperty("readOnly", aValue);
     },
 
+    // attribute boolean showInTodayPane;
+    get showInTodayPane() {
+        return this.getProperty("showInTodayPane");
+    },
+    set showInTodayPane(aValue) {
+        return this.setProperty("showInTodayPane", aValue);
+    },
+
+    // attribute boolean showInvitations;
+    get showInvitations() {
+        return this.getProperty("showInvitations");
+    },
+    set showInvitations(aValue) {
+        return this.setProperty("showInvitations", aValue);
+    },
+
     // readonly attribute boolean canRefresh;
     get canRefresh() {
         return false;
@@ -349,6 +365,8 @@ calProviderBase.prototype = {
                             }
                             // Otherwise fall through to fix the type
                         case "readOnly":
+                        case "showInTodayPane":
+                        case "showInvitations":
                         case "disabled":
                         case "relaxedMode":
                         case "cache.supported":
@@ -390,6 +408,8 @@ calProviderBase.prototype = {
                 // xxx todo: work around value types here unless we save into the prefs...
                 switch (aName) {
                 case "readOnly":
+                case "showInTodayPane":
+                case "showInvitations":
                 case "disabled":
                 case "relaxedMode":
                 case "cache.supported":

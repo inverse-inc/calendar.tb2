@@ -362,6 +362,8 @@
 <!ENTITY calendarproperties.firealarms.label "Afficher les alarmes">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPÉRIMENTAL, nécessite un redémarrage)">
 <!ENTITY calendarproperties.enabled.label  "Activer cet agenda">
+<!ENTITY calendarproperties.showintodaypane.label "Afficher les événements dans le panneau « Aujourd'hui »">
+<!ENTITY calendarproperties.showinvitations.label "Afficher les invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Contenu de l'aide">

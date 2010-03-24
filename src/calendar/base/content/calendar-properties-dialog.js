@@ -55,7 +55,8 @@ function onLoad() {
     }
     document.getElementById("calendar-uri").value = gCalendar.uri.spec;
     document.getElementById("read-only").checked = gCalendar.readOnly;
-
+    document.getElementById("show-in-today-pane").checked = gCalendar.getProperty("showInTodayPane");
+    document.getElementById("show-invitations").checked = gCalendar.getProperty("showInvitations");
 
     // set up the cache field
     var cacheBox = document.getElementById("cache");
@@ -99,6 +100,12 @@ function onAcceptDialog() {
 
     // Save readonly state
     gCalendar.readOnly = document.getElementById("read-only").checked;
+
+    // Save showInTodayPane state
+    gCalendar.setProperty("showInTodayPane", document.getElementById("show-in-today-pane").checked);
+
+    // Save showInvitations state
+    gCalendar.setProperty("showInvitations", document.getElementById("show-invitations").checked);
 
     // Save supressAlarms
     gCalendar.setProperty("suppressAlarms", !document.getElementById("fire-alarms").checked);

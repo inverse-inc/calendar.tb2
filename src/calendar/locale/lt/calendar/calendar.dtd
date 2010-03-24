@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.cache.label    "Kešuojamas (EKSPERIMENTINĖ GALIMYBĖ, reikės perleisti programą)">
 <!ENTITY calendarproperties.firealarms.label "Rodyti priminimus">
 <!ENTITY calendarproperties.enabled.label  "Naudoti šį kalendorių">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Žinyno turinys">

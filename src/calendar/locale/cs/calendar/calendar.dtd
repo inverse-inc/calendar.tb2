@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Zobrazit upozornění">
 <!ENTITY calendarproperties.cache.label "Vyrovnávací paměť (EXPERIMENTÁLNÍ - vyžaduje restart)">
 <!ENTITY calendarproperties.enabled.label "Zapnout kalendář">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label "Obsah nápovědy">

@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Arată alarmele">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPERIMENTAL, necesită repornirea)">
 <!ENTITY calendarproperties.enabled.label "Activează acest calendar">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Manual de utilizare">

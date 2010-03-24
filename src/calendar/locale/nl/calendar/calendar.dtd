@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Alarmen tonen">
 <!ENTITY calendarproperties.cache.label    "Buffer (EXPERIMENTEEL, herstart nodig)">
 <!ENTITY calendarproperties.enabled.label  "Deze agenda inschakelen">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Helpinhoud">

@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Mostrar Alarmes">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPERIMENTAL, necessita re-ínicio)">
 <!ENTITY calendarproperties.enabled.label "Acivar este calendário">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Conteúdos de Ajuda">

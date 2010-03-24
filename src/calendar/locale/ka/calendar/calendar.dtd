@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "გაფრთხილებათა ჩვენება">
 <!ENTITY calendarproperties.cache.label    "ბუფერი (ექსპერიმენტულია, საჭიროებს გადატვირთვას)">
 <!ENTITY calendarproperties.enabled.label "ამ კალენდრის ჩართვა">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "დახმარების შინაარსი">

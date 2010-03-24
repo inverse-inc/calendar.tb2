@@ -365,6 +365,8 @@
 <!ENTITY calendarproperties.firealarms.label "Riasztások megjelenítése">
 <!ENTITY calendarproperties.cache.label    "Gyorsítótár (KÍSÉRLETI, újraindítás szükséges)">
 <!ENTITY calendarproperties.enabled.label "Naptár bekapcsolása">
+<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
+<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Tartalom">
