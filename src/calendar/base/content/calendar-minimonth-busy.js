@@ -176,14 +176,17 @@ var minimonthBusyListener = {
     onLoad: function mBL_onLoad(aCalendar) {},
 
     onAddItem: function mBL_onAddItem(aItem) {
+        return;
         this.setBusyDaysForItem(aItem, true);
     },
 
     onDeleteItem: function mBL_onDeleteItem(aItem) {
+        return;
         this.setBusyDaysForItem(aItem, false);
     },
 
     onModifyItem: function mBL_onModifyItem(aNewItem, aOldItem) {
+        return;
         this.setBusyDaysForItem(aOldItem, false);
         this.setBusyDaysForItem(aNewItem, true);
     },
@@ -191,6 +194,7 @@ var minimonthBusyListener = {
     onError: function mBL_onError(aCalendar, aErrNo, aMessage) {},
 
     onPropertyChanged: function(aCalendar, aName, aValue, aOldValue) {
+        return;
         switch (aName) {
             case "disabled":
                 var minimonth = getMinimonth();
@@ -206,13 +210,15 @@ var minimonthBusyListener = {
 
     // calICompositeObserver methods
     onCalendarAdded: function mBL_onCalendarAdded(aCalendar) {
-         if (!aCalendar.getProperty("disabled")) {
-             var minimonth = getMinimonth();
-             monthChangeListener({ target: minimonth }, aCalendar);
-         }
+        return;
+        if (!aCalendar.getProperty("disabled")) {
+            var minimonth = getMinimonth();
+            monthChangeListener({ target: minimonth }, aCalendar);
+        }
     },
 
     onCalendarRemoved: function mBL_onCalendarRemoved(aCalendar) {
+        return;
         if (!aCalendar.getProperty("disabled")) {
             var minimonth = getMinimonth();
             for (var day in minimonth.mDayMap) {
@@ -225,6 +231,7 @@ var minimonthBusyListener = {
 };
 
 function monthChangeListener(event, aCalendar) {
+    return;
     // The minimonth automatically clears extra styles on a month change.
     // Therefore we only need to fill the minimonth with new info.
     var start = event.target.firstDate;

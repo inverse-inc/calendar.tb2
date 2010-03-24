@@ -1,3 +1,15 @@
+2010-03-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-minimonth-busy.js
+	(minimonthBusyListener.onCalendarAdded)
+	(minimonthBusyListener.onCalendarRemoved): we now return directly, to
+	avoid updating the minimonth with costly getItems.
+	(minimonthBusyListener.onAddItem)
+	(minimonthBusyListener.onDeleteItem)
+	(minimonthBusyListener.onModifyItem): we also return directly
+	here, to avoid a UI inconsistency where any change to an event
+	would cause the boldening of the referred dates.
+
 2010-03-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/src/calIcsParser.js
