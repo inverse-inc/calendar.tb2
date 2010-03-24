@@ -143,7 +143,7 @@ var TodayPane = {
   setDaywithjsDate: function setDaywithjsDate(aNewDate) {
       var newdatetime = jsDateToDateTime(aNewDate, floating());
       newdatetime = newdatetime.getInTimezone(calendarDefaultTimezone());
-      document.getElementById("aMinimonthPopupset").hidePopup();
+      // document.getElementById("aMinimonthPopupset").hidePopup();
       return this.setDay(newdatetime, true);
   },
 
@@ -167,9 +167,9 @@ var TodayPane = {
                                this.start.month,
                                this.start.year,
                                getWeekInfoService().getWeekTitle(this.start));
-      if (!aDontUpdateMinimonth || !aDontUpdateMinimonth) {
-          document.getElementById("today-Minimonth").value = this.start.jsDate;
-      }
+      // if (!aDontUpdateMinimonth || !aDontUpdateMinimonth) {
+      //     document.getElementById("today-Minimonth").value = this.start.jsDate;
+      // }
       this.updatePeriod();
   },
 
@@ -192,7 +192,7 @@ var TodayPane = {
   },
 
   displayMiniSection: function displayMiniSection(aIndex) {
-      document.getElementById("today-minimonth-box").setVisible(aIndex == 2);
+      // document.getElementById("today-minimonth-box").setVisible(aIndex == 2);
       document.getElementById("mini-day-box").setVisible(aIndex == 1);
       document.getElementById("today-none-box").setVisible(aIndex == 3);
   },
