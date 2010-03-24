@@ -360,3 +360,4 @@
 <!ENTITY read.only.link.label            "Powiązany odnośnik">
 <!ENTITY read.only.delegate.label        "I delegate">
 <!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
+<!ENTITY event.showtimeasfree.label                          "Show Time as Free" >

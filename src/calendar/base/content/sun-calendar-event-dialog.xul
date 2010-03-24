@@ -799,6 +799,18 @@
                 </vbox>
             </row>
 
+            <!-- Show Time as Free -->
+            <row id="event-show-time-as-row"
+                 align="center">
+                <spacer/>
+                <checkbox id="event-show-time-as"
+                          class="event-only"
+                          disable-on-readonly="true"
+                          label="&event.showtimeasfree.label;"
+                          accesskey="&event.menu.options.show.time.free.accesskey;"
+                          oncommand="onUpdateShowTimeAsFree();"/>
+            </row>
+
             <row id="event-grid-todo-status-row"
                  class="todo-only"
                  align="center">

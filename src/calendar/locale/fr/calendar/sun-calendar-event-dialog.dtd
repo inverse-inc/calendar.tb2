@@ -355,3 +355,4 @@
 <!ENTITY read.only.documents.label       "Documents">
 <!ENTITY read.only.link.label            "Lien">
 <!ENTITY read.only.keep-delegator-updated.label "Me tenir au courant">
+<!ENTITY event.showtimeasfree.label                          " Affiché comme disponible" >

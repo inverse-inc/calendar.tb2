@@ -50,6 +50,10 @@
 	and backported patch from bug #367359
 	Also set the default zoom to 200%.
 
+	* src/calendar/base/content/sun-calendar-event-dialog.{js,xul}
+	Added the "Show Time as Free" checkbox in the main event
+	editing window.
+
 2010-02-19  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-editing.js
