@@ -109,14 +109,14 @@
               this.setAttribute("hidden", "true");
           } else {
               this.removeAttribute("hidden");
-              var label = getDateFormatter().formatDateTime(date);
-              if (date.timezone.tzid != calendarDefaultTimezone().tzid) {
-                  itemDateTimeLabel.value = calGetString("calendar",
-                                            "datetimeWithTimezone",
-                                            [label, date.timezone.tzid]);
-              } else {
-                  itemDateTimeLabel.value = label;
-              }
+              var label = getDateFormatter().formatDateTime(date.getInTimezone(calendarDefaultTimezone()));
+              // if (date.timezone.tzid != calendarDefaultTimezone().tzid) {
+              //     itemDateTimeLabel.value = calGetString("calendar",
+              //                               "datetimeWithTimezone",
+              //                               [label, date.timezone.tzid]);
+              // } else {
+              itemDateTimeLabel.value = label;
+              // }
           }
         ]]></setter>
       </property>

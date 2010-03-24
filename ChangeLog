@@ -1,5 +1,10 @@
 2010-03-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-item-bindings.xml
+	(item-date-row.Item): instead of keeping their original timezone
+	and displaying it, the dates are now displayed according to the
+	user timezone.
+
 	* src/calendar/lightning/content/messenger-overlay-sidebar.js
 	(gInvitationsCalendarManagerObserver): enhanced with interface
 	calIObserver so that the new "showInvitations" parameter is taken
