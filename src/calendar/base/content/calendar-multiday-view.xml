@@ -2529,13 +2529,13 @@
             // XXXvv we can be smarter about how we handle this stuff
             //
             onCalendarAdded: function onCalendarAdded(aCalendar) {
-                if (!aCalendar.getProperty("disabled")) {
+                if (this.calView.isActiveView() && !aCalendar.getProperty("disabled")) {
                    this.calView.addItemsFromCalendar(aCalendar);
                 }
             },
 
             onCalendarRemoved: function onCalendarRemoved(aCalendar) {
-                if (!aCalendar.getProperty("disabled")) {
+                if (this.calView.isActiveView() && !aCalendar.getProperty("disabled")) {
                    this.calView.deleteItemsFromCalendar(aCalendar);
                 }
             },
@@ -3177,11 +3177,21 @@
         ]]></body>
       </method>
 
+      <method name="isActiveView">
+        <body><![CDATA[
+            return true;
+            var view = currentView();
+            return (this.parentNode.parentNode.parentNode == view);
+            ]]></body>
+      </method>
+
       <method name="refresh">
         <body><![CDATA[
-          var refreshJob = {};
-          this.mRefreshQueue.push(refreshJob);
-          this.popRefreshQueue();
+          if (this.isActiveView()) {
+            var refreshJob = {};
+            this.mRefreshQueue.push(refreshJob);
+            this.popRefreshQueue();
+          }
         ]]></body>
       </method>
 
@@ -3202,24 +3212,22 @@
               var eventInfos = col.column.mEventInfos.concat([]);
               for each (var info in eventInfos) {
                   var event = info.event;
-                  if (!deleteHash[event.hashId]
-                      && event.calendar.id == aCalendar.id) {
+                  if (event.calendar.id == aCalendar.id
+                      && !deleteHash[event.hashId]) {
                       deleteHash[event.hashId] = event;
+                      this.doDeleteEvent(event);
                   }
               }
 
               var itemBoxes = col.header.mItemBoxes.concat([]);
               for each (var box in itemBoxes) {
                   var event = box.mOccurrence;
-                  if (!deleteHash[event.hashId]
-                      && event.calendar.id == aCalendar.id) {
+                  if (event.calendar.id == aCalendar.id
+                      && !deleteHash[event.hashId]) {
                       deleteHash[event.hashId] = event;
+                      this.doDeleteEvent(event);
                   }
               }
-          }
-
-          for (var hash in deleteHash) {
-              this.doDeleteEvent(deleteHash[hash]);
           }
         ]]></body>
       </method>

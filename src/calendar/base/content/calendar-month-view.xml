@@ -1202,11 +1202,22 @@
         ]]></body>
       </method>
 
+      <method name="isActiveView">
+        <body><![CDATA[
+            var view = currentView();
+//            dump("this.parentNode.parentNode.parentNode.id: " + this.parentNode.parentNode.parentNode.id);
+//            dump("; view.id: " + view.id + "\n");
+            return (this.parentNode.parentNode.parentNode == view);
+            ]]></body>
+      </method>
+
       <method name="refresh">
         <body><![CDATA[
-          var refreshJob = {};
-          this.mRefreshQueue.push(refreshJob);
-          this.popRefreshQueue();
+          if (this.isActiveView()) {
+            var refreshJob = {};
+            this.mRefreshQueue.push(refreshJob);
+            this.popRefreshQueue();
+          }
         ]]></body>
       </method>
 
@@ -1679,13 +1690,13 @@
           // XXXvv we can be smarter about how we handle this stuff
           //
           onCalendarAdded: function (aCalendar) {
-            if (!aCalendar.getProperty("disabled")) {
+            if (this.calView.isActiveView() && !aCalendar.getProperty("disabled")) {
                 this.calView.addItemsFromCalendar(aCalendar);
             }
           },
 
           onCalendarRemoved: function (aCalendar) {
-            if (!aCalendar.getProperty("disabled")) {
+            if (this.calView.isActiveView() && !aCalendar.getProperty("disabled")) {
               this.calView.deleteItemsFromCalendar(aCalendar);
             }
           },

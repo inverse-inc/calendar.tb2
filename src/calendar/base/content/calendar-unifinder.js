@@ -178,14 +178,14 @@ var unifinderObserver = {
 
     // calICompositeObserver:
     onCalendarAdded: function uO_onCalendarAdded(aAddedCalendar) {
-        if (!aAddedCalendar.getProperty("disabled")) {
+        if (!isUnifinderHidden() && !aAddedCalendar.getProperty("disabled")) {
             addItemsFromCalendar(aAddedCalendar,
                                  addItemsFromSingleCalendarInternal);
         }
     },
 
     onCalendarRemoved: function uO_onCalendarRemoved(aDeletedCalendar) {
-        if (!aDeletedCalendar.getProperty("disabled")) {
+        if (!isUnifinderHidden() && !aDeletedCalendar.getProperty("disabled")) {
             deleteItemsFromCalendar(aDeletedCalendar);
         }
     },
@@ -890,8 +890,8 @@ function addItemsFromCalendar(aCalendar, aAddItemsInternalFunc) {
 function deleteItemsFromCalendar(aCalendar) {
     var items = [];
 
-    for (var i = unifinderTreeView.eventArray.length; i > 0; i--) {
-        var item = unifinderTreeView.eventArray[i-1];
+    for (var i = 0; i < unifinderTreeView.eventArray.length; i++) {
+        var item = unifinderTreeView.eventArray[i];
         if (item.calendar.id == aCalendar.id)
             items.push(item);
     }

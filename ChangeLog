@@ -1,5 +1,20 @@
 2010-03-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-unifinder.js
+	(unifinderObserve.onCalendarAdded)
+	(unifinderObserve.onCalendarRemoved): check whether the unifinder
+	is visible before executing any update, in order to avoid useless
+	calls of getItems().
+
+	* src/calendar/base/content/calendar-multiday-view.xml: same as below.
+
+	* src/calendar/base/content/calendar-month-view.xml
+	(calendar-month-view.isActiveView): new method that determines
+	whether the current instance is the active view.
+	(calendar-month-view.refresh, calendar-month-view.onCalendarAdded)
+	(calendar-month-view.onCalendarRemoved): make use of the new
+	method above to reduce the amount of invocations of getItems.
+
 	* src/calendar/base/content/calendar-minimonth-busy.js
 	(minimonthBusyListener.onCalendarAdded)
 	(minimonthBusyListener.onCalendarRemoved): we now return directly, to
