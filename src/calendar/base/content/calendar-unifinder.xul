@@ -62,9 +62,9 @@
         <box align="center">
           <menulist id="event-filter-menulist" value="next7Days" persist="value">
             <menupopup id="event-filter-menupopup" oncommand="refreshEventTree()">
-              <menuitem id="event-filter-all"
-                        label="&calendar.events.filter.all.label;"
-                        value="all"/>
+              <!-- menuitem id="event-filter-all" -->
+              <!--           label="&calendar.events.filter.all.label;" -->
+              <!--           value="all"/ -->
               <menuitem id="event-filter-today"
                         label="&calendar.events.filter.today.label;"
                         value="today"/>
