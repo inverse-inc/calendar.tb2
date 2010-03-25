@@ -1,3 +1,9 @@
+2010-03-25  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js
+	(onLoad): restore the width of the attendees and freebusy
+	containers, saved from the new "saveWidgets" methods.
+
 2010-03-24  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-item-bindings.xml

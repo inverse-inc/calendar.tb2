@@ -272,3 +272,15 @@ toolbar[iconsize="small"] .cal-toolbarbutton-2 {
     border: none;
     padding: 0px;
 }
+
+/*--------------------------------------------------------------------
+ *   freebusy
+ *-------------------------------------------------------------------*/
+#freebusy-container {
+    overflow: hidden;
+    min-width: 100px;
+}
+
+#freebusy-grid {
+    min-width: 1px;
+}

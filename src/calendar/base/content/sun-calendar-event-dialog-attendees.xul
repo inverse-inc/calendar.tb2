@@ -94,13 +94,13 @@
                     oncommand="zoomWithButtons(false);"/>
     </box>
     <box orient="horizontal" flex="1">
-      <box orient="vertical" flex="1">
+      <box id="attendees-container" orient="vertical" flex="1">
         <box class="attendee-spacer-top"/>
         <attendees-list flex="1" id="attendees-list"/>
         <box class="attendee-spacer-bottom"/>
       </box>
       <splitter id="splitter"/>
-      <box orient="vertical">
+      <box id="freebusy-container" orient="vertical">
         <stack flex="1">
           <box orient="vertical" flex="1">
             <freebusy-timebar id="timebar"

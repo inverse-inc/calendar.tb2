@@ -92,7 +92,25 @@ function onLoad() {
     var zoomOut = document.getElementById("zoom-out-button");
     var zoomIn = document.getElementById("zoom-in-button");
 
-    zoom.value = "50";
+    var pb2 = Components.classes["@mozilla.org/preferences-service;1"].
+              getService(Components.interfaces.nsIPrefBranch2);
+    try {
+        zoom.value = pb2.getCharPref("calendar.invitations.freebuzy.zoom");
+    }
+    catch(e) {
+        zoom.value = "50";
+    }
+
+    var containers = [ "attendees-container", "freebusy-container" ];
+    for each (var container in containers) {
+        try {
+            var width = pb2.getCharPref("calendar.invitations."
+                                        + container + ".width");
+            var container = document.getElementById(container);
+            container.width = width + "px";
+        }
+        catch(e) {}
+    }
 
     initTimeRange();
 
@@ -132,17 +150,28 @@ function onLoad() {
             }
         }
     }
-    var pb2 = Components.classes["@mozilla.org/preferences-service;1"].
-              getService(Components.interfaces.nsIPrefBranch2);
     pb2.addObserver("calendar.", prefObserver, false);
     window.addEventListener("unload",
         function() {
             pb2.removeObserver("calendar.", prefObserver);
+            saveWidgets(pb2);
         },
         false);
 
     opener.setCursor("auto");
     self.focus();
+}
+
+function saveWidgets(pb2) {
+    var zoom = document.getElementById("zoom-menulist");
+    pb2.setCharPref("calendar.invitations.freebuzy.zoom", zoom.value);
+
+    var container = document.getElementById("attendees-container");
+    pb2.setCharPref("calendar.invitations.attendees-container.width",
+                    container.boxObject.width);
+    var container = document.getElementById("freebusy-container");
+    pb2.setCharPref("calendar.invitations.freebusy-container.width",
+                    container.boxObject.width);
 }
 
 function onAccept() {
