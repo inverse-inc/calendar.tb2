@@ -1,3 +1,14 @@
+2010-03-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-task-tree.xml
+	(calendar-task-tree.mTaskTreeObserver.onPropertyChanged): take the
+	"showInTodayPane" property into account, if this tree is part of
+	the today-pane.
+	(calendar-task-tree.mustShowInTaskTree): new method that returns
+	true if the id of the current tree is "unifinder-todo-tree" and
+	the calendar passed as parameter has its "showInTodayPane"
+	propery set.
+
 2010-03-25  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js

@@ -837,11 +837,23 @@
           onError: function tTO_onError(aCalendar, aErrNo, aMessage) {},
           onPropertyChanged: function tTO_onPropertyChanged(aCalendar, aName, aValue, aOldValue) {
               switch (aName) {
+                  case "showInTodayPane":
+                      if (!aCalendar.getProperty("disabled")
+                          && this.binding.getAttribute("id") == "unifinder-todo-tree") {
+                          if (aValue) {
+                              this.binding.onCalendarAdded(aCalendar);
+                          } else {
+                              this.binding.onCalendarRemoved(aCalendar);
+                          }
+                      }
+                      break;
                   case "disabled":
-                      if (aValue) {
-                          this.binding.onCalendarRemoved(aCalendar);
-                      } else {
-                          this.binding.onCalendarAdded(aCalendar);
+                      if (this.binding.calendarMustShowInTaskTree(aCalendar)) {
+                          if (aValue) {
+                              this.binding.onCalendarRemoved(aCalendar);
+                          } else {
+                              this.binding.onCalendarAdded(aCalendar);
+                          }
                       }
                       break;
               }
@@ -855,13 +867,15 @@
            * calICompositeObserver methods and properties
            */
           onCalendarAdded: function tTO_onCalendarAdded(aCalendar) {
-              if (!aCalendar.getProperty("disabled")) {
+              if (!aCalendar.getProperty("disabled")
+                  && this.binding.calendarMustShowInTaskTree(aCalendar)) {
                   this.binding.onCalendarAdded(aCalendar);
               }
           },
           
           onCalendarRemoved: function tTO_onCalendarRemoved(aCalendar) {
-              if (!aCalendar.getProperty("disabled")) {
+              if (!aCalendar.getProperty("disabled")
+                  && this.binding.calendarMustShowInTaskTree(aCalendar)) {
                   this.binding.onCalendarRemoved(aCalendar);
               }
           },
@@ -1039,11 +1053,23 @@
         <parameter name="aFilter"/>
         <body><![CDATA[
             this.mTreeView.treebox.beginUpdateBatch();
-            this.refreshFromCalendar(getCompositeCalendar(), aFilter, true);
+            var calendars = getCompositeCalendar().getCalendars({});
+            for each (var cal in calendars) {
+                if (!cal.getProperty("disabled") && this.calendarMustShowInTaskTree(cal)) {
+                    this.refreshFromCalendar(cal, aFilter, true);
+                }
+            }
             this.mTreeView.treebox.endUpdateBatch();
         ]]></body>
       </method>
 
+      <method name="calendarMustShowInTaskTree">
+        <parameter name="aCalendar"/>
+          <body><![CDATA[
+            return (this.getAttribute("id") != "unifinder-todo-tree"
+                    || aCalendar.getProperty("showInTodayPane"));
+            ]]></body>
+      </method>
       <method name="onCalendarAdded">
         <parameter name="aCalendar"/>
         <parameter name="aFilter"/>
