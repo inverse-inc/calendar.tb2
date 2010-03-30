@@ -2147,9 +2147,10 @@ calDavCalendar.prototype = {
             }
             // Google does not yet support OPTIONS but does support scheduling
             // so we'll spoof the DAV header until Google gets fixed
-            if (thisCalendar.calendarUri.host == "www.google.com") {
+            if (thisCalendar.calendarUri.host == "www.google.com"
+                || thisCalendar.calendarUri.spec.indexOf("/SOGo/dav") > -1) {
                 dav = "calendar-schedule";
-                // Google also reports an inbox URL distinct from the calendar
+                // Google and SOGo also report an inbox URL distinct from the calendar
                 // URL but a) doesn't use it and b) 405s on etag queries to it
                 thisCalendar.mShouldPollInbox = false;
             }

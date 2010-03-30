@@ -1,5 +1,11 @@
 2010-03-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calDavCalendar.js (checkServerCaps): SOGo
+	provides a "false" inbox too but the caldav provider handles it
+	wrong. In particular, the inbox "calendar" is not a separate
+	instance, which causes an overwrite of the metadata when a regular
+	calendar and its corresponding inbox are updated.
+
 	* src/calendar/base/content/calendar-task-tree.xml
 	(calendar-task-tree.mTaskTreeObserver.onPropertyChanged): take the
 	"showInTodayPane" property into account, if this tree is part of
