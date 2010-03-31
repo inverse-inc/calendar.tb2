@@ -687,8 +687,9 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         if (aItem.calendar.canNotify("REPLY", aItem)) {
             return; // provider does that
         }
-        var origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));
-        origInvitedAttendee = invitedAttendee;
+        var origInvitedAttendee
+
+	origInvitedAttendee = (aOriginalItem && aOriginalItem.getAttendeeById(invitedAttendee.id));
         invitedAttendee = invitedAttendee.clone();
 
         if (aOpType == Components.interfaces.calIOperationListener.DELETE) {
@@ -732,12 +733,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
         }
 
         // has this been a PARTSTAT change?
-        if (aItem.organizer) { // &&
-
-            //(!origInvitedAttendee ||
-            // (origInvitedAttendee.participationStatus != invitedAttendee.participationStatus))) {
-            //var rID = null;
-
+        if (aItem.organizer) {
             // HACK around bug https://bugzilla.mozilla.org/show_bug.cgi?id=396182
             if (aOriginalItem && aOriginalItem.recurrenceId) {
                 rID = aItem.getProperty("RECURRENCE-ID");
@@ -786,6 +782,12 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                 aItem.addAttendee(newDelegates[delegate]);
             }
 
+	    // Do we really need to send something? If the user has only 
+	    // set a new reminder, we simply return right away
+	    if (origInvitedAttendee.participationStatus == invitedAttendee.participationStatus &&
+		origInvitedAttendee.getProperty("DELEGATED-TO") == invitedAttendee.getProperty("DELEGATED-TO"))
+	      return;	    
+	    
             var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
                                      .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
@@ -848,7 +850,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
             }
         }
         return;
-    }
+    } // if (invitedAttendee) ...
 
     // HACK - We send invitation unconditionally. Why we wouldn't
     // anyway if we invoked this method?

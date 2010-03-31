@@ -4,6 +4,13 @@
 	Fixed typo which would prevent setting a reminder of
 	1 week for received invitations
 
+	* src/calendar/base/content/calendar-item-editing.js
+	Modified the checkAndSendItipMessage() function so that
+	if the part-state is the same and the delegated-to is
+	the same, we just don't send any invitatation reply.
+	This was causing major pain when simply setting a reminder
+	to an invitation email.
+
 2010-03-30  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js (checkServerCaps): SOGo
