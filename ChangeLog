@@ -1,3 +1,11 @@
+2010-03-31  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-task-tree.xml
+	(calendar-task-tree.refresh): we enable the "aCompleteRefresh"
+	argument only when the current calendar in the loop is the first
+	one, otherwise, the shown tasks will only be those of the latest
+	in the list.
+
 2010-03-31  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/content/calendar-summary-dialog.xul

@@ -1054,9 +1054,11 @@
         <body><![CDATA[
             this.mTreeView.treebox.beginUpdateBatch();
             var calendars = getCompositeCalendar().getCalendars({});
+            var isFirst = true;
             for each (var cal in calendars) {
                 if (!cal.getProperty("disabled") && this.calendarMustShowInTaskTree(cal)) {
-                    this.refreshFromCalendar(cal, aFilter, true);
+                    this.refreshFromCalendar(cal, aFilter, isFirst);
+                    isFirst = false;
                 }
             }
             this.mTreeView.treebox.endUpdateBatch();
