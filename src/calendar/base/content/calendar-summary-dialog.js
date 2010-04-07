@@ -228,7 +228,8 @@ function saveDelegationInfo() {
                 keepOldDelegate = true;
             } else {
                 if (window.item.getAttendeeById(newDelegateEmail)) {
-                    window.alert("attendee already present n.t.");
+                    window.alert(calGetString("sun-calendar-event-dialog",
+                                              "The selected delegate is already present in the attendees list."));
                     validated = false;
                 } else {
                     var newDelegate
@@ -254,7 +255,8 @@ function saveDelegationInfo() {
                 }
             }
         } else {
-            window.alert("invalid name n.t.");
+            window.alert(calGetString("sun-calendar-event-dialog",
+                                      "The delegate must be a valid contact name."));
             delegateField.select();
             validated = false;
         }
@@ -442,7 +444,9 @@ function updateAttendees() {
                 }
                 var delegatedFrom = attendee.getProperty("DELEGATED-FROM");
                 if (delegatedFrom && delegatedFrom.length > 0) {
-                    var delegatorLabel = "delegated by ";
+                    var delegatorLabel = (calGetString("sun-calendar-event-dialog",
+                                                      "delegated from")
+                                          + " ");
                     var delegator = item.getAttendeeById(delegatedFrom);
                     if (delegator) {
                         var delegatorName = delegator.commonName;

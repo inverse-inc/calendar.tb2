@@ -1,5 +1,8 @@
 2010-04-07  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-summary-dialog.js: added
+	missing translations.
+
 	* src/calendar/base/src/calUtils.js (calGetString): instead of
 	returning a useless failure string, we return the property key
 	instead. This enables the same behaviour as with gettext.
