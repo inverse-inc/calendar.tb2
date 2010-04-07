@@ -676,9 +676,7 @@ function calGetString(aBundleName, aStringName, aParams, aComponent) {
             return props.GetStringFromName(aStringName);
         }
     } catch (ex) {
-        var s = ("Failed to read '" + aStringName + "' from " + propName + ".");
-        Components.utils.reportError(s + " Error: " + ex);
-        return s;
+        return aStringName;
     }
 }
 
