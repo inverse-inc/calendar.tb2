@@ -784,7 +784,8 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
 	    // Do we really need to send something? If the user has only 
 	    // set a new reminder, we simply return right away
-	    if (origInvitedAttendee.participationStatus == invitedAttendee.participationStatus &&
+	    if (origInvitedAttendee && invitedAttendee &&
+	    	origInvitedAttendee.participationStatus == invitedAttendee.participationStatus &&
 		origInvitedAttendee.getProperty("DELEGATED-TO") == invitedAttendee.getProperty("DELEGATED-TO"))
 	      return;	    
 	    
