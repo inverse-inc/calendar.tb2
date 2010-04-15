@@ -1022,7 +1022,7 @@ function openNewCardDialog() {
 // automatically select pref calendar.allday.defaultTransparency if this
 // event is said to be all-day.
 function setShowTimeAs(allDay) {
-    gShowTimeAs = (allDay ? getPrefSafe("calendar.allday.defaultTransparency", "TRANSPARENT") : "OPAQUE");
+    gShowTimeAs = (allDay ? getPrefSafe("calendar.allday.defaultTransparency", "OPAQUE") : "OPAQUE");
     updateShowTimeAs();
 }
 
