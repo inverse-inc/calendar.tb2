@@ -33,9 +33,9 @@ function build_osx {
     cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
-    cd $BASE/tmp/chrome/content/calendar/
+    # cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
-    patch -p5 < $BASE/src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/js
     patch -p4 < $BASE/src/patches/468846.diff
@@ -109,9 +109,9 @@ function build_win32 {
     cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
-    cd $BASE/tmp/chrome/content/calendar/
+    # cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
-    patch -p5 < $BASE/src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/js
     patch -p4 < $BASE/src/patches/468846.diff
@@ -194,9 +194,9 @@ function build_linux {
     cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
-    cd $BASE/tmp/chrome/content/calendar/
+    # cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
-    patch -p5 < $BASE/src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/js
     patch -p4 < $BASE/src/patches/468846.diff
@@ -275,9 +275,9 @@ function build_linux_x64 {
     cp -fr ../../src/calendar/lightning/content/messenger-overlay* content/lightning/
 
     # We first patch what we have to re-apply each time
-    cd $BASE/tmp/chrome/content/calendar/
+    # cd $BASE/tmp/chrome/content/calendar/
     # patch -p5 < $BASE/src/patches/inv-invitations-view-2.diff
-    patch -p5 < $BASE/src/patches/462109.diff
+    # patch -p5 < $BASE/src/patches/462109.diff
 
     cd $BASE/tmp/js
     patch -p4 < $BASE/src/patches/468846.diff
