@@ -637,6 +637,9 @@ calendar-month-day-box-item[invitation-status="TENTATIVE"] {
     opacity: 0.5;
 }
 
+calendar-event-box[invitation-status="DELEGATED"],
+calendar-editable-item[invitation-status="DELEGATED"],
+calendar-month-day-box-item[invitation-status="DELEGATED"],
 calendar-event-box[invitation-status="DECLINED"],
 calendar-editable-item[invitation-status="DECLINED"],
 calendar-month-day-box-item[invitation-status="DECLINED"] {
