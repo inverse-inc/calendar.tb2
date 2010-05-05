@@ -505,7 +505,7 @@
 
 	* src/calendar/base/content/calendar-minimonth-busy.js
 	(parseBoxBusy, updateBoxBusy): use "\u001a" as separator instead
-	of ";".: 
+	of ";".:
 
 	* src/calendar/base/content/agenda-listbox.js
 	(agendaListbox.deleteItemsFromCalendar) duplicate the childNodes
@@ -546,7 +546,7 @@
 
 2009-05-05  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
-	* src/calendar/lightning/content/imip-bar.js 
+	* src/calendar/lightning/content/imip-bar.js
 	Make sure that the IMIP bar is present before
 	trying to collapse it in imipOnUnload()
 
@@ -578,7 +578,7 @@
 2009-02-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Commited change for version number (0.9.1)
-	* Updated fix wrt bug #468723 
+	* Updated fix wrt bug #468723
 
 2009-01-05  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
@@ -592,7 +592,7 @@
         * Added src/patches/421329.diff
 	src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml
 	to fix the issue with all-day events (on multiple days) + freebusy
-	
+
 2008-12-23  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
         * src/calendar/base/src/calDavCalendar.js
@@ -623,7 +623,7 @@
 	* Bumped version number to 0.9.1pre11
 
 2008-12-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
-	
+
 	* Improved ITIP support in calendar-item-editing.js
 	* Bumped version number to 0.9.1pre10
 
@@ -645,7 +645,7 @@
 	* We now correctly refresh our view when
 	ACLs have changed.
 
-2008-12-06  Ludovic Marcotte  <lmarcotte@inverse.ca>	
+2008-12-06  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Modified src/calendar/base/src/calDavCalendar.js
 	so implement a faster way of comparing items in order
@@ -674,7 +674,7 @@
 	* Bumped version number to 0.9.1pre7
 	* Moved the SENT-BY so we can handle the case when
 	the calendar changes after having defined the attendees.
-	
+
 2008-11-28  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* We now allow the creation of cached
@@ -687,7 +687,7 @@
 
         * Updated the code with regard to bug #463961
 	* Bumped version number to 0.9.1pre5
-	
+
 2008-11-22  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Added file src/patches/457854.diff
@@ -747,7 +747,7 @@
 	- modified the delete method to proceed with the
 	  delete even with 404 error codes from the server
 	- added patch from bug #342934
-	
+
 2008-11-10  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* Initial import of Mozilla Calendar source and binaries.
