@@ -2970,11 +2970,10 @@ calDavCalendar.prototype = {
 
     mVerboseLogging: undefined,
     verboseLogging: function caldav_verboseLogging() {
-      ///if (this.mVerboseLogging === undefined) {
-      //    this.mVerboseLogging = getPrefSafe("calendar.debug.log.verbose", false);
-      //}
-      // return this.mVerboseLogging;
-      return true;
+      if (this.mVerboseLogging === undefined) {
+         this.mVerboseLogging = getPrefSafe("calendar.debug.log.verbose", false);
+      }
+      return this.mVerboseLogging;
     },
 
     getSerializedItem: function caldav_getSerializedItem(aItem) {
