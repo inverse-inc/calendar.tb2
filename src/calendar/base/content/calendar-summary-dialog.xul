@@ -137,11 +137,12 @@
                   <menuitem label="&read.only.accept.label;" value="ACCEPTED"/>
                   <menuitem label="&read.only.decline.label;" value="DECLINED"/>
                   <menuitem label="&read.only.needs.action.label;" value="NEEDS-ACTION"/>
+                  <menuitem label="&read.only.tentative.label;" value="TENTATIVE"/>
                   <menuitem label="&read.only.delegate.label;" value="DELEGATED"/>
                 </menupopup>
               </menulist>
               <textbox id="item-delegate"
-                disabled="true"
+                collapsed="true"
                 type="autocomplete" flex="1" searchSessions="addrbook"
                 autofill="true" autoFill="true"
                 autofillaftermatch="true" autoFillAfterMatch="true"
@@ -149,8 +150,8 @@
                 minresultsforpopup="1" minResultsForPopup="true"
                 ignoreblurwhilesearching="true" ignoreBlurWhileSearching="true"
                 />
-              <checkbox disabled="true" id="item-delegate-staytuned"
-                label="&read.only.keep-delegator-updated.label;"/>
+              <!-- checkbox disabled="true" id="item-delegate-staytuned"
+                label="&read.only.keep-delegator-updated.label;" -->
             </vbox>
           </row>
           <row id="reminder-row" hidden="true" align="center">
@@ -252,13 +253,8 @@
       <listbox id="item-attendee-listbox" rows="6" flex="1" disabled="true">
         <listcols>
           <listcol flex="1"/>
-          <listcol flex="1"/>
         </listcols>
         <listitem>
-          <listcell>
-            <image class="status-icon" hidden="true"/>
-            <label/>
-          </listcell>
           <listcell>
             <image class="status-icon" hidden="true"/>
             <label/>

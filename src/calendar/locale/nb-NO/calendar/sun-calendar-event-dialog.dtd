@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Ledig" >
 <!ENTITY event.freebusy.legend.busy      "Opptatt" >
 <!ENTITY event.freebusy.legend.unknown   "Ingen informasjon" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Jeg deltar">
 <!ENTITY read.only.decline.label         "Jeg deltar ikke">
 <!ENTITY read.only.needs.action.label    "Jeg beslutter senere">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Påminnelse:">
 <!ENTITY read.only.attendees.label       "Deltakere">
 <!ENTITY read.only.description.label     "Beskrivelse">

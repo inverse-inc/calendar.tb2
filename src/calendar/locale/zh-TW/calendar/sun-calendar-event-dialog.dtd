@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "空閒" >
 <!ENTITY event.freebusy.legend.busy      "忙碌" >
 <!ENTITY event.freebusy.legend.unknown   "沒有資訊" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "我會出席">
 <!ENTITY read.only.decline.label         "我不會出席">
 <!ENTITY read.only.needs.action.label    "我稍候再決定">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "提醒:">
 <!ENTITY read.only.attendees.label       "與會者">
 <!ENTITY read.only.description.label     "描述">

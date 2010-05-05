@@ -129,19 +129,41 @@
     </box>
     <box orient="horizontal">
       <box orient="vertical" flex="1">
-        <box orient="horizontal" align="center">
-          <box class="legend" status="FREE"/>
-          <label value="&event.freebusy.legend.free;"/>
-        </box>
-        <box orient="horizontal" align="center">
-          <box class="legend" status="BUSY"/>
-          <label value="&event.freebusy.legend.busy;"/>
-        </box>
-        <box orient="horizontal" align="center">
-          <box class="legend" status="UNKNOWN"/>
-          <label value="&event.freebusy.legend.unknown;"/>
-        </box>
         <box orient="horizontal">
+          <box orient="vertical">
+            <box orient="horizontal" align="center">
+              <image class="role-icon" role="REQ-PARTICIPANT"/>
+              <label value="&event.freebusy.role.reqparticipant;"/>
+            </box>
+            <box orient="horizontal" align="center">
+              <image class="role-icon" role="OPT-PARTICIPANT"/>
+              <label value="&event.freebusy.role.optparticipant;"/>
+            </box>
+            <box orient="horizontal" align="center">
+              <image class="role-icon" role="NON-PARTICIPANT"/>
+              <label value="&event.freebusy.role.nonparticipant;"/>
+            </box>
+            <box orient="horizontal" align="center">
+              <image class="role-icon" role="CHAIR"/>
+              <label value="&event.freebusy.role.chair;"/>
+            </box>
+          </box>
+          <box orient="vertical">
+            <box orient="horizontal" align="center">
+              <box class="legend" status="FREE"/>
+              <label value="&event.freebusy.legend.free;"/>
+            </box>
+            <box orient="horizontal" align="center">
+              <box class="legend" status="BUSY"/>
+              <label value="&event.freebusy.legend.busy;"/>
+            </box>
+            <box orient="horizontal" align="center">
+              <box class="legend" status="UNKNOWN"/>
+              <label value="&event.freebusy.legend.unknown;"/>
+            </box>
+          </box>
+        </box>
+        <box orient="horizontal" collapsed="true">
           <button label="&event.freebusy.minus;"
                   oncommand="onMinus();"/>
           <button label="&event.freebusy.plus;"
@@ -150,7 +172,6 @@
         <box orient="horizontal" collapsed="true">
           <label value="&event.organizer.label;" disabled="true" control="event-organizer"/>
           <textbox id="event-organizer"
-                   disabled="true"
                    flex="true"/>
         </box>
       </box>

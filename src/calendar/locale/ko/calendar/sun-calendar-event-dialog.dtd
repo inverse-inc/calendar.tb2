@@ -334,6 +334,10 @@
 <!ENTITY event.freebusy.legend.free      "여유" >
 <!ENTITY event.freebusy.legend.busy      "바쁨" >
 <!ENTITY event.freebusy.legend.unknown   "정보 없음" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -351,6 +355,7 @@
 <!ENTITY read.only.accept.label          "참석 예정">
 <!ENTITY read.only.decline.label         "불참 예정">
 <!ENTITY read.only.needs.action.label    "추후 확인">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "알림:">
 <!ENTITY read.only.attendees.label       "참가자">
 <!ENTITY read.only.description.label     "설명">

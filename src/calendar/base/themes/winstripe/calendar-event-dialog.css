@@ -60,10 +60,20 @@ listbox[disabled="true"] {
   -moz-margin-start: 1.5em;
 }
 
+listcell.owner-attendee
+{ font-weight: bold; }
+
+listcell[role="OPT-PARTICIPANT"]
+{ font-style: italic; }
+
+listcell[role="NON-PARTICIPANT"]
+{ color: #888; }
+
 .status-icon {
   margin: 0 3px;
-  display: none;
+  display: inline;
   list-style-image: url("chrome://calendar/skin/sun-calendar-event-dialog-attendees.png");
+  -moz-image-region: rect(14px 36px 28px 24px);
 }
 
 .status-icon[status="ACCEPTED"] {

@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Beschikbaar" >
 <!ENTITY event.freebusy.legend.busy      "Bezet" >
 <!ENTITY event.freebusy.legend.unknown   "Geen informatie" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Ik zal aanwezig zijn">
 <!ENTITY read.only.decline.label         "Ik zal niet aanwezig zijn">
 <!ENTITY read.only.needs.action.label    "Ik zal later bevestigen">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Herinnering:">
 <!ENTITY read.only.attendees.label       "Genodigden">
 <!ENTITY read.only.description.label     "Beschrijving">

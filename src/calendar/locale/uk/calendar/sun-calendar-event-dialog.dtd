@@ -246,6 +246,10 @@
 <!ENTITY event.freebusy.legend.free      "Вільно" >
 <!ENTITY event.freebusy.legend.busy      "Зайнято" >
 <!ENTITY event.freebusy.legend.unknown   "Без інформації" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!ENTITY repeat.units.weeks.both         "Тиждень(тижні)" >
 <!ENTITY repeat.units.months.both        "Місяць(місяці)" >
@@ -267,6 +271,7 @@
 <!ENTITY read.only.accept.label          "Я буду присутній">
 <!ENTITY read.only.decline.label         "Я не буду присутній">
 <!ENTITY read.only.needs.action.label    "Підтверджу пізніше">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Нагадування:">
 <!ENTITY read.only.attendees.label       "Присутні">
 <!ENTITY read.only.description.label     "Опис">

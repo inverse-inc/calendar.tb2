@@ -334,6 +334,10 @@
 <!ENTITY event.freebusy.legend.free "Volno">
 <!ENTITY event.freebusy.legend.busy "Není volno">
 <!ENTITY event.freebusy.legend.unknown "Bez informací">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -351,6 +355,7 @@
 <!ENTITY read.only.accept.label "Zúčastním se">
 <!ENTITY read.only.decline.label "Nezúčastním se">
 <!ENTITY read.only.needs.action.label "Potvrdím později">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label "Připomenutí:">
 <!ENTITY read.only.attendees.label "Účastníci">
 <!ENTITY read.only.description.label "Popis">

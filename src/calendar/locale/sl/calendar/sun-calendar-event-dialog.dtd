@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Prosto">
 <!ENTITY event.freebusy.legend.busy      "Zasedeno">
 <!ENTITY event.freebusy.legend.unknown   "Ni podatkov">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Stran časovnega pasu -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Potrjujem udeležbo">
 <!ENTITY read.only.decline.label         "Ne potrjujem udeležbe">
 <!ENTITY read.only.needs.action.label    "Udeležbo potrdim kasneje">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Opomnik:">
 <!ENTITY read.only.attendees.label       "Udeleženci">
 <!ENTITY read.only.description.label     "Opis">

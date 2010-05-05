@@ -333,6 +333,10 @@
 <!ENTITY event.freebusy.legend.free      "Disponible" >
 <!ENTITY event.freebusy.legend.busy      "occupé" >
 <!ENTITY event.freebusy.legend.unknown   "Pas d'information" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 <!ENTITY timezone.title.label            "Veuillez indiquer le fuseau horaire">
@@ -348,6 +352,7 @@
 <!ENTITY read.only.accept.label          "Je participerai">
 <!ENTITY read.only.decline.label         "Je ne participerai pas">
 <!ENTITY read.only.needs.action.label    "Je confirmerai plus tard">
+<!ENTITY read.only.tentative.label       "Je participerai peut-être">
 <!ENTITY read.only.delegate.label        "Je délègue">
 <!ENTITY read.only.reminder.label        "Rappel :">
 <!ENTITY read.only.attendees.label       "Participants">

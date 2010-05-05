@@ -307,6 +307,11 @@ calItipItem.prototype = {
                 newAttendee.id = attendee.id;
                 newAttendee.participationStatus = aStatus;
 
+                /* This should not happen, as an iTIP item is not a request.
+                However, not doing it resets the rsvp in the original imported
+                events. */
+                newAttendee.rsvp = attendee.rsvp;
+
                 var delegatedTo = attendee.getProperty("DELEGATED-TO");
                 if (delegatedTo && delegatedTo.length > 0) {
                     newAttendee.setProperty("DELEGATED-TO", delegatedTo);

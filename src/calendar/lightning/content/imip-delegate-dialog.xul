@@ -59,7 +59,7 @@
           minresultsforpopup="1" minResultsForPopup="true"
           ignoreblurwhilesearching="true" ignoreBlurWhileSearching="true"
           />
-        <checkbox id="item-delegate-staytuned"
+        <checkbox collapsed="true" id="item-delegate-staytuned"
           label="&delegate-dialog.keep-delegator-updated.label;"/>
       </vbox>
     </vbox>

@@ -471,7 +471,17 @@
                   var attendee = inputField.attendee.clone();
 
                   attendee.role = this.getRoleElement(i).getAttribute("role");
-                  //attendee.participationStatus = this.getStatusElement(i).getAttribute("status");
+                  if (attendee.role == "NON-PARTICIPANT") {
+                    attendee.rsvp = false;
+                    attendee.participationStatus = "";
+                  } else {
+                    attendee.rsvp = true;
+                    var newStatus = this.getStatusElement(i).getAttribute("status");
+                    if (newStatus == "") {
+                      newStatus = "NEEDS-ACTION";
+                    }
+                    attendee.participationStatus = newStatus;
+                  }
 
                   // break the list of potentially many attendees back into individual names
                   var emailAddresses = {};
@@ -1465,43 +1475,27 @@
     <handlers>
       <handler event="click" button="0"><![CDATA[
         var target = event.originalTarget;
-        if (target.hasAttribute("role")) {
-            if (target.hasAttribute("disabled") &&
-                target.getAttribute("disabled")) {
-                return;
-            }
-            var role = target.getAttribute("role");
-            if (role == "CHAIR") {
-                target.setAttribute("role", "REQ-PARTICIPANT");
-            } else if (role == "REQ-PARTICIPANT") {
-                target.setAttribute("role", "OPT-PARTICIPANT");
-            } else if (role == "OPT-PARTICIPANT") {
-                target.setAttribute("role", "CHAIR");
-            }
+        if (target.hasAttribute("disabled") &&
+            target.getAttribute("disabled")) {
             return;
         }
-
-        if (target.hasAttribute("status")) {
-            if (target.hasAttribute("disabled") &&
-                target.getAttribute("disabled")) {
+        var values = { "role": [ "REQ-PARTICIPANT", "OPT-PARTICIPANT",
+                                 "CHAIR", "NON-PARTICIPANT" ],
+                       "status": [ "NEEDS-ACTION", "ACCEPTED", "DECLINED",
+                                   "TENTATIVE" ] };
+        for each (var attrName in [ "role", "status" ]) {
+            if (target.hasAttribute(attrName)) {
+                var attrValues = values[attrName];
+                var attrValue = target.getAttribute(attrName);
+                var idx = (attrValue ? attrValues.indexOf(attrValue) : -1);
+                if (idx == -1 || idx > (attrValues.length - 2)) {
+                    idx = 0;
+                } else {
+                    idx++;
+                }
+                target.setAttribute(attrName, attrValues[idx]);
                 return;
             }
-            var status = target.getAttribute("status");
-            switch (status) {
-                case "NEEDS-ACTION":
-                    target.setAttribute("status", "ACCEPTED");
-                    break;
-                case "ACCEPTED":
-                    target.setAttribute("status", "DECLINED");
-                    break;
-                case "DECLINED":
-                    target.setAttribute("status", "TENTATIVE");
-                    break;
-                case "TENTATIVE":
-                    target.setAttribute("status", "ACCEPTED");
-                    break;
-            }
-            return;
         }
 
         if (this.mIsReadOnly || this.mIsInvitation) {

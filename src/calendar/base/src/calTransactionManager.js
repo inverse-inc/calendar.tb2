@@ -202,8 +202,8 @@ calTransaction.prototype = {
             attendee = attendee.clone();
             if ((aItem.organizer && (attendee.id.toLowerCase()
                 != aItem.organizer.id.toLowerCase()))
-                && attendee.participationStatus != "DELEGATED") {
-                attendee.role = "REQ-PARTICIPANT";
+                && attendee.participationStatus != "DELEGATED"
+                && attendee.role != "NON-PARTICIPANT") {
                 attendee.participationStatus = "NEEDS-ACTION";
                 attendee.rsvp = true;
             }

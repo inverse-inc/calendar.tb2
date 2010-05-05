@@ -333,6 +333,10 @@
 <!ENTITY event.freebusy.legend.free      "Voľno" >
 <!ENTITY event.freebusy.legend.busy      "Obsadené" >
 <!ENTITY event.freebusy.legend.unknown   "Žiadne informácie" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -350,6 +354,7 @@
 <!ENTITY read.only.accept.label          "Chcem sa zúčastniť">
 <!ENTITY read.only.decline.label         "Nechcem sa zúčastniť">
 <!ENTITY read.only.needs.action.label    "Potvrdím neskôr">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Pripomienka:">
 <!ENTITY read.only.attendees.label       "Účastníci">
 <!ENTITY read.only.description.label     "Popis">

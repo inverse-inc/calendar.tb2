@@ -307,6 +307,10 @@
 <!ENTITY event.freebusy.legend.free "空闲">
 <!ENTITY event.freebusy.legend.busy "繁忙">
 <!ENTITY event.freebusy.legend.unknown "无信息">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 <!ENTITY timezone.title.label "请指定时区">
 <!ENTITY read.only.general.label "常规">
 <!ENTITY read.only.title.label "标题：">
@@ -318,6 +322,7 @@
 <!ENTITY read.only.accept.label "我将参加">
 <!ENTITY read.only.decline.label "我不参加">
 <!ENTITY read.only.needs.action.label "我下次确定">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label "提醒：">
 <!ENTITY read.only.attendees.label "参与者">
 <!ENTITY read.only.description.label "描述">

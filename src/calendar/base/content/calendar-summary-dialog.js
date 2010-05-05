@@ -214,7 +214,7 @@ function saveDelegationInfo() {
 
     if (window.attendee.participationStatus == "DELEGATED") {
         var delegateField = document.getElementById("item-delegate");
-        var delegateCB = document.getElementById("item-delegate-staytuned");
+        // var delegateCB = document.getElementById("item-delegate-staytuned");
 
         var emails = {};
         var names = {};
@@ -246,12 +246,11 @@ function saveDelegationInfo() {
                     newDelegate.setProperty("DELEGATED-FROM", window.attendee.id);
                     window.attendee.setProperty("DELEGATED-TO", newDelegateEmail);
                     window.item.addAttendee(newDelegate);
-
-                    if (delegateCB.checked) {
-                        window.attendee.role = "NON-PARTICIPANT";
-                    } else {
-                        window.attendee.role = "";
-                    }
+                    // if (delegateCB.checked) {
+                    //     window.attendee.role = "NON-PARTICIPANT";
+                    // } else {
+                    //     window.attendee.role = "";
+                    // }
                 }
             }
         } else {
@@ -308,7 +307,7 @@ function updateInvitationStatus() {
     var item = window.item;
     var calendar = item.calendar;
     if (!window.readOnly) {
-        if (window.attendee) {
+        if (window.attendee && window.attendee.rsvp) {
             var invitationRow =
                 document.getElementById("invitation-row");
             invitationRow.removeAttribute("hidden");
@@ -316,10 +315,10 @@ function updateInvitationStatus() {
                 document.getElementById("item-participation");
             statusElement.value = attendee.participationStatus;
             var delegate = document.getElementById("item-delegate");
-            var delegateCB = document.getElementById("item-delegate-staytuned");
+            // var delegateCB = document.getElementById("item-delegate-staytuned");
             if (statusElement.value == "DELEGATED") {
-                delegate.removeAttribute("disabled");
-                delegateCB.removeAttribute("disabled");
+                delegate.removeAttribute("collapsed");
+                // delegateCB.removeAttribute("disabled");
                 var delegateEmail = window.attendee.getProperty("DELEGATED-TO");
                 if (delegateEmail && delegateEmail.length > 0) {
                     var delegateAtt
@@ -334,8 +333,8 @@ function updateInvitationStatus() {
                     delegate.value = name;
                 }
             } else {
-                delegate.setAttribute("disabled", "true");
-                delegateCB.setAttribute("disabled", "true");
+                delegate.setAttribute("collapsed", "true");
+                // delegateCB.setAttribute("disabled", "true");
             }
         }
     }
@@ -346,13 +345,13 @@ function updateInvitation() {
     if (window.attendee) {
         window.attendee.participationStatus = statusElement.value;
         var delegate = document.getElementById("item-delegate");
-        var delegateCB = document.getElementById("item-delegate-staytuned");
+        // var delegateCB = document.getElementById("item-delegate-staytuned");
         if (statusElement.value == "DELEGATED") {
-            delegate.removeAttribute("disabled");
-            delegateCB.removeAttribute("disabled");
+            delegate.removeAttribute("collapsed");
+            // delegateCB.removeAttribute("disabled");
         } else {
-            delegate.setAttribute("disabled", "true");
-            delegateCB.setAttribute("disabled", "true");
+            delegate.setAttribute("collapsed", "true");
+            // delegateCB.setAttribute("disabled", "true");
         }
     }
 }
@@ -414,24 +413,25 @@ function updateAttendees() {
     var args = window.arguments[0];
     var item = args.calendarEvent;
     var attendees = item.getAttendees({});
+
     if (attendees && attendees.length) {
         document.getElementById("item-attendees").removeAttribute("hidden");
         var listbox = document.getElementById("item-attendee-listbox");
-        var itemNode = listbox.getElementsByTagName("listitem")[0];
-        var num_items = Math.ceil(attendees.length/2)-1;
-        while (num_items--) {
-            var newNode = itemNode.cloneNode(true);
-            listbox.appendChild(newNode);
-        }
-        var list = listbox.getElementsByTagName("listitem");
-        var page = 0;
-        var line = 0;
+        var modelNode = listbox.getElementsByTagName("listitem")[0];
+        listbox.removeChild(modelNode);
         for each (var attendee in attendees) {
             if (attendee.participationStatus != "DELEGATED") {
-                var itemNode = list[line];
-                var listcell = itemNode.getElementsByTagName("listcell")[page];
-                var image = itemNode.getElementsByTagName("image")[page];
-                var label = itemNode.getElementsByTagName("label")[page];
+                var itemNode = modelNode.cloneNode(true);
+                listbox.appendChild(itemNode);
+                var listcell = itemNode.getElementsByTagName("listcell")[0];
+                var image = itemNode.getElementsByTagName("image")[0];
+                var label = itemNode.getElementsByTagName("label")[0];
+                if (attendee.role) {
+                    listcell.setAttribute("role", attendee.role);
+                }
+                if (attendee.id == window.attendee.id) {
+                    listcell.className += " owner-attendee";
+                }
                 if (attendee.commonName && attendee.commonName.length) {
                     label.value = attendee.commonName;
                     // XXX While this is correct from a XUL standpoint, it doesn't
@@ -460,14 +460,11 @@ function updateAttendees() {
                     }
                     label.value += ", " + delegatorLabel;
                 }
-                image.setAttribute("status", attendee.participationStatus);
-                image.removeAttribute("hidden");
-
-                page++;
-                if (page > 1) {
-                    page = 0;
-                    line++;
+                if (attendee.participationStatus) {
+                    image.setAttribute("status",
+                                       attendee.participationStatus);
                 }
+                image.removeAttribute("hidden");
             }
         }
     }

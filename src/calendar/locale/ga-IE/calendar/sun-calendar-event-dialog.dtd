@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free "Saor">
 <!ENTITY event.freebusy.legend.busy "Gnóthach">
 <!ENTITY event.freebusy.legend.unknown "Gan eolas">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 <!-- Timezone dialog -->
 
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label "Beidh mé i láthair">
 <!ENTITY read.only.decline.label "Ní bheidh mé i láthair">
 <!ENTITY read.only.needs.action.label "Dearbhóidh mé níos déanaí">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label "Meabhrúchán:">
 <!ENTITY read.only.attendees.label "Rannpháirtithe">
 <!ENTITY read.only.description.label "Cur Síos">

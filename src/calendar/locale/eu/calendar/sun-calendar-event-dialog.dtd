@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free "Libre">
 <!ENTITY event.freebusy.legend.busy "Lanpetua">
 <!ENTITY event.freebusy.legend.unknown "Informaziorik gabe">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 <!-- Timezone dialog -->
 
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label "Parte hartuko dut">
 <!ENTITY read.only.decline.label "Ez dut parte hartuko">
 <!ENTITY read.only.needs.action.label "Beranduago baieztatuko dut">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label "Gogoratu:">
 <!ENTITY read.only.attendees.label "Partaideak">
 <!ENTITY read.only.description.label "Deskribapena">

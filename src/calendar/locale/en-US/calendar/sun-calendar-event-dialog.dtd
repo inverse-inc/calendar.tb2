@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Free" >
 <!ENTITY event.freebusy.legend.busy      "Busy" >
 <!ENTITY event.freebusy.legend.unknown   "No information" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "I will attend">
 <!ENTITY read.only.decline.label         "I will not attend">
 <!ENTITY read.only.needs.action.label    "I will confirm later">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Reminder:">
 <!ENTITY read.only.attendees.label       "Attendees">
 <!ENTITY read.only.description.label     "Description">

@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "空き" >
 <!ENTITY event.freebusy.legend.busy      "予定あり" >
 <!ENTITY event.freebusy.legend.unknown   "不明" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "参加します">
 <!ENTITY read.only.decline.label         "参加できません">
 <!ENTITY read.only.needs.action.label    "後で決定します">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "アラーム:">
 <!ENTITY read.only.attendees.label       "参加者">
 <!ENTITY read.only.description.label     "詳細">

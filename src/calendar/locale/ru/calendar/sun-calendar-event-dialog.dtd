@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Свободен" >
 <!ENTITY event.freebusy.legend.busy      "Занят" >
 <!ENTITY event.freebusy.legend.unknown   "Нет информации" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Я буду участвовать">
 <!ENTITY read.only.decline.label         "Я не буду участвовать">
 <!ENTITY read.only.needs.action.label    "Я подтвержу позже">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Напоминание:">
 <!ENTITY read.only.attendees.label       "Участники">
 <!ENTITY read.only.description.label     "Описание">

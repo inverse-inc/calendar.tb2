@@ -2887,8 +2887,10 @@ calDavCalendar.prototype = {
             httpchannel.requestMethod = "POST";
             httpchannel.setRequestHeader("Originator", this.getProperty("organizerId"), false);
             for each (var recipient in aRecipients) {
-                httpchannel.setRequestHeader("Recipient", recipient.id, true);
+                if (recipient.participationStatus != "NON-PARTICIPANT") {
+                    httpchannel.setRequestHeader("Recipient", recipient.id, true);
                 }
+            }
 
             var thisCalendar = this;
             var streamListener = {

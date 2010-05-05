@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Szabad" >
 <!ENTITY event.freebusy.legend.busy      "Elfoglalt" >
 <!ENTITY event.freebusy.legend.unknown   "Nincs információ" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Részt veszek">
 <!ENTITY read.only.decline.label         "Nem veszek rész">
 <!ENTITY read.only.needs.action.label    "Később döntök">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Emlékeztető:">
 <!ENTITY read.only.attendees.label       "Résztvevők">
 <!ENTITY read.only.description.label     "Leírás">

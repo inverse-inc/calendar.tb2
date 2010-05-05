@@ -1,5 +1,22 @@
 2010-05-05  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/src/calTransactionManager.js
+	(resetAttendeeStatus): we don't reset the attendee status to
+	"NEEDS-ACTION" if its role is "NON-PARTICIPANT". We also no longer
+	set its role to "REQ-PARTICIPANT", as the organizer may have
+	chosen to assign it another role.
+
+	* src/calendar/base/content/calendar-summary-dialog.js:
+	(saveDelegationInfo): the "item-delegate-staytuned" checkbox is now
+	disable in the template, since it is not properly handled yet.
+	(updateAttendees): attendees are now displayed one by line to
+	avoid the delegation text from overlapping the rest of the list.
+
+	* src/calendar/base/content/calendar-item-editing.js
+	(checkAndSendItipMessage): Fixed a typo. When constructing the
+	itip item, we avoid setting rsvp and the participation status for
+	attendee having their role set to "NON-PARTICIPANT".
+
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js
 	(onAttrModified): catch the moment when the focus is lost from an
 	attendee input field and invoke "resolvePotentialList" on it. Keep

@@ -307,6 +307,10 @@
 <!ENTITY event.freebusy.legend.free "Libre">
 <!ENTITY event.freebusy.legend.busy "Ocupado">
 <!ENTITY event.freebusy.legend.unknown "Sin información">
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 <!ENTITY timezone.title.label "Por favor, especifique la zona horaria">
 <!ENTITY read.only.general.label "General">
 <!ENTITY read.only.title.label "Título:">
@@ -318,6 +322,7 @@
 <!ENTITY read.only.accept.label "Asistiré">
 <!ENTITY read.only.decline.label "No asistiré">
 <!ENTITY read.only.needs.action.label "Lo confirmaré más tarde">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label "Recordatorio:">
 <!ENTITY read.only.attendees.label "Asistentes">
 <!ENTITY read.only.description.label "Descripción">

@@ -230,6 +230,12 @@ timezone-page {
     list-style-image: url(chrome://calendar/skin/abcard.png);
 }
 
+.status-icon {
+    margin: 0 3px;
+    list-style-image: url(chrome://calendar/skin/sun-calendar-event-dialog-attendees.png);
+    -moz-image-region: rect(14px 36px 28px 24px);
+}
+
 .status-icon[status="ACCEPTED"] {
     margin: 0 3px;
     list-style-image: url(chrome://calendar/skin/sun-calendar-event-dialog-attendees.png);
@@ -322,10 +328,15 @@ timezone-page {
     -moz-image-region: rect(0px 201px 16px 180px);
 }
 
-.role-icon[role="CHAIR"] {
+.role-icon[role="NON-PARTICIPANT"] {
     margin: 0 3px;
     list-style-image: url(chrome://calendar/skin/sun-calendar-event-dialog-attendees.png);
-    -moz-image-region: rect(0px 201px 16px 180px);
+    -moz-image-region: rect(0px 222px 16px 201px);
+}
+.role-icon[role="NON-PARTICIPANT"][disabled="true"] {
+    margin: 0 3px;
+    list-style-image: url(chrome://calendar/skin/sun-calendar-event-dialog-attendees.png);
+    -moz-image-region: rect(0px 222px 16px 201px);
 }
 
 .zoom-in-icon {

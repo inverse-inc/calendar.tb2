@@ -334,6 +334,10 @@
 <!ENTITY event.freebusy.legend.free      "Laisva" >
 <!ENTITY event.freebusy.legend.busy      "Užimta" >
 <!ENTITY event.freebusy.legend.unknown   "Nežinoma" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 <!ENTITY timezone.title.label            "Prašom parinkti laiko juostą">
@@ -349,6 +353,7 @@
 <!ENTITY read.only.accept.label          "Aš dalyvausiu">
 <!ENTITY read.only.decline.label         "Aš nedalyvausiu">
 <!ENTITY read.only.needs.action.label    "Apsisprendimą pranešiu vėliau">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Priminimas:">
 <!ENTITY read.only.attendees.label       "Dalyviai">
 <!ENTITY read.only.description.label     "Aprašas">

@@ -335,6 +335,10 @@
 <!ENTITY event.freebusy.legend.free      "Liber" >
 <!ENTITY event.freebusy.legend.busy      "Ocupat" >
 <!ENTITY event.freebusy.legend.unknown   "Nicio informație" >
+<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
+<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
+<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
+<!ENTITY event.freebusy.role.chair           "Chair" >
 
 <!-- Timezone dialog -->
 
@@ -352,6 +356,7 @@
 <!ENTITY read.only.accept.label          "Voi participa">
 <!ENTITY read.only.decline.label         "Nu voi participa">
 <!ENTITY read.only.needs.action.label    "Voi confirma ulterior">
+<!ENTITY read.only.tentative.label       "I might attend">
 <!ENTITY read.only.reminder.label        "Memento:">
 <!ENTITY read.only.attendees.label       "Participanți">
 <!ENTITY read.only.description.label     "Descriere">
