@@ -1,3 +1,16 @@
+2010-05-05  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js
+	(onAttrModified): catch the moment when the focus is lost from an
+	attendee input field and invoke "resolvePotentialList" on it. Keep
+	a reference of the last checked value to not verify the same entry
+	twice.
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.xml
+	(attendees-list.resolvePotentialList): new method, designed to
+	resolve contact lists and decompose them in individual freebusy
+	entries.
+
 2010-05-03  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/src/calTransactionManager.js
