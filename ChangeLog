@@ -1,5 +1,10 @@
 2010-05-05  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.xml:
+	(attendees-list._resolveListByName): a bug in the exception
+	handling would prevent the search from happening on any other than
+	the first addressbook.
+
 	* src/calendar/base/src/calTransactionManager.js
 	(resetAttendeeStatus): we don't reset the attendee status to
 	"NEEDS-ACTION" if its role is "NON-PARTICIPANT". We also no longer
