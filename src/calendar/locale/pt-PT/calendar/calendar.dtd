@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Localização:">
 <!ENTITY calendarproperties.name.label     "Nome:">
 <!ENTITY calendarproperties.readonly.label "Apenas de leitura">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Mostrar Alarmes">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPERIMENTAL, necessita re-ínicio)">
 <!ENTITY calendarproperties.enabled.label "Acivar este calendário">

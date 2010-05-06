@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Adresse:">
 <!ENTITY calendarproperties.name.label     "Namn:">
 <!ENTITY calendarproperties.readonly.label "Skriveverna">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Vis alarmar">
 <!ENTITY calendarproperties.cache.label    "Mellomlager (EKSPERIMENTELT, krev omstart)">
 <!ENTITY calendarproperties.enabled.label "Slå på denne kalenderen">

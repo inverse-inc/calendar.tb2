@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Loc:">
 <!ENTITY calendarproperties.name.label     "Nume:">
 <!ENTITY calendarproperties.readonly.label "Numai pentru citit">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Arată alarmele">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPERIMENTAL, necesită repornirea)">
 <!ENTITY calendarproperties.enabled.label "Activează acest calendar">

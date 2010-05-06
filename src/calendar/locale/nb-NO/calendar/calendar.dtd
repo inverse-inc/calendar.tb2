@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Adresse:">
 <!ENTITY calendarproperties.name.label     "Navn:">
 <!ENTITY calendarproperties.readonly.label "Skrivebeskyttet">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Vis alarmer">
 <!ENTITY calendarproperties.cache.label    "Hurtiglager (EKSPERIMENTELT, krever omstart)">
 <!ENTITY calendarproperties.enabled.label "Bruk denne kalenderen">

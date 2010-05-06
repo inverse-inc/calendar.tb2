@@ -363,6 +363,7 @@
 <!ENTITY calendarproperties.location.label "Kokapena:">
 <!ENTITY calendarproperties.name.label "Izena:">
 <!ENTITY calendarproperties.readonly.label "Irakurketa soilekoa">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Ikusi alarmak">
 <!ENTITY calendarproperties.cache.label "Katxe (EXPERIMENTALA, berrabiaraztea behar du))">
 <!ENTITY calendarproperties.enabled.label "Aldatu egutegi hau:">

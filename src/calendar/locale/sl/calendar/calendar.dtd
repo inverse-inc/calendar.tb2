@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Lokacija:">
 <!ENTITY calendarproperties.name.label     "Ime:">
 <!ENTITY calendarproperties.readonly.label "Samo za branje">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Pokaži alarme">
 <!ENTITY calendarproperties.cache.label    "Medpomnilnik (POSKUSNO, zahteva ponoven zagon)">
 <!ENTITY calendarproperties.enabled.label "Vključi ta koledar">

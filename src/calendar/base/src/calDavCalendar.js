@@ -363,6 +363,8 @@ function calDavCalendar() {
     else {
         this.mFirstRefreshDelay = 0;
     }
+
+    this.mSupportsFreeBusyTransparency = false;
 }
 
 // some shorthand
@@ -623,6 +625,67 @@ calDavCalendar.prototype = {
     },
     hasAutoScheduling: false, // Whether server automatically takes care of scheduling
 
+    mSupportsFreeBusyTransparency: false,
+    get supportsFreeBusyTransparency caldav_get_supportsFreeBusyTransparency() {
+        return this.mSupportsFreeBusyTransparency;
+    },
+    mIncludeInFreeBusy: false,
+    get includeInFreeBusy caldav_get_includeInFreeBusy() {
+        return this.mIncludeInFreeBusy;
+    },
+    set includeInFreeBusy caldav_set_includeInFreeBusy(value) {
+        if (value != this.mIncludeInFreeBusy) {
+            var D = new Namespace("D", "DAV:");
+            var C = new Namespace("CD", "urn:ietf:params:xml:ns:caldav");
+            default xml namespace = D;
+
+            var queryXml =
+                    <propertyupdate xmlns:C={C}>
+                      <set>
+                        <prop>
+                          <C:schedule-calendar-transp/>
+                        </prop>
+                      </set>
+                    </propertyupdate>;
+            var xmlValue;
+            if (value) {
+                xmlValue = <C:schedule-calendar-transp xmlns:C={C}><C:opaque/></C:schedule-calendar-transp>;
+            } else {
+                xmlValue = <C:schedule-calendar-transp xmlns:C={C}><C:transparent/></C:schedule-calendar-transp>;
+            }
+            queryXml[0].D::set.D::prop.C::["schedule-calendar-transp"] = xmlValue;
+            if (this.verboseLogging()) {
+                dump("CalDAV: send: " + queryXml + "\n");
+            }
+
+            var httpchannel = calPrepHttpChannel(this.calendarUri,
+                                                 queryXml,
+                                                 "text/xml; charset=utf-8",
+                                                 this);
+            httpchannel.requestMethod = "PROPPATCH";
+            var thisCalendar = this;
+            var streamListener = {
+            onStreamComplete: function caldav_set_includeInFreeBusy_onStreamComplete(aLoader,
+                                                                                     aContext,
+                                                                                     aStatus,
+                                                                                     aResultLength,
+                                                                                     aResult) {
+                    var status;
+                    try {
+                        status = aContext.responseStatus;
+                    } catch (ex) {
+                        status = Components.interfaces.calIErrors.DAV_PUT_ERROR;
+                    }
+                    if (status == 207) {
+                        thisCalendar.mIncludeInFreeBusy = value;
+                    }
+                }
+            };
+            var streamLoader = createStreamLoader();
+            calSendHttpRequest(streamLoader, httpchannel, streamListener);
+        }
+    },
+
     mAuthScheme: null,
 
     mAuthRealm: null,
@@ -732,7 +795,7 @@ calDavCalendar.prototype = {
         case "capabilities.tasks.supported":
             return (this.supportedItemTypes.indexOf("VTODO") > -1);
         case "capabilities.events.supported":
-            return (this.supportedItemTypes.indexOf("VEVENT") > -1);            
+            return (this.supportedItemTypes.indexOf("VEVENT") > -1);
         }
         return this.__proto__.__proto__.getProperty.apply(this, arguments);
     },
@@ -1956,12 +2019,14 @@ calDavCalendar.prototype = {
         var thisCalendar = this;
 
         var D = new Namespace("D", "DAV:");
+        var C = new Namespace("CD", "urn:ietf:params:xml:ns:caldav");
         var CS = new Namespace("CS", "http://calendarserver.org/ns/");
-        var queryXml = <D:propfind xmlns:D="DAV:" xmlns:CS={CS}>
+        var queryXml = <D:propfind xmlns:D="DAV:" xmlns:C={C} xmlns:CS={CS}>
                         <D:prop>
                             <D:resourcetype/>
                             <D:owner/>
                             <D:supported-report-set/>
+                            <C:schedule-calendar-transp/>
                             <CS:getctag/>
                         </D:prop>
                         </D:propfind>;
@@ -2049,6 +2114,27 @@ calDavCalendar.prototype = {
                     dump("CalDAV: initial ctag " + ctag + " for calendar "
                          + thisCalendar.name + "\n");
                 }
+            }
+
+            // check for presence and value of calendar transparency for freebusy
+            var transparency = multistatus..C::["schedule-calendar-transp"].toString();
+            if (transparency.length) {
+                if (thisCalendar.verboseLogging()) {
+                    dump("CalDAV: calendar supports freebusy transparency\n");
+                }
+                if (transparency.indexOf("opaque") > -1) {
+                    thisCalendar.mIncludeInFreeBusy = true;
+                    thisCalendar.mSupportsFreeBusyTransparency = true;
+                } else if (transparency.indexOf("transparent") > -1) {
+                    thisCalendar.mIncludeInFreeBusy = false;
+                    thisCalendar.mSupportsFreeBusyTransparency = true;
+                } else {
+                    dump("CalDAV: ERROR: calendar adverstise wrong unknown"
+                         + " transparency value: " + transparency + "\n");
+                }
+            }
+            else if (thisCalendar.verboseLogging()) {
+                dump("CalDAV: calendar does not support freebusy transparency\n");
             }
 
             // check for webdav-sync capability
@@ -2888,6 +2974,7 @@ calDavCalendar.prototype = {
             httpchannel.setRequestHeader("Originator", this.getProperty("organizerId"), false);
             for each (var recipient in aRecipients) {
                 if (recipient.participationStatus != "NON-PARTICIPANT") {
+                    httpchannel.setRequestHeader("Recipient", recipient.id, true);
                     httpchannel.setRequestHeader("Recipient", recipient.id, true);
                 }
             }

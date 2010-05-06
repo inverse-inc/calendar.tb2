@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Plats:">
 <!ENTITY calendarproperties.name.label     "Namn:">
 <!ENTITY calendarproperties.readonly.label "Skrivskyddad">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Visa påminnelse">
 <!ENTITY calendarproperties.cache.label    "Buffert (EXPERIMENTELL, kräver omstart)">
 <!ENTITY calendarproperties.enabled.label "Slå på denna kalender">

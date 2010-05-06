@@ -277,6 +277,7 @@
 <!ENTITY calendarproperties.location.label "Місце:">
 <!ENTITY calendarproperties.name.label     "Назва:">
 <!ENTITY calendarproperties.readonly.label "Тільки для читання">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label               "Зміст допомоги">

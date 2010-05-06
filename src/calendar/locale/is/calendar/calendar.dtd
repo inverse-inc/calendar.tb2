@@ -318,6 +318,7 @@
 <!ENTITY calendarproperties.location.label "Staðsetning:">
 <!ENTITY calendarproperties.name.label "Nafn:">
 <!ENTITY calendarproperties.readonly.label "Skrifvarinn">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Sýna viðvörun">
 <!ENTITY calendarproperties.cache.label "Skyndiminni (TILRAUN, þarfnast endurræsingar)">
 <!ENTITY calendarproperties.enabled.label "Kveikja á þessu dagatali">

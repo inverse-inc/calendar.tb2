@@ -105,6 +105,12 @@
                   label="&calendarproperties.readonly.label;"
                   disable-with-calendar="true"/>
       </row>
+      <row id="calendar-freebusy-transparency-row" align="center" collapsed="true">
+        <spacer/>
+        <checkbox id="include-in-freebusy"
+                  label="&calendarproperties.include-in-freebusy.label;"
+                  disable-with-calendar="true"/>
+      </row>
       <row id="calendar-suppressAlarms-row"
            align="center">
         <spacer/>

@@ -40,6 +40,7 @@
  * The calendar to modify, is retrieved from window.arguments[0].calendar
  */
 var gCalendar;
+var wCalendar;
 
 /**
  * To open the window, use an object as argument. The object needs a 'calendar'
@@ -57,6 +58,25 @@ function onLoad() {
     document.getElementById("read-only").checked = gCalendar.readOnly;
     document.getElementById("show-in-today-pane").checked = gCalendar.getProperty("showInTodayPane");
     document.getElementById("show-invitations").checked = gCalendar.getProperty("showInvitations");
+
+    wCalendar = gCalendar.wrappedJSObject;
+    if (wCalendar.mUncachedCalendar) {
+        wCalendar = wCalendar.mUncachedCalendar.wrappedJSObject;
+    }
+    if (wCalendar && wCalendar.supportsFreeBusyTransparency) {
+        var showIncludeInFB = true;
+        var aclMgr = wCalendar.mACLMgr;
+        if (aclMgr) {
+            var calEntry = aclMgr.calendarEntry(wCalendar.calendarUri);
+            showIncludeInFB = calEntry.userIsOwner();
+        }
+        if (showIncludeInFB) {
+            var row = document.getElementById("calendar-freebusy-transparency-row");
+            row.removeAttribute("collapsed");
+            var includeInFB = document.getElementById("include-in-freebusy");
+            includeInFB.checked = wCalendar.includeInFreeBusy;
+        }
+    }
 
     // set up the cache field
     var cacheBox = document.getElementById("cache");
@@ -115,6 +135,15 @@ function onAcceptDialog() {
 
     // Save disabled option (should do this last)
     gCalendar.setProperty("disabled", !document.getElementById("calendar-enabled-checkbox").checked);
+
+    if (wCalendar) {
+        var row = document.getElementById("calendar-freebusy-transparency-row");
+        var collapsed = row.getAttribute("collapsed");
+        if (!collapsed || collapsed == "false") {
+            var includeInFB = document.getElementById("include-in-freebusy");
+            wCalendar.includeInFreeBusy = includeInFB.checked;
+        }
+    }
 
     // tell standard dialog stuff to close the dialog
     return true;

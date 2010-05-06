@@ -1,3 +1,14 @@
+2010-05-06  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-properties-dialog.js:
+	(onLoad, onAcceptDialog): added code to retrieve and save the
+	"includeInFreeBusy" on calendar that support it.
+
+	* src/calendar/base/src/calDavCalendar.js
+	(supportsFreeBusyTransparency, includeInFreeBusy): new properties
+	that handles the availability and the value of the
+	"schedule-calendar-transp" property.
+
 2010-05-05  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.xml:

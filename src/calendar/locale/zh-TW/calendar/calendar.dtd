@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "地點:">
 <!ENTITY calendarproperties.name.label     "名稱:">
 <!ENTITY calendarproperties.readonly.label "唯讀">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "顯示鬧鈴">
 <!ENTITY calendarproperties.cache.label    "快取 (實驗性，需要重新啟動)">
 <!ENTITY calendarproperties.enabled.label "切換為此行事曆:">

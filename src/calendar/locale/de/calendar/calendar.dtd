@@ -360,6 +360,7 @@
 <!ENTITY calendarproperties.location.label   "Adresse:">
 <!ENTITY calendarproperties.name.label       "Name:">
 <!ENTITY calendarproperties.readonly.label   "Schreibgeschützt">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Erinnerungen anzeigen">
 <!ENTITY calendarproperties.cache.label      "Cache (EXPERIMENTELL, benötigt Neustart)">
 <!ENTITY calendarproperties.enabled.label    "Diesen Kalender aktivieren">

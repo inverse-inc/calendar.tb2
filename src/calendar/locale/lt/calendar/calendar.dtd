@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Vieta:">
 <!ENTITY calendarproperties.name.label     "Pavadinimas:">
 <!ENTITY calendarproperties.readonly.label "Skirtas tik skaitymui">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.cache.label    "Kešuojamas (EKSPERIMENTINĖ GALIMYBĖ, reikės perleisti programą)">
 <!ENTITY calendarproperties.firealarms.label "Rodyti priminimus">
 <!ENTITY calendarproperties.enabled.label  "Naudoti šį kalendorių">

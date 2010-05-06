@@ -358,6 +358,7 @@
 <!ENTITY calendarproperties.location.label "위치:">
 <!ENTITY calendarproperties.name.label     "이름:">
 <!ENTITY calendarproperties.readonly.label "읽기 전용">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "알람 보기">
 <!ENTITY calendarproperties.cache.label    "캐쉬 (시범, 재시작 필요)">
 <!ENTITY calendarproperties.enabled.label   "이 캘린더 전환: ">

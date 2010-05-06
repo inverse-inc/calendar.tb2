@@ -306,6 +306,7 @@
 <!ENTITY calendarproperties.location.label "位置：">
 <!ENTITY calendarproperties.name.label "名称：">
 <!ENTITY calendarproperties.readonly.label "只读">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "显示提醒">
 <!ENTITY calendarproperties.cache.label "缓存 （实验中的功能, 需要重启）">
 <!ENTITY calendarproperties.enabled.label "启用此日历">

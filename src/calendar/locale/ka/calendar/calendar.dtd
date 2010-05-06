@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "მისამართი:">
 <!ENTITY calendarproperties.name.label     "სახელი:">
 <!ENTITY calendarproperties.readonly.label "მხოლოდ კითხვადი">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "გაფრთხილებათა ჩვენება">
 <!ENTITY calendarproperties.cache.label    "ბუფერი (ექსპერიმენტულია, საჭიროებს გადატვირთვას)">
 <!ENTITY calendarproperties.enabled.label "ამ კალენდრის ჩართვა">

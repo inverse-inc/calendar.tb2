@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Placering:">
 <!ENTITY calendarproperties.name.label "Navn:">
 <!ENTITY calendarproperties.readonly.label "Skrivebeskyttet">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Vis alarmer">
 <!ENTITY calendarproperties.cache.label "Cache (EKSPERIMENTELT! kræver genstart)">
 <!ENTITY calendarproperties.enabled.label "Slå denne kalender til">

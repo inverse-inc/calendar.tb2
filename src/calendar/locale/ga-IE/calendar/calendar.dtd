@@ -363,6 +363,7 @@
 <!ENTITY calendarproperties.location.label "Suíomh:">
 <!ENTITY calendarproperties.name.label "Teideal:">
 <!ENTITY calendarproperties.readonly.label "Inléite Amháin">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Taispeáin Aláraim">
 <!ENTITY calendarproperties.cache.label "Taisce (trialach; atosú riachtanach)">
 <!ENTITY calendarproperties.enabled.label "Cumasaigh an féilire seo">

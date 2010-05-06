@@ -363,6 +363,7 @@
 <!ENTITY calendarproperties.location.label "Local:">
 <!ENTITY calendarproperties.name.label     "Nome:">
 <!ENTITY calendarproperties.readonly.label "Somente leitura">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Exibir alarmes">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPERIMENTAL, requer reinicialização)">
 <!ENTITY calendarproperties.enabled.label "Habilitar este calendário">

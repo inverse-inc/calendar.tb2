@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label "Locatie:">
 <!ENTITY calendarproperties.name.label     "Naam:">
 <!ENTITY calendarproperties.readonly.label "Alleen-lezen">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Alarmen tonen">
 <!ENTITY calendarproperties.cache.label    "Buffer (EXPERIMENTEEL, herstart nodig)">
 <!ENTITY calendarproperties.enabled.label  "Deze agenda inschakelen">

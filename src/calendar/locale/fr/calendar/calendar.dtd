@@ -359,6 +359,7 @@
 <!ENTITY calendarproperties.location.label "Emplacement :">
 <!ENTITY calendarproperties.name.label     "Nom :">
 <!ENTITY calendarproperties.readonly.label "En lecture seule">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label "Afficher les alarmes">
 <!ENTITY calendarproperties.cache.label    "Cache (EXPÉRIMENTAL, nécessite un redémarrage)">
 <!ENTITY calendarproperties.enabled.label  "Activer cet agenda">

@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label	"場所:">
 <!ENTITY calendarproperties.name.label		"名前:">
 <!ENTITY calendarproperties.readonly.label	"読み込み専用">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label	"アラーム通知する">
 <!ENTITY calendarproperties.cache.label		"キャッシュ (実験的, 再起動が必要)">
 <!ENTITY calendarproperties.enabled.label "このカレンダーを有効にする">

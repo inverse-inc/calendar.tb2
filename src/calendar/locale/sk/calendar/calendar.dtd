@@ -362,6 +362,7 @@
 <!ENTITY calendarproperties.location.label             "Umiestnenie:">
 <!ENTITY calendarproperties.name.label                 "Názov:">
 <!ENTITY calendarproperties.readonly.label             "Len na čítanie">
+<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
 <!ENTITY calendarproperties.firealarms.label           "Zobraziť upozornenia">
 <!ENTITY calendarproperties.cache.label                "Vyrovnávacia pamäť (EXPERIMENTÁLNE, vyžaduje reštart)">
 <!ENTITY calendarproperties.enabled.label              "Zapnúť tento kalendár">
