@@ -334,10 +334,10 @@
 <!ENTITY event.freebusy.legend.free "Volno">
 <!ENTITY event.freebusy.legend.busy "Není volno">
 <!ENTITY event.freebusy.legend.unknown "Bez informací">
-<!ENTITY event.freebusy.role.reqparticipant  "Participant" >
-<!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
-<!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
-<!ENTITY event.freebusy.role.chair           "Chair" >
+<!ENTITY event.freebusy.role.reqparticipant  "Účastník" >
+<!ENTITY event.freebusy.role.optparticipant  "Nepovinný účastník" >
+<!ENTITY event.freebusy.role.nonparticipant  "Na vědomí" >
+<!ENTITY event.freebusy.role.chair           "Předsedající" >
 
 <!-- Timezone dialog -->
 
@@ -355,7 +355,7 @@
 <!ENTITY read.only.accept.label "Zúčastním se">
 <!ENTITY read.only.decline.label "Nezúčastním se">
 <!ENTITY read.only.needs.action.label "Potvrdím později">
-<!ENTITY read.only.tentative.label       "I might attend">
+<!ENTITY read.only.tentative.label       "Potvrdím později">
 <!ENTITY read.only.reminder.label "Připomenutí:">
 <!ENTITY read.only.attendees.label "Účastníci">
 <!ENTITY read.only.description.label "Popis">
@@ -363,4 +363,4 @@
 <!ENTITY read.only.link.label "Související odkaz">
 <!ENTITY read.only.delegate.label        "I delegate">
 <!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
-<!ENTITY event.showtimeasfree.label                          "Show Time as Free" >
+<!ENTITY event.showtimeasfree.label                          "Čas zobrazit jako volný">

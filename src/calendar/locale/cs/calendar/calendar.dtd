@@ -362,12 +362,12 @@
 <!ENTITY calendarproperties.location.label "Adresa:">
 <!ENTITY calendarproperties.name.label "Název:">
 <!ENTITY calendarproperties.readonly.label "Pouze ke čtení">
-<!ENTITY calendarproperties.include-in-freebusy.label "Include in free-busy">
+<!ENTITY calendarproperties.include-in-freebusy.label "Zahrnout do obsazeného času">
 <!ENTITY calendarproperties.firealarms.label "Zobrazit upozornění">
 <!ENTITY calendarproperties.cache.label "Vyrovnávací paměť (EXPERIMENTÁLNÍ - vyžaduje restart)">
 <!ENTITY calendarproperties.enabled.label "Zapnout kalendář">
-<!ENTITY calendarproperties.showintodaypane.label "Show in Today Pane">
-<!ENTITY calendarproperties.showinvitations.label "Show Invitations">
+<!ENTITY calendarproperties.showintodaypane.label "Zobrazit v událostech">
+<!ENTITY calendarproperties.showinvitations.label "Zobrazit pozvánky">
 
 <!-- Sunbird Help -->
 <!ENTITY calendar.help.label "Obsah nápovědy">
