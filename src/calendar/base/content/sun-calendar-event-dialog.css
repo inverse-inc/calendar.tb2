@@ -208,7 +208,7 @@ timezone-page {
      ensure that the rows of the freebusy-grid and
      the attendee-list always have the same height,
      regardless of the font size. */
-    min-height: 16px;
+    min-height: 17px;
 }
 
 .addressingWidgetCell {
