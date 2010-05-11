@@ -336,7 +336,7 @@
 <!ENTITY event.freebusy.role.reqparticipant  "Participant" >
 <!ENTITY event.freebusy.role.optparticipant  "Optional Participant" >
 <!ENTITY event.freebusy.role.nonparticipant  "Non-Participant" >
-<!ENTITY event.freebusy.role.chair           "Chair" >
+<!ENTITY event.freebusy.role.chair           "Président" >
 
 <!-- Timezone dialog -->
 <!ENTITY timezone.title.label            "Veuillez indiquer le fuseau horaire">
