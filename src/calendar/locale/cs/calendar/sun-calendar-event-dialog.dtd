@@ -355,12 +355,12 @@
 <!ENTITY read.only.accept.label "Zúčastním se">
 <!ENTITY read.only.decline.label "Nezúčastním se">
 <!ENTITY read.only.needs.action.label "Potvrdím později">
-<!ENTITY read.only.tentative.label       "Potvrdím později">
+<!ENTITY read.only.tentative.label "Možná se zúčastním">
 <!ENTITY read.only.reminder.label "Připomenutí:">
 <!ENTITY read.only.attendees.label "Účastníci">
 <!ENTITY read.only.description.label "Popis">
 <!ENTITY read.only.documents.label "Dokumenty">
 <!ENTITY read.only.link.label "Související odkaz">
-<!ENTITY read.only.delegate.label        "I delegate">
-<!ENTITY read.only.keep-delegator-updated.label "Keep me updated">
-<!ENTITY event.showtimeasfree.label                          "Čas zobrazit jako volný">
+<!ENTITY read.only.delegate.label  "Deleguji">
+<!ENTITY read.only.keep-delegator-updated.label  "Chci zůstat informovaný">
+<!ENTITY event.showtimeasfree.label  "Čas zobrazit jako volný">
