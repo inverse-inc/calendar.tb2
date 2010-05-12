@@ -944,26 +944,200 @@ function onTimeChange(event) {
     }
 }
 
-/**
- * This listener is used in sun-calendar-event-dialog-freebusy.xml inside the
- * binding. It has been taken out of the binding to prevent leaks.
- */
-function calFreeBusyListener(aFbElement, aBinding) {
-    this.mFbElement = aFbElement;
-    this.mBinding = aBinding;
+/* freeBusyRequestListener:
+   A dumb listener that associates cache entries, client requests and freebusy
+   requests for further handling by freeBusyRowController. */
+function freeBusyRequestListener(aFBRowController, aStart, aEnd,
+                                 aFetchStart, aFetchEnd,
+                                 aCacheEntry) {
+    this.mController = aFBRowController;
+    this.mStart = aStart;
+    this.mEnd = aEnd;
+    this.mFetchStart = aFetchStart;
+    this.mFetchEnd = aFetchEnd;
+    this.mCacheEntry = aCacheEntry;
 }
 
-calFreeBusyListener.prototype = {
-    onResult: function cFBL_onResult(aRequest, aEntries) {
+freeBusyRequestListener.prototype = {
+    mController: null,
+
+    mStart: null,
+    mEnd: null,
+
+    onResult: function fBRL_onResult(aRequest, aEntries) {
+        this.mController.onResult(aRequest, aEntries,
+                                  this.mStart, this.mEnd,
+                                  this.mFetchStart, this.mFetchEnd,
+                                  this.mCacheEntry);
+    }
+};
+
+/* freeBusyCacheEntry:
+   A "smart" cache entry object that provides date and content management
+   methods. */
+function freeBusyCacheEntry() {
+}
+
+freeBusyCacheEntry.prototype = {
+    mStart: null,
+    mEnd: null,
+    mEntries: null,
+
+    /* returns null if any of the dates are not covered by the cache */
+    getEntries: function fCBE_getEntries(aStart, aEnd) {
+        var entries = null;
+
+        if (this.mStart && this.mEnd
+            && aStart.compare(this.mStart) >= 0
+            && aEnd.compare(this.mEnd) <= 0) {
+            entries = [];
+            for each (var entry in this.mEntries) {
+                if (entry.interval.start.compare(aEnd) <= 0
+                    && entry.interval.end.compare(aStart) >= 0) {
+                    entries.push(entry);
+                }
+            }
+        }
+
+        return entries;
+    },
+
+    /* returns an array of start/end ranges needed to complete the array of entries */
+    getFetchDates: function fCBE_getEntries(aStart, aEnd) {
+        var fetchDates;
+        if (this.mStart && this.mEnd) {
+            fetchDates = [];
+
+            if (aStart.compare(this.mStart) < 0) {
+                var extraDuration = Components.classes["@mozilla.org/calendar/duration;1"]
+                                              .createInstance(Components.interfaces.calIDuration);
+                extraDuration.days = -15;
+                var start = aStart.clone();
+                start.addDuration(extraDuration);
+                var dates = { start: start, end: this.mStart };
+                fetchDates.push(dates);
+            }
+            if (aEnd.compare(this.mEnd) > 0) {
+                var extraDuration = Components.classes["@mozilla.org/calendar/duration;1"]
+                                              .createInstance(Components.interfaces.calIDuration);
+                extraDuration.days = 15;
+                var end = aEnd.clone();
+                end.addDuration(extraDuration);
+                var dates = { start: this.mEnd, end: end };
+                fetchDates.push(dates);
+            }
+        } else {
+            fetchDates = [{ start: aStart, end: aEnd }];
+        }
+
+        return fetchDates;
+    },
+
+    /* append/prepend the additional entries */
+    integrateEntries: function fCBE_integrateEntries(aEntries, aStart, aEnd) {
+        if (this.mStart) {
+            if (aStart.compare(this.mStart) > 0) {
+                for each (var entry in aEntries) {
+                    if (entry.interval.start.compare(this.mEnd) >= 0) {
+                        this.mEntries.push(entry);
+                    }
+                }
+                this.mEnd = aEnd;
+            } else {
+                for each (var entry in aEntries) {
+                    if (entry.interval.end.compare(this.mStart) <= 0) {
+                        this.mEntries.push(entry);
+                    }
+                }
+                this.mStart = aStart;
+            }
+        } else {
+            this.mEntries = aEntries;
+            this.mStart = aStart;
+            this.mEnd = aEnd;
+        }
+    }
+};
+
+/* freeBusyRowController:
+   Attempt cache requests. If those fail, request the freebusy from the
+   calendars in order to populate the cache and then restart the cache
+   requests. */
+var freeBusyCache = {};
+
+function freeBusyRowController(aFreeBusyRow) {
+    this.mFreeBusyRow = aFreeBusyRow;
+    this.mPendingRequests = [];
+}
+
+freeBusyRowController.prototype = {
+    mFreeBusyRow: null,
+
+    mPendingRequests: null,
+
+    fetchFreeBusy: function fBRC_fetchFreeBusy(aStart, aEnd) {
+        var calId = this.mFreeBusyRow.getAttribute("calid");
+        var cacheEntry = freeBusyCache[calId];
+        if (!cacheEntry) {
+            cacheEntry = new freeBusyCacheEntry();
+            freeBusyCache[calId] = cacheEntry;
+        }
+
+        var entries = cacheEntry.getEntries(aStart, aEnd);
+        if (entries) {
+            this.mFreeBusyRow.onFreeBusy(entries);
+        }
+        else {
+            var fbService = getFreeBusyService();
+            var fetchDates = cacheEntry.getFetchDates(aStart, aEnd);
+            for each (var fetchDate in fetchDates) {
+                var listener = new freeBusyRequestListener(this,
+                                                           aStart, aEnd,
+                                                           fetchDate.start,
+                                                           fetchDate.end,
+                                                           cacheEntry);
+                var request = fbService.getFreeBusyIntervals(calId,
+                                                             fetchDate.start,
+                                                             fetchDate.end,
+                                                             Components.interfaces.calIFreeBusyInterval.BUSY_ALL,
+                                                             listener);
+                if (request && request.isPending) {
+                    this.mPendingRequests.push(request);
+                }
+            }
+        }
+        // }
+        // catch (ex) {
+        //     Components.utils.reportError(ex);
+        // }
+    },
+
+    onResult: function fBRC_onResult(aRequest, aEntries, aStart, aEnd,
+                                     aFetchStart, aFetchEnd, aCacheEntry) {
         if (aRequest && !aRequest.isPending) {
             // Find request in list of pending requests and remove from queue:
             function neq(aOp) {
                 return (aRequest.id != aOp.id);
             }
-            this.mBinding.mPendingRequests = this.mBinding.mPendingRequests.filter(neq);
+            this.mPendingRequests = this.mPendingRequests.filter(neq);
+
+            aCacheEntry.integrateEntries(aEntries, aFetchStart, aFetchEnd);
+            var entries = aCacheEntry.getEntries(aStart, aEnd);
+            if (entries) {
+                /* the fact that entries are returned for the given timerange
+                   is a sign that we reached the last response to our
+                   request. */
+                this.mFreeBusyRow.onFreeBusy(entries);
+            }
         }
-        if (aEntries) {
-            this.mFbElement.onFreeBusy(aEntries);
+    },
+
+    onUnload: function fBRC_onUnload() {
+        // Cancel pending free/busy requests
+        for each (var request in this.mPendingRequests) {
+            request.cancel(null);
         }
+
+        this.mPendingRequests = [];
     }
 };

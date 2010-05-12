@@ -1,3 +1,17 @@
+2010-05-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml:
+	(freebusy-grid.nextSlot): we now deduce and cache offdays in
+	"this.mOffdays".
+	(freebusy-grid.nextSlot): the end hour of the current event may
+	match the end hour of the current day as long as the end minute is
+	0. Also, we ensure that the resulting period does not overlap with
+	off days.
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
+	(freeBusyRequestListener, freeBusyCacheEntry)
+	(freeBusyRowController): new classes for handling cached freebusy entries.
+
 2010-05-06  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-properties-dialog.js:

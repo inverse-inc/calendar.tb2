@@ -587,6 +587,7 @@
       <field name="mEndHour">24</field>
       <field name="mForce24Hours">false</field>
       <field name="mZoomFactor">100</field>
+      <field name="mFBController">null</field>
 
       <property name="zoomFactor">
         <getter><![CDATA[
@@ -636,6 +637,9 @@
           this.mStartDate.makeImmutable();
           return val;
         ]]></setter>
+        <getter><![CDATA[
+          return this.mStartDate;
+        ]]></getter>
       </property>
 
       <property name="endDate">
@@ -645,6 +649,9 @@
           this.mEndDate.makeImmutable();
           return val;
         ]]></setter>
+        <getter><![CDATA[
+          return this.mEndDate;
+        ]]></getter>
       </property>
 
       <property name="numHours">
@@ -770,6 +777,21 @@
                   remain = count;
               }
           }
+
+          var controller = new freeBusyRowController(this);
+          this.mFBController = controller;
+          var unload = function freebusycontroller_unloadHandler() {
+              controller.onUnload();
+          };
+          window.addEventListener("unload", unload, true);
+        ]]></body>
+      </method>
+
+      <method name="fetchFreeBusy">
+        <parameter name="aStart"/>
+        <parameter name="aEnd"/>
+        <body><![CDATA[
+            this.mFBController.fetchFreeBusy(aStart, aEnd);
         ]]></body>
       </method>
 
@@ -1047,7 +1069,6 @@
       <field name="mRowHeight">0</field>
       <field name="mNumColumns">0</field>
       <field name="mMaxFreeBusy">0</field>
-      <field name="mPendingRequests">null</field>
       <field name="mStartDate">null</field>
       <field name="mEndDate">null</field>
       <field name="mScrollOffset">0</field>
@@ -1056,6 +1077,7 @@
       <field name="mEndHour">24</field>
       <field name="mForce24Hours">false</field>
       <field name="mZoomFactor">100</field>
+      <field name="mOffdays">null</field>
 
       <property name="zoomFactor">
         <getter><![CDATA[
@@ -1122,17 +1144,21 @@
         this.mRange = Number(this.getAttribute("range"));
 
         this.mMaxFreeBusy = 0;
-        this.mPendingRequests = [];
 
         var self = this;
         var load = function freebusy_grid_loadHandler() {
             self.onLoad();
         };
         window.addEventListener("load", load, true);
-        var unload = function freebusy_grid_unloadHandler() {
-            self.onUnload();
-        };
-        window.addEventListener("unload", unload, true);
+
+        this.mOffdays = [];
+        var dayValueNames = ["sundays", "mondays", "tuesdays", "wednesdays",
+                             "thursdays", "fridays", "saturdays"];
+        for (var i = 0; i < 7; i++) {
+            var dayValueName = "calendar.week.d" + i + dayValueNames[i] + "off";
+            var defaultValue = (i == 0 || i == 6) ? true : false;
+            this.mOffdays[i] = getPrefSafe(dayValueName, defaultValue);
+        }
       ]]></constructor>
 
       <property name="startDate">
@@ -1172,17 +1198,6 @@
       <method name="onLoad">
         <body><![CDATA[
           this.onInitialize();
-        ]]></body>
-      </method>
-
-      <method name="onUnload">
-        <body><![CDATA[
-          // Cancel pending free/busy requests
-          for each (var request in this.mPendingRequests) {
-              request.cancel(null);
-          }
-
-          this.mPendingRequests = [];
         ]]></body>
       </method>
 
@@ -1314,7 +1329,6 @@
       <!-- updateFreeBusy(), implementation of the core functionality of this binding -->
       <method name="updateFreeBusy">
         <body><![CDATA[
-          var fbService = getFreeBusyService();
           for (var i = 1; i <= this.mMaxFreeBusy; i++) {
               // Retrieve the string from the appropriate row
               var freebusy = this.getFreeBusyElement(i);
@@ -1329,21 +1343,7 @@
                       start.second = 0;
                       var end = start.clone();
                       end.day += this.mRange;
-                      // Update with 'no data available' until response will be received
-                      freebusy.onFreeBusy(null);
-                      try {
-                          var listener = new calFreeBusyListener(freebusy, this);
-                          var request = fbService.getFreeBusyIntervals(calid,
-                                                                       start,
-                                                                       end,
-                                                                       Components.interfaces.calIFreeBusyInterval.BUSY_ALL,
-                                                                       listener);
-                          if (request && request.isPending) {
-                              this.mPendingRequests.push(request);
-                          }
-                      } catch (ex) {
-                          Components.utils.reportError(ex);
-                      }
+                      freebusy.fetchFreeBusy(start, end);
                   }
               }
           }
@@ -1376,7 +1376,9 @@
 
           endTime = startTime.clone();
           endTime.addDuration(duration);
-          if (endTime.hour > this.mEndHour) {
+
+          if (endTime.hour > this.mEndHour
+              || (endTime.hour == this.mEndHour && endTime.minute > 0)) {
               startTime.day++;
               startTime.hour = this.mStartHour;
               startTime.minute = 0;
@@ -1432,6 +1434,18 @@
           // in case no possible match was found.
           if (startTime.compare(this.mStartDate) == 0) {
               return this.mStartDate.clone();
+          }
+
+          /* handling of weekdays */
+          var hasShifted = false;
+          while (this.mOffdays[startTime.weekday]) {
+              hasShifted = true;
+              startTime.day++;
+          }
+          if (hasShifted) {
+              startTime.hour = this.mStartHour;
+              endTime = startTime.clone();
+              endTime.addDuration(duration);
           }
 
           // Special case for allday events - if the original
