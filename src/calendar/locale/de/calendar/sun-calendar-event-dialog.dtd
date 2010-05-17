@@ -327,6 +327,9 @@
 <!ENTITY invite.title.label              "Teilnehmer einladen">                                                      
 <!ENTITY event.organizer.label           "Organisator">
 <!ENTITY event.freebusy.suggest.slot     "Termin vorschlagen:">
+<!ENTITY event.freebusy.time-range.office-hours "During office hours">
+<!ENTITY event.freebusy.time-range.between "Between:">
+<!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot        "Nächster Termin" >
 <!ENTITY event.freebusy.previous.slot    "Vorheriger Termin" >
 <!ENTITY event.freebusy.zoom             "Zoom:">

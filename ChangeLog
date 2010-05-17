@@ -1,3 +1,23 @@
+2010-05-17  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml:
+	(freebusy-grid.setRange): new accessor that sets the lower and
+	upper limits between which the potential event should fit.
+	(freebusy-grid.initTimeRange): decoupled "mStartHour/mEndHour" and
+	"mRangeXXXHour/Minute", the former being used only for choosing
+	which hours are displayed and the latter being used to determine a
+	time range in which the event should fit. They may or may not have
+	the same value.
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
+	(onLoad): initialize the new time range widgets with the values of
+	the event start and end time.
+	(onNextSlot): invoke the new "setRange" method on the freebusy
+	grid widget with the values corresponding to the current time
+	range settings.
+	(onTimeRange): new callback for displaying or hiding the time
+	fields depending on the value of the time range popup menu.
+
 2010-05-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml:

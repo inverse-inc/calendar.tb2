@@ -327,6 +327,9 @@
 <!ENTITY invite.title.label              "Приглашение участников">
 <!ENTITY event.organizer.label           "Организатор">
 <!ENTITY event.freebusy.suggest.slot     "Предложить отрезок времени:">
+<!ENTITY event.freebusy.time-range.office-hours "During office hours">
+<!ENTITY event.freebusy.time-range.between "Between:">
+<!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot        "Следующий отрезок " >
 <!ENTITY event.freebusy.previous.slot    " Предыдущий отрезок" >
 <!ENTITY event.freebusy.zoom             "Масштаб:">

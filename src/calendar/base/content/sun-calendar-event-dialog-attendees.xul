@@ -61,20 +61,39 @@
   <script type="application/x-javascript" src="chrome://calendar/content/calendar-dialog-utils.js"/>
 
   <box orient="vertical" flex="1">
-    <box orient="horizontal" align="center" pack="end">
-      <spacer flex="1"/>
+    <box orient="horizontal" align="left" pack="start">
+      <spacer style="width: 3em"/>
       <label value="&event.freebusy.suggest.slot;"/>
-      <button label="&event.freebusy.previous.slot;"
+
+      <menulist id="timerange-menulist"
+                oncommand="onTimeRange(this.value);">
+        <menupopup>
+          <menuitem label="&event.freebusy.time-range.office-hours;" value="office-hours"/>
+          <menuitem label="&event.freebusy.time-range.between;" value="range"/>
+        </menupopup>
+      </menulist>
+      <box orient="horizontal" id="range-time" collapsed="true">
+        <timepicker id="range-starttime"/>
+        <label value="&event.freebusy.time-range.and;"/>
+        <timepicker id="range-endtime"/>
+      </box>
+      <spacer/>
+
+      <tooltip id="time-slot-previous" label="&event.freebusy.previous.slot;"/>"
+      <tooltip id="time-slot-next" label="&event.freebusy.next.slot;"/>"
+
+      <button tooltip="time-slot-previous"
               dir="normal"
               class="left-icon"
               id="previous-slot"
               oncommand="onPreviousSlot();"/>
-      <button label="&event.freebusy.next.slot;"
+      <button tooltip="time-slot-next"
               dir="reverse"
               class="right-icon"
               id="next-slot"
               oncommand="onNextSlot();"/>
-      <spacer style="width: 10em"/>
+
+      <spacer flex="1"/>
       <label value="&event.freebusy.zoom;" control="zoom-menulist"/>
      <toolbarbutton id="zoom-out-button"
                     class="zoom-out-icon"

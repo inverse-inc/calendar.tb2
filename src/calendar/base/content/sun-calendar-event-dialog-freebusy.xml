@@ -111,8 +111,15 @@
       <field name="mDateFormatter">null</field>
       <field name="mStartDate">null</field>
       <field name="mEndDate">null</field>
+
       <field name="mStartHour">0</field>
       <field name="mEndHour">24</field>
+
+      <field name="mRangeStartHour">0</field>
+      <field name="mRangeStartMinute">0</field>
+      <field name="mRangeEndHour">0</field>
+      <field name="mRangeEndMinute">0</field>
+
       <field name="mForce24Hours">false</field>
       <field name="mZoomFactor">100</field>
 
@@ -1073,8 +1080,15 @@
       <field name="mEndDate">null</field>
       <field name="mScrollOffset">0</field>
       <field name="mRange">0</field>
+
       <field name="mStartHour">0</field>
       <field name="mEndHour">24</field>
+
+      <field name="mRangeStartHour">0</field>
+      <field name="mRangeStartMinute">0</field>
+      <field name="mRangeEndHour">24</field>
+      <field name="mRangeEndMinute">0</field>
+
       <field name="mForce24Hours">false</field>
       <field name="mZoomFactor">100</field>
       <field name="mOffdays">null</field>
@@ -1350,6 +1364,17 @@
         ]]></body>
       </method>
 
+      <method name="setRange">
+        <parameter name="rangeStart"/>
+        <parameter name="rangeEnd"/>
+        <body><![CDATA[
+            this.mRangeStartHour = rangeStart.getHours();
+            this.mRangeStartMinute = rangeStart.getMinutes();
+            this.mRangeEndHour = rangeEnd.getHours();
+            this.mRangeEndMinute = rangeEnd.getMinutes();
+        ]]></body>
+      </method>
+
       <method name="nextSlot">
         <body><![CDATA[
           var startTime = this.mStartDate.clone();
@@ -1369,19 +1394,22 @@
 
           startTime.minute += step_in_minutes;
 
-          if (startTime.hour < this.mStartHour) {
-              startTime.hour = this.mStartHour;
-              startTime.minute = 0;
+          if (startTime.hour < this.mRangeStartHour
+              || (startTime.hour == this.mRangeStartHour
+                  && startTime.minute < this.mRangeStartMinute)) {
+              startTime.hour = this.mRangeStartHour;
+              startTime.minute = this.mRangeStartMinute;
           }
 
           endTime = startTime.clone();
           endTime.addDuration(duration);
 
-          if (endTime.hour > this.mEndHour
-              || (endTime.hour == this.mEndHour && endTime.minute > 0)) {
+          if (endTime.hour > this.mRangeEndHour
+              || (endTime.hour == this.mRangeEndHour
+                  && endTime.minute > this.mRangeEndMinute)) {
               startTime.day++;
-              startTime.hour = this.mStartHour;
-              startTime.minute = 0;
+              startTime.hour = this.mRangeStartHour;
+              startTime.minute = this.mRangeStartMinute;
               endTime = startTime.clone();
               endTime.addDuration(duration);
               if (endTime.hour > this.mEndHour) {
@@ -1404,18 +1432,22 @@
                     if (newTime.compare(startTime) != 0) {
                         startTime = newTime;
 
-                        if (startTime.hour < this.mStartHour) {
-                            startTime.hour = this.mStartHour;
-                            startTime.minute = 0;
+                        if (startTime.hour < this.mRangeStartHour
+                            || (startTime.hour == this.mRangeStartHour
+                                && startTime.minute < this.mRangeStartMinute)) {
+                          startTime.hour = this.mRangeStartHour;
+                          startTime.minute = this.mRangeStartMinute;
                         }
 
                         endTime = startTime.clone();
                         endTime.addDuration(duration);
 
-                        if (endTime.hour > this.mEndHour) {
+                        if (endTime.hour > this.mRangeEndHour
+                            || (endTime.hour == this.mRangeEndHour
+                                && endTime.minute > this.mRangeEndMinute)) {
                             startTime.day++;
-                            startTime.hour = this.mStartHour;
-                            startTime.minute = 0;
+                            startTime.hour = this.mRangeStartHour;
+                            startTime.minute = this.mRangeStartMinute;
                             endTime = startTime.clone();
                             endTime.addDuration(duration);
                         }
@@ -1443,7 +1475,8 @@
               startTime.day++;
           }
           if (hasShifted) {
-              startTime.hour = this.mStartHour;
+              startTime.hour = this.mRangeStartHour;
+              startTime.minute = this.mRangeStartMinute;
               endTime = startTime.clone();
               endTime.addDuration(duration);
           }
@@ -1661,6 +1694,10 @@
               this.mStartHour = getPrefSafe("calendar.view.daystarthour", 8);
               this.mEndHour = getPrefSafe("calendar.view.dayendhour", 19);
           }
+          this.mRangeStartHour = this.mStartHour;
+          this.mRangeStartMinute = 0;
+          this.mRangeEndHour = this.mEndHour;
+          this.mRangeEndMinute = 0;
         ]]></body>
       </method>
     </implementation>

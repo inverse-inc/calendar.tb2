@@ -327,6 +327,9 @@
 <!ENTITY invite.title.label              "邀請與會者">
 <!ENTITY event.organizer.label           "召集人">
 <!ENTITY event.freebusy.suggest.slot     "建議時段:">
+<!ENTITY event.freebusy.time-range.office-hours "During office hours">
+<!ENTITY event.freebusy.time-range.between "Between:">
+<!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot        "下一時段 " >
 <!ENTITY event.freebusy.previous.slot    " 前一時段" >
 <!ENTITY event.freebusy.zoom             "縮放:">

@@ -327,6 +327,9 @@
 <!ENTITY invite.title.label "Tabhair Cuireadh Do Rannpháirtithe">
 <!ENTITY event.organizer.label "Eagraí">
 <!ENTITY event.freebusy.suggest.slot "Mol sliotán ama:">
+<!ENTITY event.freebusy.time-range.office-hours "During office hours">
+<!ENTITY event.freebusy.time-range.between "Between:">
+<!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot "An chéad sliotán eile ">
 <!ENTITY event.freebusy.previous.slot " An sliotán roimhe seo">
 <!ENTITY event.freebusy.zoom "Súmáil:">
