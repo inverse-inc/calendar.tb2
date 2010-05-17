@@ -163,7 +163,7 @@
           // with plain xul and css, at least as far as i know.
           const kStylesheet = "chrome://calendar/content/sun-calendar-event-dialog.css";
           for each (var stylesheet in document.styleSheets) {
-              if (stylesheet.href == kStylesheet) {
+              if (stylesheet.href == kStylesheet && template.boxObject.height > 0) {
                   // the height of the text blocks contained in the grid items needs
                   // to have the same height as the items of the attendee-list.
                   var height = template.boxObject.height - 1;
