@@ -1,3 +1,15 @@
+2010-05-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-unifinder.js:
+	(unifinderKeyPress): see below.
+
+	* src/calendar/base/content/calendar-common-sets.js:
+	(calendarController.doCommand): see below.
+
+	* src/calendar/base/content/agenda-listbox.js:
+	(agendaListbox.onKeyPress:) prompt a confirmation dialog before
+	deleting events.
+
 2010-05-17  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml:

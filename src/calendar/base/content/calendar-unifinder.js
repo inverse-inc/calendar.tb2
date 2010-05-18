@@ -366,7 +366,10 @@ function unifinderKeyPress(aEvent) {
             break;
         case kKE.DOM_VK_BACK_SPACE:
         case kKE.DOM_VK_DELETE:
-            deleteSelectedEvents();
+            if (window.confirm(calGetString("calendar",
+                                            "deleteEventConfirmLabel"))) {
+                deleteSelectedEvents();
+            }
             aEvent.stopPropagation();
             aEvent.preventDefault();
             break;

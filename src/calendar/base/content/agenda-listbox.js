@@ -188,7 +188,10 @@ function onKeyPress(aEvent) {
             document.getElementById('agenda_edit_event_command').doCommand();
             break;
         case aEvent.DOM_VK_DELETE:
-            document.getElementById('agenda_delete_event_command').doCommand();
+            if (window.confirm(calGetString("calendar",
+                                            "deleteEventConfirmLabel"))) {
+                document.getElementById('agenda_delete_event_command').doCommand();
+            }
             aEvent.stopPropagation();
             aEvent.preventDefault();
             break;

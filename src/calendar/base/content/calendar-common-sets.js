@@ -213,19 +213,21 @@ var calendarController = {
             case "calendar_delete_event_command":
             case "cmd_delete":
             case "button_delete":
-                var focusedElement = document.commandDispatcher.focusedElement;
-                if (!focusedElement && this.defaultController && !this.isCalendarInForeground()) {
-                    this.defaultController.doCommand(aCommand);
-                } else {
-                    var focusedRichListbox = getParentNodeOrThis(focusedElement, "richlistbox");
-                    if (focusedRichListbox && focusedRichListbox.id == "agenda-listbox") {
-                        agendaListbox.deleteSelectedItem(false);
-                    } else if (focusedElement.className == "calendar-task-tree") {
-                        deleteToDoCommand(null, false);
-                    } else if (this.defaultController && !this.isCalendarInForeground()) {
+                if (window.confirm(calGetString("calendar", "deleteEventConfirmLabel"))) {
+                    var focusedElement = document.commandDispatcher.focusedElement;
+                    if (!focusedElement && this.defaultController && !this.isCalendarInForeground()) {
                         this.defaultController.doCommand(aCommand);
                     } else {
-                        deleteSelectedEvents();
+                        var focusedRichListbox = getParentNodeOrThis(focusedElement, "richlistbox");
+                        if (focusedRichListbox && focusedRichListbox.id == "agenda-listbox") {
+                            agendaListbox.deleteSelectedItem(false);
+                        } else if (focusedElement.className == "calendar-task-tree") {
+                            deleteToDoCommand(null, false);
+                        } else if (this.defaultController && !this.isCalendarInForeground()) {
+                            this.defaultController.doCommand(aCommand);
+                        } else {
+                            deleteSelectedEvents();
+                        }
                     }
                 }
                 break;
@@ -233,7 +235,9 @@ var calendarController = {
                 createTodoWithDialog(getSelectedCalendar());
                 break;
             case "calendar_delete_todo_command":
-                deleteToDoCommand();
+                if (window.confirm(calGetString("calendar", "deleteTaskConfirmLabel"))) {
+                    deleteToDoCommand();
+                }
                 break;
 
             case "calendar_new_calendar_command":
