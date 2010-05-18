@@ -126,8 +126,8 @@ function onLoad() {
         setForce24Hours(true);
         zoom.value = "400";
         zoom.setAttribute("disabled", "true");
-	zoomOut.setAttribute("disabled", "true");
-	zoomIn.setAttribute("disabled", "true");
+        zoomOut.setAttribute("disabled", "true");
+        zoomIn.setAttribute("disabled", "true");
     }
 
     setZoomFactor(zoom.value);
@@ -187,13 +187,41 @@ function saveWidgets(pb2) {
 }
 
 function onAccept() {
-    var attendees = document.getElementById("attendees-list");
-    window.arguments[0].onOk(
-        attendees.attendees,
-        attendees.organizer,
-        gStartDate.getInTimezone(gStartTimezone),
-        gEndDate.getInTimezone(gEndTimezone));
-    return true;
+    var rc;
+
+    if (window.hasCheckedConflicts) {
+        rc = true;
+    }
+    else {
+        rc = false;
+        var attendeesList = document.getElementById("attendees-list");
+        var listener = {
+          onRequestComplete: function(aCanClose) {
+              if (aCanClose
+                  || window.confirm(calGetString("sun-calendar-event-dialog",
+                                                 "confirmTimeConflict"))) {
+                  window.hasCheckedConflicts = true;
+                  window.arguments[0].onOk(attendeesList.attendees,
+                                           attendeesList.organizer,
+                                           gStartDate.getInTimezone(gStartTimezone),
+                                           gEndDate.getInTimezone(gEndTimezone));
+
+                  var dialog = document.getElementById("sun-calendar-event-dialog-attendees");
+                  dialog.acceptDialog();
+              }
+          }
+        };
+
+        var startDate = document.getElementById("event-starttime").value;
+        var endDate = document.getElementById("event-endtime").value;
+
+        var cHandler = new conflictHandler(attendeesList.attendees,
+                                           startDate, endDate,
+                                           listener);
+        cHandler.start();
+    }
+
+    return rc;
 }
 
 function onCancel() {
@@ -1129,7 +1157,7 @@ freeBusyRowController.prototype = {
     mPendingRequests: null,
 
     fetchFreeBusy: function fBRC_fetchFreeBusy(aStart, aEnd) {
-        var calId = this.mFreeBusyRow.getAttribute("calid");
+        var calId = this.mFreeBusyRow.getAttribute("calid").toLowerCase();
         var cacheEntry = freeBusyCache[calId];
         if (!cacheEntry) {
             cacheEntry = new freeBusyCacheEntry();
@@ -1193,4 +1221,74 @@ freeBusyRowController.prototype = {
 
         this.mPendingRequests = [];
     }
+};
+
+
+/* conflict handler:
+   Wander through the list of attendees and "returns" false when at least one
+   of those have a freebusy entry matching the current event. */
+function conflictHandler(attendees, startDate, endDate, listener) {
+    this.mAttendees = attendees;
+
+    this.mStartDate = jsDateToDateTime(startDate);
+    this.mEndDate = jsDateToDateTime(endDate);
+
+    this.mListener = listener;
+}
+
+conflictHandler.prototype = {
+  mAttendees: null,
+  mCurrentCalId: 0,
+
+  mStartDate: null,
+  mEndDate: null,
+
+  mListener: null,
+
+  start: function cH_start() {
+      this.mCurrentCalId = 0;
+      this._step();
+  },
+
+  _step: function cH__step() {
+      if (this.mCurrentCalId < this.mAttendees.length) {
+          this._readFreeBusy(this.mAttendees[this.mCurrentCalId]);
+      }
+      else {
+          this.mListener.onRequestComplete(true);
+      }
+  },
+
+  _readFreeBusy: function cH__readFreeBusy(attendee) {
+      var calId = attendee.id.toLowerCase();
+      var cacheEntry = freeBusyCache[calId];
+      if (!cacheEntry) {
+          cacheEntry = new freeBusyCacheEntry();
+          freeBusyCache[calId] = cacheEntry;
+      }
+
+      var entries = cacheEntry.getEntries(this.mStartDate, this.mEndDate);
+      if (entries) {
+          if (entries.length > 0) {
+              this.mListener.onRequestComplete(false);
+          }
+      }
+      else {
+          var fbService = getFreeBusyService();
+          fbService.getFreeBusyIntervals(calId,
+                                         this.mStartDate, this.mEndDate,
+                                         Components.interfaces.calIFreeBusyInterval.BUSY_ALL,
+                                         this);
+      }
+  },
+
+  onResult: function cH_onResult(aRequest, aEntries) {
+      if (aEntries.length > 0) {
+          this.mListener.onRequestComplete(false);
+      }
+      else {
+          this.mCurrentCalId++;
+          this._step();
+      }
+  }
 };

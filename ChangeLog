@@ -1,5 +1,10 @@
 2010-05-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
+	(onAccept): added code to prevent the closing of the window, check
+	the freebusy of every attendee and prompt a conflict dialog if
+	needed.
+
 	* src/calendar/base/content/calendar-unifinder.js:
 	(unifinderKeyPress): see below.
 
