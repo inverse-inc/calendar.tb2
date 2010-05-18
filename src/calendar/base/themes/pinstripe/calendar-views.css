@@ -191,10 +191,15 @@ calendar-header-container[weekend="true"][selected="true"],
     overflow: hidden;    
 }
 
-.calendar-event-details-core {
+.calendar-event-details-core,
+.calendar-event-details-accessory {
     width: 0px;
     margin: 0px;
     overflow: hidden;    
+}
+
+.calendar-event-details-accessory {
+    font-size: smaller;
 }
 
 .calendar-event-name-textbox {

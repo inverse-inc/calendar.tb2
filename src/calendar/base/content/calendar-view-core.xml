@@ -68,6 +68,9 @@
                                crop="end"
                                flex="1"
                                style="margin: 0;"/>
+                    <xul:label anonid="event-location"
+                               crop="end"
+                               flex="1"/>
                     <xul:textbox anonid="event-name-textbox"
                                  class="plain"
                                  crop="end"
@@ -167,11 +170,13 @@
         onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'event-name-textbox');"/>
       <property name="eventNameInput" readonly="true"
         onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'event-name-textbox').inputField;"/>
+      <property name="eventLocationLabel" readonly="true"
+        onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'event-location');"/>
+
       <method name="setEditableLabel">
         <body><![CDATA[
           var evl = this.eventNameLabel;
           var item = this.mOccurrence;
-
 
           if (item.title && item.title != "") {
             evl.value = item.title;
@@ -259,6 +264,7 @@
           this.mOriginalTextLabel = this.mOccurrence.title;
 
           this.eventNameLabel.setAttribute("hidden", "true");
+          this.eventLocationLabel.setAttribute("hidden", "true");
 
           this.mEditing = true;
 
@@ -305,6 +311,7 @@
 
           this.eventNameTextbox.setAttribute("hidden", "true");
           this.eventNameLabel.removeAttribute("hidden");
+          this.eventLocationLabel.removeAttribute("hidden");
           return;
         ]]></body>
       </method>

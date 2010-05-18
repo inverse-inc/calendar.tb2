@@ -1,5 +1,16 @@
 2010-05-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-multiday-view.xml:
+	(calendar-event-box.setEditableLabel) set the value of the
+	location label if the item contains such a value.
+
+	* src/calendar/base/content/calendar-view-core.xml:
+	(calendar-editable-item.eventLocationLabel): new accessor that
+	returns the new XUL:element representing the event location.
+	(calendar-editable-item.startEditing)
+	(calendar-editable-item.stopEditing): hide and show the new event
+	location label.
+
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
 	(onAccept): added code to prevent the closing of the window, check
 	the freebusy of every attendee and prompt a conflict dialog if

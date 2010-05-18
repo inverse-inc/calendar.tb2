@@ -1960,7 +1960,8 @@
                          xbl:inherits="context,parentorient=orient,readonly,flashing,alarm,allday,priority,progress,status,calendar,categories">
                 <xul:image flex="1" class="calendar-event-box-gradient"/>
                 <xul:vbox class="calendar-event-details" anonid="calendar-event-details">
-                  <xul:description anonid="event-name" class="calendar-event-details-core" flex="1"/>
+                  <xul:description anonid="event-name" class="calendar-event-details-core"/>
+                  <xul:description anonid="event-location" class="calendar-event-details-accessory"/>
                   <xul:textbox anonid="event-name-textbox"
                                class="plain calendar-event-details-core calendar-event-name-textbox"
                                flex="1"
@@ -2084,6 +2085,12 @@
             evl.textContent = item.title;
           } else {
             evl.textContent = calGetString("calendar", "eventUntitled");
+          }
+
+          var location = item.getProperty("LOCATION");
+          if (location && location != "") {
+            var locationL = this.eventLocationLabel;
+            locationL.textContent = calGetString('calendar', "tooltipLocation") + location;
           }
 
           var gripbar = document.getAnonymousElementByAttribute(this, "anonid", "gripbar1").boxObject.height;
