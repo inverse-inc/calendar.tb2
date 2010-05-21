@@ -238,7 +238,6 @@
 <!ENTITY invite.title.label              "Запросити бути присутнім">
 <!ENTITY event.organizer.label           "Організатор">
 <!ENTITY event.freebusy.suggest.slot     "Запропонувати часову нішу:"> <!-- варіант: час -->
-<!ENTITY event.freebusy.time-range.office-hours "During office hours">
 <!ENTITY event.freebusy.time-range.between "Between:">
 <!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot        "Наступна ніша " >

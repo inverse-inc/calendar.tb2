@@ -327,7 +327,6 @@
 <!ENTITY invite.title.label              "Bjud in deltagare">
 <!ENTITY event.organizer.label          "Organisatör">
 <!ENTITY event.freebusy.suggest.slot     "Föreslå nästa lediga tid:">
-<!ENTITY event.freebusy.time-range.office-hours "During office hours">
 <!ENTITY event.freebusy.time-range.between "Between:">
 <!ENTITY event.freebusy.time-range.and "and">
 <!ENTITY event.freebusy.next.slot        "Nästa lediga tid " >
