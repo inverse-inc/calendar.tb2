@@ -37,6 +37,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+var gActiveOperations = {};
+
 function opCompleteListener(aOriginalItem, aOuterListener) {
     this.mOriginalItem = aOriginalItem;
     this.mOuterListener = aOuterListener;
@@ -46,7 +48,8 @@ opCompleteListener.prototype = {
     mOriginalItem: null,
     mOuterListener: null,
 
-    onOperationComplete: function oCL_onOperationComplete(aCalendar, aStatus, aOpType, aId, aItem) {
+    onOperationComplete: function oCL_onOperationComplete(aCalendar, aStatus,
+                                                          aOpType, aId, aItem) {
         if (Components.isSuccessCode(aStatus)) {
             // we may optionally shift the whole check and send mail messages to
             // calProviderBase.notifyOperationComplete (with adding an oldItem parameter).
@@ -58,6 +61,10 @@ opCompleteListener.prototype = {
         if (this.mOuterListener) {
             this.mOuterListener.onOperationComplete.apply(this.mOuterListener,
                                                           arguments);
+        }
+        if (this.mOriginalItem && this.mOriginalItem.id
+            && gActiveOperations[this.mOriginalItem.id]) {
+            delete gActiveOperations[this.mOriginalItem.id];
         }
     },
 
@@ -508,6 +515,16 @@ function getTransactionMgr() {
 }
 
 function doTransaction(aAction, aItem, aCalendar, aOldItem, aListener) {
+    if (aItem && aItem.id) {
+        if (gActiveOperations[aItem.id]) {
+            dump("transaction already active for aItem.id: " + aItem.id + "\n");
+            return;
+        }
+        else {
+            gActiveOperations[aItem.id] = true;
+        }
+    }
+
     var innerListener = new opCompleteListener(aOldItem, aListener);
     getTransactionMgr().createAndCommitTxn(aAction,
                                            aItem,

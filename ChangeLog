@@ -1,3 +1,11 @@
+2010-05-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-item-editing.js:
+	(doTransaction): add an entry to the new global
+	"gActiveOperations" dictionary when a transaction is in progress
+	so that two transactions cannot occur concurrently on the same
+	item.
+
 2010-05-18  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-multiday-view.xml:
