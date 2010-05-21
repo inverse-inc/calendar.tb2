@@ -1247,9 +1247,7 @@ conflictHandler.prototype = {
 
       var entries = cacheEntry.getEntries(this.mStartDate, this.mEndDate);
       if (entries) {
-          if (entries.length > 0) {
-              this.mListener.onRequestComplete(false);
-          }
+          this.onResult(null, entries);
       }
       else {
           var fbService = getFreeBusyService();
