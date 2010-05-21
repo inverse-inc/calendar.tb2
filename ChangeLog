@@ -1,5 +1,11 @@
 2010-05-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/calendar-task-tree.xml:
+	(calendar-task-tree.mTaskTreeObserver.onAdditem)
+	(calendar-task-tree.mTaskTreeObserver.onModifyitem): prevent
+	GUI operations for items in calendars that should not appear in
+	the today pane.
+
 	* src/calendar/base/content/calendar-item-editing.js:
 	(doTransaction): add an entry to the new global
 	"gActiveOperations" dictionary when a transaction is in progress

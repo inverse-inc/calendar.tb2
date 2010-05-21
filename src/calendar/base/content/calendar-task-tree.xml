@@ -804,14 +804,15 @@
           },
           
           onAddItem: function tTO_onAddItem(aItem) {
-              if (isToDo(aItem)) {
+              if (isToDo(aItem) && calendarMustShowInTaskTree(aItem.calendar)) {
               // if (isToDo(aItem) && !this.mBatchCount) {
                   this.binding.mTreeView.addItem(aItem);
               }
           },
           
           onModifyItem: function tTO_onModifyItem(aNewItem, aOldItem) {
-              if ((isToDo(aNewItem) || isToDo(aOldItem))) {
+              if ((isToDo(aNewItem) || isToDo(aOldItem))
+                  && calendarMustShowInTaskTree(aNewItem.calendar)) {
               // if ((isToDo(aNewItem) || isToDo(aOldItem)) &&
               //     !this.mBatchCount) {
                   
@@ -838,8 +839,7 @@
           onPropertyChanged: function tTO_onPropertyChanged(aCalendar, aName, aValue, aOldValue) {
               switch (aName) {
                   case "showInTodayPane":
-                      if (!aCalendar.getProperty("disabled")
-                          && this.binding.getAttribute("id") == "unifinder-todo-tree") {
+                      if (this.binding.getAttribute("id") == "unifinder-todo-tree") {
                           if (aValue) {
                               this.binding.onCalendarAdded(aCalendar);
                           } else {
