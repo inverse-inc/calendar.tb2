@@ -989,37 +989,38 @@
 
           if (this.mEntries) {
               for each (var entry in this.mEntries) {
-                var rangeStart =
+                  var rangeStart =
                     entry.interval.start.getInTimezone(kDefaultTimezone);
-                var rangeEnd =
+                  var rangeEnd =
                     entry.interval.end.getInTimezone(kDefaultTimezone);
 
-                var isZeroLength = !newTime.compare(newEndTime);
-                if ((isZeroLength &&
-                     newTime.compare(rangeStart) >= 0 &&
-                     newTime.compare(rangeEnd) < 0) ||
-                    (!isZeroLength &&
-                     newTime.compare(rangeEnd) < 0 &&
-                     newEndTime.compare(rangeStart) > 0)) {
-                    // Current range of event conflicts with another event.
-                    // we need to find a new time for this event. A trivial approach
-                    // is to set the new start-time of the event equal to the end-time
-                    // of the conflict-range. All-day events need to be considered
-                    // separately, in which case we skip to the next day.
-                    newTime = rangeEnd.clone();
-                    if (allDay) {
-                        if (!((newTime.hour == 0) &&
-                             (newTime.minute == 0) &&
-                             (newTime.second == 0))) {
-                            newTime.day++;
-                            newTime.hour = 0;
-                            newTime.minute = 0;
-                            newTime.second = 0;
-                        }
-                    }
-                    newEndTime = newTime.clone();
-                    newEndTime.addDuration(duration);
-                }
+                  var isZeroLength = !newTime.compare(newEndTime);
+                  if ((isZeroLength &&
+                       newTime.compare(rangeStart) >= 0 &&
+                       newTime.compare(rangeEnd) < 0) ||
+                      (!isZeroLength &&
+                       newTime.compare(rangeEnd) < 0 &&
+                       newEndTime.compare(rangeStart) > 0)) {
+                      // Current range of event conflicts with another event.
+                      // we need to find a new time for this event. A trivial
+                      // approach is to set the new start-time of the event
+                      // equal to the end-time of the conflict-range. All-day
+                      // events need to be considered separately, in which
+                      // case we skip to the next day.
+                      newTime = rangeEnd.clone();
+                      if (allDay) {
+                          if (!((newTime.hour == 0) &&
+                                (newTime.minute == 0) &&
+                                (newTime.second == 0))) {
+                              newTime.day++;
+                              newTime.hour = 0;
+                              newTime.minute = 0;
+                              newTime.second = 0;
+                          }
+                      }
+                      newEndTime = newTime.clone();
+                      newEndTime.addDuration(duration);
+                  }
               }
           }
 
@@ -1406,7 +1407,8 @@
 
           if (endTime.hour > this.mRangeEndHour
               || (endTime.hour == this.mRangeEndHour
-                  && endTime.minute > this.mRangeEndMinute)) {
+                  && endTime.minute > this.mRangeEndMinute)
+              || startTime.hour > this.mRangeEndHour) {
               startTime.day++;
               startTime.hour = this.mRangeStartHour;
               startTime.minute = this.mRangeStartMinute;
@@ -1429,36 +1431,36 @@
                   var row = this.getFreeBusyElement(i);
                   var newTime = row.nextSlot(startTime, endTime, allDay);
                   if (newTime) {
-                    if (newTime.compare(startTime) != 0) {
-                        startTime = newTime;
+                      if (newTime.compare(startTime) != 0) {
+                          startTime = newTime;
+                          if (startTime.hour < this.mRangeStartHour
+                              || (startTime.hour == this.mRangeStartHour
+                                  && startTime.minute < this.mRangeStartMinute)) {
+                              startTime.hour = this.mRangeStartHour;
+                              startTime.minute = this.mRangeStartMinute;
+                          }
 
-                        if (startTime.hour < this.mRangeStartHour
-                            || (startTime.hour == this.mRangeStartHour
-                                && startTime.minute < this.mRangeStartMinute)) {
-                          startTime.hour = this.mRangeStartHour;
-                          startTime.minute = this.mRangeStartMinute;
-                        }
+                          endTime = startTime.clone();
+                          endTime.addDuration(duration);
 
-                        endTime = startTime.clone();
-                        endTime.addDuration(duration);
+                          if (endTime.hour > this.mRangeEndHour
+                              || (endTime.hour == this.mRangeEndHour
+                                  && endTime.minute > this.mRangeEndMinute)
+                              || startTime.hour > this.mRangeEndHour) {
+                              startTime.day++;
+                              startTime.hour = this.mRangeStartHour;
+                              startTime.minute = this.mRangeStartMinute;
+                              endTime = startTime.clone();
+                              endTime.addDuration(duration);
+                          }
 
-                        if (endTime.hour > this.mRangeEndHour
-                            || (endTime.hour == this.mRangeEndHour
-                                && endTime.minute > this.mRangeEndMinute)) {
-                            startTime.day++;
-                            startTime.hour = this.mRangeStartHour;
-                            startTime.minute = this.mRangeStartMinute;
-                            endTime = startTime.clone();
-                            endTime.addDuration(duration);
-                        }
-
-                        recheck = true;
-                    }
-                } else {
-                    // A new slot could not be found
-                    // and the given time was also invalid.
-                    return this.mStartDate.clone();
-                }
+                          recheck = true;
+                      }
+                  } else {
+                      // A new slot could not be found and the given time was
+                      // also invalid.
+                      return this.mStartDate.clone();
+                  }
               }
           } while (recheck);
 

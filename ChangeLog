@@ -1,5 +1,9 @@
 2010-05-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/sun-calendar-event-dialog-freebusy.xml:
+	(freebusy-grid.nextSlot): we shift the start date when its hours
+	component passes over the day end hour.
+
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
 	(onNextSlot) removed the handling of the time range menu, which
 	was removed. Moved the time range code into "initTimeRange".
