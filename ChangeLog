@@ -1,5 +1,9 @@
 2010-05-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
+	(onNextSlot) removed the handling of the time range menu, which
+	was removed. Moved the time range code into "initTimeRange".
+
 	* src/calendar/base/content/calendar-task-tree.xml:
 	(calendar-task-tree.mTaskTreeObserver.onAdditem)
 	(calendar-task-tree.mTaskTreeObserver.onModifyitem): prevent

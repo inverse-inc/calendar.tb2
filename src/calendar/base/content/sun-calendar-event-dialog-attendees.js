@@ -135,18 +135,6 @@ function onLoad() {
     loadDateTime(startTime, endTime);
     propagateDateTime();
 
-    /* We initialize the range time pickers to the initial time values of the
-       event. */
-    var prefixes = [ "start", "end" ];
-    for each (var prefix in prefixes) {
-        var dtPicker = document.getElementById("event-" + prefix + "time");
-        var tPicker = document.getAnonymousElementByAttribute(dtPicker,
-                                                              "anonid",
-                                                              "time-picker");
-        var rangePicker = document.getElementById("range-" + prefix + "time");
-        rangePicker.update(tPicker.parseTextBoxTime());
-    }
-
     updateButtons();
 
     // attach an observer to get notified of changes
@@ -705,35 +693,9 @@ function onNextSlot() {
 
     // Ask the grid for the next possible timeslot.
     var grid = document.getElementById("freebusy-grid");
-    var rangeStart;
-    var rangeEnd;
-    if (gStartDate.isDate) {
-        rangeStart = new Date();
-        rangeStart.setHours(0);
-        rangeStart.setMinutes(0);
-        rangeStart.setSeconds(0);
-        rangeEnd = new Date(rangeStart.getTime() + 86400000);
-    }
-    else {
-        var timeRangeList = document.getElementById("timerange-menulist");
-        if (timeRangeList.value == "range") {
-            var rangePicker = document.getElementById("range-starttime");
-            rangeStart = rangePicker.value;
-            rangePicker = document.getElementById("range-endtime");
-            rangeEnd = rangePicker.value;
-        }
-        else {
-            rangeStart = new Date();
-            rangeStart.setHours(gStartHour);
-            rangeStart.setMinutes(0);
-            rangeStart.setSeconds(0);
-            rangeEnd = new Date();
-            rangeEnd.setHours(gEndHour);
-            rangeEnd.setMinutes(0);
-            rangeEnd.setSeconds(0);
-        }
-    }
-    grid.setRange(rangeStart, rangeEnd);
+    var startRangePicker = document.getElementById("range-starttime");
+    var endRangePicker = document.getElementById("range-endtime");
+    grid.setRange(startRangePicker.value, endRangePicker.value);
 
     var duration = gEndDate.subtractDate(gStartDate);
     var start = grid.nextSlot();
@@ -901,6 +863,22 @@ function initTimeRange() {
     } else {
         gStartHour = getPrefSafe("calendar.view.daystarthour", 8);
         gEndHour = getPrefSafe("calendar.view.dayendhour", 19);
+    }
+
+    var prefixes = [ "start", "end" ];
+    for each (var prefix in prefixes) {
+        var rangePicker = document.getElementById("range-" + prefix + "time");
+        var rangeTime = new Date();
+        rangePicker.disabled = gForce24Hours;
+        if (prefix == "start") {
+            rangeTime.setHours(gStartHour);
+        }
+        else {
+            rangeTime.setHours(gEndHour);
+        }
+        rangeTime.setMinutes(0);
+        rangeTime.setSeconds(0);
+        rangePicker.update(rangeTime);
     }
 }
 
