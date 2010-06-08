@@ -1,3 +1,10 @@
+2010-06-08  Ludovic Marcotte  <lmarcotte@inverse.ca>
+
+	* src/calendar/base/src/calDavCalendar.js (sendItems): removed
+	duplicate "Recipient" header for participant recipients. Also,
+	NON-PARTICIPANT recipients must continue receiving email
+	exchanges.
+
 2010-05-21  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
