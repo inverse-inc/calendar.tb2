@@ -429,7 +429,7 @@ function updateAttendees() {
                 if (attendee.role) {
                     listcell.setAttribute("role", attendee.role);
                 }
-                if (attendee.id == window.attendee.id) {
+                if (window.attendee && attendee.id == window.attendee.id) {
                     listcell.className += " owner-attendee";
                 }
                 if (attendee.commonName && attendee.commonName.length) {
