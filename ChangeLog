@@ -1,3 +1,9 @@
+2010-06-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-view-core.xml
+	(calendar-editable-item.startEditing): don't attempt to hide the
+	event location label if it's null.
+
 2010-06-08  Ludovic Marcotte  <lmarcotte@inverse.ca>
 
 	* src/calendar/base/src/calDavCalendar.js (sendItems): removed

@@ -264,7 +264,9 @@
           this.mOriginalTextLabel = this.mOccurrence.title;
 
           this.eventNameLabel.setAttribute("hidden", "true");
-          this.eventLocationLabel.setAttribute("hidden", "true");
+          if (this.eventLocationLabel) {
+            this.eventLocationLabel.setAttribute("hidden", "true");
+          }
 
           this.mEditing = true;
 
