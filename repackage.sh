@@ -27,6 +27,7 @@ function build_osx {
     cp -fr ../../src/calendar/base/themes/pinstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/preferences/* content/calendar/preferences/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
 
     cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
@@ -103,6 +104,7 @@ function build_win32 {
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/preferences/* content/calendar/preferences/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
     cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
@@ -188,6 +190,7 @@ function build_linux {
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/preferences/* content/calendar/preferences/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
     cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
@@ -269,6 +272,7 @@ function build_linux_x64 {
     cp -fr ../../src/calendar/base/themes/winstripe/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/themes/common/* skin/classic/calendar/
     cp -fr ../../src/calendar/base/content/* content/calendar/
+    cp -fr ../../src/calendar/base/content/preferences/* content/calendar/preferences/
     cp -fr ../../src/calendar/base/content/widgets/* content/calendar/widgets/
     
     cp -fr ../../src/calendar/lightning/content/imip-* content/lightning/
