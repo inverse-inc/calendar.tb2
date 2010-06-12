@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "r">
 <!ENTITY pref.categories.removeButton.label "Fjarlægja">
 <!ENTITY pref.categories.removeButton.accesskey "F">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Nafn">
 <!ENTITY pref.categories.color.label "Litur">
 <!ENTITY pref.categories.usecolor.label "Nota lit">

@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "E">
 <!ENTITY pref.categories.removeButton.label "Slett">
 <!ENTITY pref.categories.removeButton.accesskey "S">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Namn">
 <!ENTITY pref.categories.color.label "Farge">
 <!ENTITY pref.categories.usecolor.label "Bruk farge">

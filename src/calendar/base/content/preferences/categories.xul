@@ -78,6 +78,9 @@
                 </listcols>
             </listbox>
             <hbox pack="end">
+                <button label="&pref.categories.resetButton.label;"
+                        oncommand="gCategoriesPane.resetCategories()"/>
+                <spring flex="1"/>
                 <button label="&pref.categories.addButton.label;"
                         accesskey="&pref.categories.addButton.accesskey;"
                         oncommand="gCategoriesPane.addCategory()"/>

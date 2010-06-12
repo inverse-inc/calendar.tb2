@@ -1,3 +1,11 @@
+2010-06-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/preferences/categories.js:
+	(gCategoriesPane.init): extracted the categories initialisation
+	code into its own method named "loadCategoryList".
+	(gCategoriesPane.resetCategories): new action method that resets
+	the categories list to the defaults if modified by the user.
+
 2010-06-09  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-view-core.xml

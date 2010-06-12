@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "">
 <!ENTITY pref.categories.removeButton.label "Verwijderen">
 <!ENTITY pref.categories.removeButton.accesskey "">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Naam">
 <!ENTITY pref.categories.color.label "Kleur">
 <!ENTITY pref.categories.usecolor.label "Kleur gebruiken">

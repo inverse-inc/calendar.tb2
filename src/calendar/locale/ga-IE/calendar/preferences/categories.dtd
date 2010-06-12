@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "E">
 <!ENTITY pref.categories.removeButton.label "Bain">
 <!ENTITY pref.categories.removeButton.accesskey "B">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Ainm">
 <!ENTITY pref.categories.color.label "Dath">
 <!ENTITY pref.categories.usecolor.label "Úsáid Dath">

@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "E">
 <!ENTITY pref.categories.removeButton.label "削除">
 <!ENTITY pref.categories.removeButton.accesskey "R">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label   "カテゴリ名">
 <!ENTITY pref.categories.color.label  "色">
 <!ENTITY pref.categories.usecolor.label   "色を設定する">

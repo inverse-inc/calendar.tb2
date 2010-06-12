@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "S">
 <!ENTITY pref.categories.removeButton.label "Eltávolítás">
 <!ENTITY pref.categories.removeButton.accesskey "E">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Név">
 <!ENTITY pref.categories.color.label "Szín">
 <!ENTITY pref.categories.usecolor.label "Szín használata">

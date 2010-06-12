@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "E">
 <!ENTITY pref.categories.removeButton.label "제거">
 <!ENTITY pref.categories.removeButton.accesskey "R">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "이름">
 <!ENTITY pref.categories.color.label "색상">
 <!ENTITY pref.categories.usecolor.label "색상 사용">

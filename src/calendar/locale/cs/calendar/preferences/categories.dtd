@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "U">
 <!ENTITY pref.categories.removeButton.label "Odebrat">
 <!ENTITY pref.categories.removeButton.accesskey "O">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Jméno">
 <!ENTITY pref.categories.color.label "Barva">
 <!ENTITY pref.categories.usecolor.label "Použít barvu">

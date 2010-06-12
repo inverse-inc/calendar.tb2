@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "Р">
 <!ENTITY pref.categories.removeButton.label "Вилучити">
 <!ENTITY pref.categories.removeButton.accesskey "В">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Назва">
 <!ENTITY pref.categories.color.label "Колір">
 <!ENTITY pref.categories.usecolor.label "Використовувати колір">

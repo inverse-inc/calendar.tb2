@@ -48,6 +48,7 @@
 <!ENTITY pref.categories.editButton.accesskey "E">
 <!ENTITY pref.categories.removeButton.label "Remove">
 <!ENTITY pref.categories.removeButton.accesskey "R">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Name">
 <!ENTITY pref.categories.color.label "Color">
 <!ENTITY pref.categories.usecolor.label "Use Color">

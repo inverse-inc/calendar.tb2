@@ -66,24 +66,7 @@ var gCategoriesPane = {
             parent.backupPrefList = [];
         }
 
-        var categories = document.getElementById("calendar.categories.names").value;
-
-        // If no categories are configured load a default set from properties file
-        if (!categories || categories == "") {
-            categories = calGetString("categories", "categories");
-            document.getElementById("calendar.categories.names").value = categories;
-        }
-
-        gCategoryList = categoriesStringToArray(categories);
-        
-        // When categories is empty, split returns an array containing one empty
-        // string, rather than an empty array. This results in an empty listbox
-        // child with no corresponding category.
-        if (gCategoryList.length == 1 && !gCategoryList[0].length) {
-            gCategoryList.pop();
-        }
-
-        this.updateCategoryList();
+        this.loadCategoryList ();
     },
 
     updateCategoryList: function () {
@@ -158,6 +141,34 @@ var gCategoriesPane = {
             }
             gCategoryList.splice(list.selectedIndex, 1);
             this.updateCategoryList();
+        }
+    },
+
+    loadCategoryList: function () {
+        var categories = document.getElementById("calendar.categories.names").value;
+        // If no categories are configured load a default set from properties file
+        if (!categories || categories == "") {
+            categories = calGetString("categories", "categories");
+            document.getElementById("calendar.categories.names").value = categories;
+        }
+
+        gCategoryList = categoriesStringToArray(categories);
+        
+        // When categories is empty, split returns an array containing one empty
+        // string, rather than an empty array. This results in an empty listbox
+        // child with no corresponding category.
+        if (gCategoryList.length == 1 && !gCategoryList[0].length) {
+            gCategoryList.pop();
+        }
+
+        this.updateCategoryList();
+    },
+
+    resetCategories: function () {
+        var prefBranch = prefService.getBranch("");
+        if (prefBranch.prefHasUserValue("calendar.categories.names")) {
+            prefBranch.clearUserPref("calendar.categories.names");
+            this.loadCategoryList();
         }
     },
 

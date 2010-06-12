@@ -44,6 +44,7 @@
 <!ENTITY pref.categories.editButton.accesskey "T">
 <!ENTITY pref.categories.removeButton.label "Pašalinti">
 <!ENTITY pref.categories.removeButton.accesskey "š">
+<!ENTITY pref.categories.resetButton.label "Revert to defaults">
 <!ENTITY pref.categories.name.label "Pavadinimas">
 <!ENTITY pref.categories.color.label "Spalva">
 <!ENTITY pref.categories.usecolor.label "Parinkti spalvą">
