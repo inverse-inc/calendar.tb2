@@ -111,9 +111,7 @@ pref("calendar.view.visiblehours", 9);
 //pref("calendar.timezone.local", "");
 
 // categories settings
-// XXX One day we might want to move this to a locale specific file
-//     and include a list of locale specific default categories
-pref("calendar.categories.names", "");
+//pref("calendar.categories.names", "");
 
 // Make sure mouse wheel shift and no key actions to scroll lines.
 pref("mousewheel.withnokey.action", 0);

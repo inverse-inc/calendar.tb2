@@ -1,5 +1,10 @@
 2010-06-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/lightning/content/lightning.js: disabled the
+	default value for "calendar.categories.names" as it is defined in
+	the locale files and risk overriding the default value in other
+	custom modules.
+
 	* src/calendar/base/content/preferences/categories.js:
 	(gCategoriesPane.init): extracted the categories initialisation
 	code into its own method named "loadCategoryList".
