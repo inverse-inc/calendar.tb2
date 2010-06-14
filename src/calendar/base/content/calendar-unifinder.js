@@ -407,15 +407,23 @@ var unifinderTreeView = {
     },
 
     removeItems: function uTV_removeItems(aItemArray) {
+        var rows = [];
         for each (var item in aItemArray) {
             var row = this.getItemRow(item);
             if (row > -1) {
-                this.eventArray.splice(row, 1);
-                if (this.tree) {
-                    this.tree.rowCountChanged(row, -1);
-                }
+                rows.push(row);
             }
         }
+
+        var sorted = rows.sort();
+        for (var i = sorted.length - 1; i > -1; i--) {
+            var row = sorted[i];
+            this.eventArray.splice(row, 1);
+            if (this.tree) {
+                this.tree.rowCountChanged(row, -1);
+            }
+        }
+
         this.calculateIndexMap();
     },
 

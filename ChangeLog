@@ -1,3 +1,11 @@
+2010-06-14  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-unifinder.js:
+	(unifinderTreeView.removeItems): since the row indexes are not
+	recomputed after each removal, they are stacked in an array which
+	is sorted afterwards and then wandered backwards in order to
+	perform the actual removal with the proper index.
+
 2010-06-12  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/lightning/content/lightning.js: disabled the
