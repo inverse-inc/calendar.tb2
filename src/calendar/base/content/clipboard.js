@@ -139,6 +139,7 @@ function copyToClipboard( calendarItemArray )
                                   .createInstance(Components.interfaces.calIEvent);
         var newItem = item.clone();
         newItem.id = dummyItem.id;
+        newItem.recurrenceId = null;
         calComp.addSubcomponent(newItem.icalComponent);
     }
 

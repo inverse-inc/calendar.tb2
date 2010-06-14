@@ -1,5 +1,10 @@
 2010-06-14  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/clipboard.js (copyToClipboard): we
+	ensure the recurrenceId attribute is set to null prior to copying
+	the element to the clipboard, to avoid further parsing errors from
+	the buggy ICS Parser provided with Lightning.
+
 	* src/calendar/base/content/calendar-unifinder.js:
 	(unifinderTreeView.removeItems): since the row indexes are not
 	recomputed after each removal, they are stacked in an array which
