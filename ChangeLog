@@ -1,3 +1,12 @@
+2010-06-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-common-sets.js
+	(calendarController.doCommand): the delete command is sometimes a
+	"cmd_delete", directed at a different view than the calendar
+	views. In that case, we must not display the confirmation dialog.
+	Additionally, the confirmation dialog for event deletion would
+	appear when deleting tasks, therefore with the wrong wording.
+
 2010-06-14  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/clipboard.js (copyToClipboard): we

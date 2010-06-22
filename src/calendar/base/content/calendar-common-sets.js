@@ -213,19 +213,23 @@ var calendarController = {
             case "calendar_delete_event_command":
             case "cmd_delete":
             case "button_delete":
-                if (window.confirm(calGetString("calendar", "deleteEventConfirmLabel"))) {
-                    var focusedElement = document.commandDispatcher.focusedElement;
-                    if (!focusedElement && this.defaultController && !this.isCalendarInForeground()) {
+                var focusedElement = document.commandDispatcher.focusedElement;
+                if (!focusedElement && this.defaultController && !this.isCalendarInForeground()) {
+                    this.defaultController.doCommand(aCommand);
+                } else {
+                    var focusedRichListbox = getParentNodeOrThis(focusedElement, "richlistbox");
+                    if (focusedRichListbox && focusedRichListbox.id == "agenda-listbox") {
+                        if (window.confirm(calGetString("calendar", "deleteEventConfirmLabel"))) {
+                            agendaListbox.deleteSelectedItem(false);
+                        }
+                    } else if (focusedElement.className == "calendar-task-tree") {
+                        if (window.confirm(calGetString("calendar", "deleteTaskConfirmLabel"))) {
+                            deleteToDoCommand(null, false);
+                        }
+                    } else if (this.defaultController && !this.isCalendarInForeground()) {
                         this.defaultController.doCommand(aCommand);
                     } else {
-                        var focusedRichListbox = getParentNodeOrThis(focusedElement, "richlistbox");
-                        if (focusedRichListbox && focusedRichListbox.id == "agenda-listbox") {
-                            agendaListbox.deleteSelectedItem(false);
-                        } else if (focusedElement.className == "calendar-task-tree") {
-                            deleteToDoCommand(null, false);
-                        } else if (this.defaultController && !this.isCalendarInForeground()) {
-                            this.defaultController.doCommand(aCommand);
-                        } else {
+                        if (window.confirm(calGetString("calendar", "deleteEventConfirmLabel"))) {
                             deleteSelectedEvents();
                         }
                     }
