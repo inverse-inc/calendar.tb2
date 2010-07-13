@@ -51,7 +51,7 @@ calFreeBusyListener.prototype = {
     opGroup: null,
 
     notifyResult: function calFreeBusyListener_notifyResult(result) {
-        var listener = this.mFinalListener
+        var listener = this.mFinalListener;
         if (listener) {
             if (!this.opGroup.isPending) {
                 this.mFinalListener = null;
@@ -69,9 +69,7 @@ calFreeBusyListener.prototype = {
                     this.opGroup.notifyCompleted();
                 }
             }
-            if (aResult) {
-                this.notifyResult(aResult);
-            }
+            this.notifyResult(aResult);
         }
     }
 };

@@ -1,3 +1,9 @@
+2010-07-13  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/src/calFreeBusyService.js:
+	(calFreeBusyListener.onResult) we invoke notifyResult even if
+	"aResult" is null, to avoid breaking the chain of events.
+
 2010-06-22  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-common-sets.js
