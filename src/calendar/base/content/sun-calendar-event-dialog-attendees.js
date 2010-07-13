@@ -149,7 +149,7 @@ function onLoad() {
                     break;
             }
         }
-    }
+    };
     pb2.addObserver("calendar.", prefObserver, false);
     window.addEventListener("unload",
         function() {
@@ -169,7 +169,7 @@ function saveWidgets(pb2) {
     var container = document.getElementById("attendees-container");
     pb2.setCharPref("calendar.invitations.attendees-container.width",
                     container.boxObject.width);
-    var container = document.getElementById("freebusy-container");
+    container = document.getElementById("freebusy-container");
     pb2.setCharPref("calendar.invitations.freebusy-container.width",
                     container.boxObject.width);
 }
@@ -229,7 +229,7 @@ function onZoomFactor(aValue) {
 function zoomWithButtons(aZoomOut) {
     var zoom = document.getElementById("zoom-menulist");
     if (aZoomOut && zoom.selectedIndex < 4) {
-        zoom.selectedIndex++;   
+        zoom.selectedIndex++;
     } else if (!aZoomOut && zoom.selectedIndex > 0) {
         zoom.selectedIndex--;
     }
@@ -1033,10 +1033,13 @@ freeBusyRequestListener.prototype = {
 /* freeBusyCacheEntry:
    A "smart" cache entry object that provides date and content management
    methods. */
-function freeBusyCacheEntry() {
+function freeBusyCacheEntry(calId) {
+    this.mCalId = calId;
 }
 
 freeBusyCacheEntry.prototype = {
+    mCalId: null,
+
     mStart: null,
     mEnd: null,
     mEntries: null,
@@ -1051,7 +1054,8 @@ freeBusyCacheEntry.prototype = {
             entries = [];
 
             for each (var entry in this.mEntries) {
-                if (entry.interval.start.compare(aEnd) <= 0
+                if (entry.interval
+                    && entry.interval.start.compare(aEnd) <= 0
                     && entry.interval.end.compare(aStart) >= 0) {
                     entries.push(entry);
                 }
@@ -1094,6 +1098,28 @@ freeBusyCacheEntry.prototype = {
 
     /* append/prepend the additional entries */
     integrateEntries: function fCBE_integrateEntries(aEntries, aStart, aEnd) {
+        if (!aEntries) {
+            var this_ = this;
+            var entry = {
+                calId: null,
+                interval: null,
+                freeBusyType: Components.interfaces.calIFreeBusyInterval.UNKNOWN,
+                QueryInterface: function cFBI_QueryInterface(aIID) {
+                    return doQueryInterface(this,
+                                            calFreeBusyInterval.prototype,
+                                            aIID,
+                                            [Components.interfaces.calIFreeBusyInterval]);
+                }
+            };
+            entry.calId = this.mCalId;
+            var interval = Components.classes["@mozilla.org/calendar/period;1"]
+                .createInstance(Components.interfaces.calIPeriod);
+            interval.start = aStart;
+            interval.end = aEnd;
+            entry.interval = interval;
+            aEntries = [ entry ];
+        }
+
         if (this.mStart) {
             if (aStart.compare(this.mStart) > 0) {
                 for each (var entry in aEntries) {
@@ -1138,7 +1164,7 @@ freeBusyRowController.prototype = {
         var calId = this.mFreeBusyRow.getAttribute("calid").toLowerCase();
         var cacheEntry = freeBusyCache[calId];
         if (!cacheEntry) {
-            cacheEntry = new freeBusyCacheEntry();
+            cacheEntry = new freeBusyCacheEntry(calId);
             freeBusyCache[calId] = cacheEntry;
         }
 
@@ -1241,7 +1267,7 @@ conflictHandler.prototype = {
       var calId = attendee.id.toLowerCase();
       var cacheEntry = freeBusyCache[calId];
       if (!cacheEntry) {
-          cacheEntry = new freeBusyCacheEntry();
+          cacheEntry = new freeBusyCacheEntry(calId);
           freeBusyCache[calId] = cacheEntry;
       }
 
@@ -1260,7 +1286,14 @@ conflictHandler.prototype = {
 
   onResult: function cH_onResult(aRequest, aEntries) {
       if (aEntries.length > 0) {
-          this.mListener.onRequestComplete(false);
+          var canClose = true;
+          for (var i = 0; canClose && i < aEntries.length; i++) {
+              if (aEntries[i].freeBusyType
+                  == Components.interfaces.calIFreeBusyInterval.BUSY) {
+                  canClose = false;
+              }
+          }
+          this.mListener.onRequestComplete(canClose);
       }
       else {
           this.mCurrentCalId++;

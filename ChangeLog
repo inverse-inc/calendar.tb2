@@ -1,5 +1,16 @@
 2010-07-13  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
+	(freeBusyCacheEntry): we now pass the calId as parameter.
+	(freeBusyCacheEntry.getEntries): we simply check that the
+	"interval" member of each entries is available, altough the
+	contrary should never happen.
+	(freeBusyCacheEntry.integrateEntries): when aEntries is null, we
+	create a mock array with a single fb interval with a type of
+	"UNKNOWN".
+	(conflictHandler.onResult): returns a conflict only for "BUSY"
+	entries, ignoring anything else.
+
 	* src/calendar/base/src/calFreeBusyService.js:
 	(calFreeBusyListener.onResult) we invoke notifyResult even if
 	"aResult" is null, to avoid breaking the chain of events.
