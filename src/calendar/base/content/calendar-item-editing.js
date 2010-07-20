@@ -173,7 +173,7 @@ function createTodoWithDialog(calendar, dueDate, summary, todo) {
             // Otherwise, this is an addition
             doTransaction('add', item, calendar, null, listener);
         }
-    }
+    };
 
     if (todo) {
         // If the too should be created from a template, then make sure to
@@ -343,7 +343,7 @@ function openEventDialog(calendarItem, calendar, mode, callback, job) {
     // this will be called if file->new has been selected from within the dialog
     args.onNewEvent = function(calendar) {
         createEventWithDialog(calendar, null, null);
-    }
+    };
 
     // the dialog will reset this to auto when it is done loading.
     window.setCursor("wait");
@@ -606,19 +606,19 @@ function makeDelegateItem(aItem, method, rID, attendee, otherAttendees) {
  * retrieve the chain of delegates/delegators
  */
 function findDelegationAttendees(aItem, delegationQualifier, delegate) {
-    var attendees = {};
+    var attendees = [];
 
     // dump("qualifier: " + delegationQualifier + "\n");
     var currentAttendee = aItem.getAttendeeById(delegate.id);
     while (currentAttendee) {
-        // dump("  current delegate/delegator: " + currentAttendee.id + "\n");
         var attendeeId = currentAttendee.getProperty(delegationQualifier);
         if (attendeeId && attendeeId.length > 0) {
             currentAttendee = aItem.getAttendeeById(attendeeId);
             if (currentAttendee) {
-                attendees[currentAttendee.id.toLowerCase()] = currentAttendee;
+                // dump("  current delegate/delegator: " + currentAttendee.id + "\n");
+                attendees.push(currentAttendee);
             } else {
-                // dump("  ** not found\n");
+                dump("  ** not found: " + attendeeId + "\n");
             }
         } else {
             currentAttendee = null;
@@ -759,19 +759,16 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                 aItem = aItem.clone();
             }
 
-            var delegatorsHash = findDelegationAttendees(aItem,
-                                                         "DELEGATED-FROM",
-                                                         invitedAttendee);
-            var delegators = [];
-            for (var delegator in delegatorsHash) {
-                delegators.push(delegator);
-            }
+            var delegators = findDelegationAttendees(aItem,
+                                                     "DELEGATED-FROM",
+                                                     invitedAttendee);
 
             // dump("\noriginal ICS:\n" + serializedItem(aOriginalItem) + "\n\n");
             // dump("\nnew      ICS:\n" + serializedItem(aItem) + "\n\n");
 
             var newDelegates = findDelegationAttendees(aItem, "DELEGATED-TO",
                                                        invitedAttendee);
+            // dump("new delegates: " + newDelegates.join(", ") + "\n");
 
             var oldDelegates = null;
             if (aOriginalItem) {
@@ -782,6 +779,7 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
                     oldDelegates = findDelegationAttendees(aOriginalItem,
                                                            "DELEGATED-TO",
                                                            invitedAttendee);
+                    // dump("old delegates: " + oldDelegates.join(", ") + "\n");
                     // dump("oldDelegates queried\n");
                 } else {
                     // dump("oldAttendee not delegated\n");
@@ -791,21 +789,23 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
             }
 
             aItem.removeAllAttendees();
-            for each (var delegator in delegators) {
-                aItem.addAttendee(delegator);
+            for (var i = 0; i < delegators.length; i++) {
+                aItem.addAttendee(delegators[i]);
             }
             aItem.addAttendee(invitedAttendee);
-            for (var delegate in newDelegates) {
-                aItem.addAttendee(newDelegates[delegate]);
+            if (invitedAttendee.participationStatus == "DELEGATED") {
+                for (var i = 0; i < newDelegates.length; i++) {
+                    aItem.addAttendee(newDelegates[i]);
+                }
             }
 
-	    // Do we really need to send something? If the user has only 
+	    // Do we really need to send something? If the user has only
 	    // set a new reminder, we simply return right away
 	    if (origInvitedAttendee && invitedAttendee
                 && origInvitedAttendee.participationStatus == invitedAttendee.participationStatus
                 && origInvitedAttendee.getProperty("DELEGATED-TO") == invitedAttendee.getProperty("DELEGATED-TO"))
 	      return;
-	    
+
             var itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
                                      .createInstance(Components.interfaces.calIItipItem);
             itipItem.init(calGetSerializedItem(aItem));
@@ -824,32 +824,44 @@ function checkAndSendItipMessage(aItem, aOpType, aOriginalItem) {
 
             var requestDelegates = [];
             var cancelDelegates = [];
-            if (oldDelegates) {
-                for (var oldDelegate in oldDelegates) {
-                    if (newDelegates[oldDelegate]) {
-                        if (newDelegates[oldDelegate].participationStatus
-                            != oldDelegates[oldDelegate].participationStatus
-                            && (newDelegates[oldDelegate].participationStatus
+            if (oldDelegates && oldDelegates.length > 0) {
+                var newDelegateIds = {};
+                for (var i = 0; i < newDelegates.length; i++) {
+                    var newDelegateId = newDelegates[i].id.toLowerCase();
+                    newDelegateIds[newDelegateId] = newDelegates[i];
+                }
+
+                var oldDelegateIds = {};
+                for (var i = 0; i < oldDelegates.length; i++) {
+                    var oldDelegate = oldDelegates[i];
+                    var oldDelegateId = oldDelegate.id.toLowerCase();
+                    oldDelegateIds[oldDelegateId] = oldDelegate;
+                    if (newDelegateIds[oldDelegateId]) {
+                        if (newDelegates[oldDelegateId].participationStatus
+                            != oldDelegate.participationStatus
+                            && (newDelegates[oldDelegateId].participationStatus
                                 == "NEEDS-ACTION")) {
-                            requestDelegates.push(newDelegates[oldDelegate]);
+                            requestDelegates.push(newDelegates[oldDelegateId]);
                         }
                     } else {
                         // dump("append old delegate: " + oldDelegate + "\n");
-                        cancelDelegates.push(oldDelegates[oldDelegate]);
+                        cancelDelegates.push(oldDelegate);
                     }
                 }
 
-                for (var newDelegate in newDelegates) {
-                    if (!oldDelegates[newDelegate]) {
-                        requestDelegates.push(newDelegates[newDelegate]);
+                for (var i = 0; i < newDelegates.length; i++) {
+                    var newDelegate = newDelegates[i];
+                    var newDelegateId = newDelegate.id.toLowerCase();
+                    if (!oldDelegateIds[newDelegateId]) {
+                        requestDelegates.push(newDelegate);
                     }
                 }
             } else {
-                for (var newDelegate in newDelegates) {
-                    requestDelegates.push(newDelegates[newDelegate]);
-                }
+                requestDelegates = newDelegates;
             }
 
+            // dump("request delegates: " + requestDelegates.join(", ") + "\n");
+            // dump("cancel delegates: " + cancelDelegates.join(", ") + "\n");
             if (requestDelegates.length > 0) {
                 var requestItipItem
                     = makeDelegateItem(aItem, "REQUEST", rID,

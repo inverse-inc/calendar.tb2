@@ -265,13 +265,14 @@ function saveDelegationInfo() {
         window.attendee.rsvp = "TRUE";
     }
 
-    if (!keepOldDelegate && oldDelegate) {        
-        window.item.removeAttendee(oldDelegate);
+    if (!keepOldDelegate && oldDelegate) {
         var oldDelegates = findDelegationAttendees(window.item,
                                                    "DELEGATED-TO",
                                                    oldDelegate);
-        for (var oldDelegate in oldDelegates) {
-            window.item.removeAttendee(oldDelegate);
+        window.item.removeAttendee(oldDelegate);
+        // dump("summary: old delegates: " + oldDelegates.join(", ") + "\n");
+        for (var i = 0; i < oldDelegates.length; i++) {
+            window.item.removeAttendee(oldDelegates[i]);
         }
     }
 
@@ -373,14 +374,14 @@ function updateRepeatDetails() {
     }
 
     document.getElementById("repeat-row").removeAttribute("hidden");
-    
+
     // First of all collapse the details text. If we fail to
     // create a details string, we simply don't show anything.
     // this could happen if the repeat rule is something exotic
     // we don't have any strings prepared for.
     var repeatDetails = document.getElementById("repeat-details");
     repeatDetails.setAttribute("collapsed", "true");
-    
+
     // Try to create a descriptive string from the rule(s).
     var kDefaultTimezone = calendarDefaultTimezone();
     var startDate =  item.startDate || item.entryDate;
@@ -389,7 +390,7 @@ function updateRepeatDetails() {
     endDate = endDate ? endDate.getInTimezone(kDefaultTimezone) : null;
     var detailsString = recurrenceRule2String(recurrenceInfo, startDate,
                                               endDate, startDate.isDate);
-        
+
     // Now display the string...
     if (detailsString) {
         var lines = detailsString.split("\n");

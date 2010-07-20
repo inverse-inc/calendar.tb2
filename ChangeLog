@@ -1,3 +1,15 @@
+2010-07-20  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
+
+	* src/calendar/base/content/calendar-summary-dialog.js:
+	(saveDelegationInfo): we remove the first delegate only after the
+	delegation chain has been requested. Otherwise that chain will
+	always be empty, leaving the responded invitation in an
+	inconsistent state.
+
+	* src/calendar/base/content/calendar-item-editing.js:
+	(findDelegationAttendees): we now return an array as it keeps the
+	delegation chain sorted.
+
 2010-07-13  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/sun-calendar-event-dialog-attendees.js:
