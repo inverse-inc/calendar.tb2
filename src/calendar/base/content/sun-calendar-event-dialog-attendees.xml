@@ -473,14 +473,8 @@
                   attendee.role = this.getRoleElement(i).getAttribute("role");
                   if (attendee.role == "NON-PARTICIPANT") {
                     attendee.rsvp = false;
-                    attendee.participationStatus = "";
                   } else {
                     attendee.rsvp = true;
-                    var newStatus = this.getStatusElement(i).getAttribute("status");
-                    if (newStatus == "") {
-                      newStatus = "NEEDS-ACTION";
-                    }
-                    attendee.participationStatus = newStatus;
                   }
 
                   // break the list of potentially many attendees back into individual names

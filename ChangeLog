@@ -1,3 +1,9 @@
+2011-01-18  Francis Lachapelle  <flachapelle@inverse.ca>
+
+	* src/calendar/base/content/sun-calendar-event-dialog-attendees.xml:
+	removed block that would incorrectly set the attendees
+	participation status.
+
 2010-07-20  Wolfgang Sourdeau  <wsourdeau@inverse.ca>
 
 	* src/calendar/base/content/calendar-summary-dialog.js:
